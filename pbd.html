@@ -51,6 +51,19 @@
             box-shadow: 0 20px 50px -10px rgba(16, 185, 129, 0.1);
         }
 
+        /* Custom Scrollbar for HTML Tooltip */
+        .tooltip-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .tooltip-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        .tooltip-scroll::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.4);
+            border-radius: 4px;
+        }
+
         /* Custom Styled Select Inputs */
         select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%3c94a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
@@ -86,7 +99,7 @@
                 padding-bottom: 0 !important;
             }
 
-            header, .no-print, nav, .glow-mesh, footer {
+            header, .no-print, nav, .glow-mesh, footer, #chartjs-tooltip {
                 display: none !important;
             }
 
@@ -217,6 +230,9 @@
     </style>
 </head>
 <body class="min-h-screen pb-12 relative overflow-x-hidden antialiased">
+
+    <!-- Floating Scrollable Tooltip Container -->
+    <div id="chartjs-tooltip" class="fixed opacity-0 pointer-events-none z-50 transition-all duration-150 transform -translate-x-1/2 -translate-y-full bg-slate-900/95 border border-slate-700 backdrop-blur-md rounded-xl p-3 shadow-2xl text-xs text-white max-w-xs w-64"></div>
 
     <!-- Ambient Lighting -->
     <div class="glow-mesh w-[500px] h-[500px] bg-emerald-500 -top-32 -left-32"></div>
@@ -463,9 +479,7 @@
             const details = [];
 
             if (currentSubject === "Keseluruhan (Semua Subjek)") {
-                // If viewing a class or school overall, iterate through subjects/classes to collect breakdown
                 if (currentClass.includes("Keseluruhan")) {
-                    // School-wide: search across all views and subjects
                     Object.keys(masterData.views || {}).forEach(cls => {
                         if (cls.includes("Keseluruhan")) return;
                         const subView = masterData.views[cls];
@@ -473,23 +487,67 @@
                             if (sub.includes("Keseluruhan")) return;
                             const count = subView[sub][tpKey] || 0;
                             if (count > 0) {
-                                details.push(`${cls} - ${sub}: ${count} murid`);
+                                details.push({ label: `${cls} - ${sub}`, count: count });
                             }
                         });
                     });
                 } else {
-                    // Specific Class Keseluruhan: search across subjects inside this class
                     const subView = masterData.views[currentClass] || {};
                     Object.keys(subView).forEach(sub => {
                         if (sub.includes("Keseluruhan")) return;
                         const count = subView[sub][tpKey] || 0;
                         if (count > 0) {
-                            details.push(`${sub}: ${count} murid`);
+                            details.push({ label: sub, count: count });
                         }
                     });
                 }
             }
             return details;
+        }
+
+        /* Custom HTML Tooltip Handler with Scrollable List */
+        function externalTooltipHandler(context) {
+            const { chart, tooltip } = context;
+            const tooltipEl = document.getElementById('chartjs-tooltip');
+
+            if (tooltip.opacity === 0) {
+                tooltipEl.style.opacity = '0';
+                tooltipEl.style.pointerEvents = 'none';
+                return;
+            }
+
+            if (tooltip.body) {
+                const tpIndex = tooltip.dataPoints[0].dataIndex + 1;
+                const count = tooltip.dataPoints[0].raw;
+                const selectedClass = document.getElementById('classSelect').value;
+                const selectedSubject = document.getElementById('subjectSelect').value;
+                const breakdowns = getBreakdownForTP(tpIndex, selectedClass, selectedSubject);
+
+                let html = `<div class="font-bold border-b border-white/10 pb-1.5 mb-2 flex justify-between items-center">
+                    <span class="text-emerald-400">TP ${tpIndex}</span>
+                    <span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md font-extrabold text-[11px]">${count} Rekod</span>
+                </div>`;
+
+                if (breakdowns.length > 0) {
+                    html += `<p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Pecahan Terperinci (${breakdowns.length}):</p>`;
+                    html += `<div class="tooltip-scroll max-h-40 overflow-y-auto space-y-1 pr-1">`;
+                    breakdowns.forEach(item => {
+                        html += `<div class="flex justify-between items-center text-[11px] bg-slate-800/60 p-1.5 rounded-lg border border-white/5">
+                            <span class="text-slate-300 truncate pr-2">${item.label}</span>
+                            <span class="font-bold text-emerald-400 shrink-0">${item.count}</span>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                }
+
+                tooltipEl.innerHTML = html;
+            }
+
+            const position = chart.canvas.getBoundingClientRect();
+            tooltipEl.style.opacity = '1';
+            tooltipEl.style.pointerEvents = 'auto';
+            tooltipEl.style.left = position.left + window.pageXOffset + tooltip.caretX + 'px';
+            tooltipEl.style.top = position.top + window.pageYOffset + tooltip.caretY - 10 + 'px';
         }
 
         function updateUI() {
@@ -576,19 +634,8 @@
                     plugins: { 
                         legend: { display: false },
                         tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Jumlah: ${context.parsed.y} rekod`;
-                                },
-                                afterBody: function(context) {
-                                    const tpIndex = context[0].dataIndex + 1;
-                                    const breakdowns = getBreakdownForTP(tpIndex, selectedClass, selectedSubject);
-                                    if (breakdowns.length > 0) {
-                                        return ['\nPecahan Terperinci:', ...breakdowns];
-                                    }
-                                    return [];
-                                }
-                            }
+                            enabled: false,
+                            external: externalTooltipHandler
                         }
                     },
                     scales: {
