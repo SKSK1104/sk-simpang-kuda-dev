@@ -1,0 +1,450 @@
+{
+    "school": "SEKOLAH KEBANGSAAN SIMPANG KUDA",
+    "session": "TAHUN 2026",
+    "activity": "ANALISIS UJIAN 1 (AR 1)",
+    "views": {
+        "Seluruh Sekolah (Tahun 1 - 6)": {
+            "Keseluruhan (Semua Subjek)": {
+                "A": 96,
+                "B": 138,
+                "C": 142,
+                "D": 91,
+                "E": 110,
+                "F": 117,
+                "TH": 5,
+                "total_evaluated": 699,
+                "mtm_pass_pct": 66.8
+            },
+            "BAHASA MELAYU": {
+                "A": 30,
+                "B": 52,
+                "C": 38,
+                "D": 16,
+                "E": 10,
+                "F": 9,
+                "TH": 1,
+                "total_evaluated": 156,
+                "mtm_pass_pct": 87.2
+            },
+            "BAHASA INGGERIS": {
+                "A": 38,
+                "B": 30,
+                "C": 25,
+                "D": 10,
+                "E": 20,
+                "F": 22,
+                "TH": 1,
+                "total_evaluated": 146,
+                "mtm_pass_pct": 70.5
+            },
+            "SAINS": {
+                "A": 11,
+                "B": 14,
+                "C": 36,
+                "D": 21,
+                "E": 35,
+                "F": 31,
+                "TH": 2,
+                "total_evaluated": 150,
+                "mtm_pass_pct": 54.7
+            },
+            "MATEMATIK": {
+                "A": 14,
+                "B": 22,
+                "C": 21,
+                "D": 22,
+                "E": 26,
+                "F": 49,
+                "TH": 1,
+                "total_evaluated": 155,
+                "mtm_pass_pct": 51.0
+            },
+            "SEJARAH": {
+                "A": 3,
+                "B": 20,
+                "C": 22,
+                "D": 22,
+                "E": 19,
+                "F": 6,
+                "TH": 0,
+                "total_evaluated": 92,
+                "mtm_pass_pct": 72.8
+            }
+        },
+        "Tahun 1": {
+            "Keseluruhan (Semua Subjek)": {
+                "A": 26,
+                "B": 23,
+                "C": 19,
+                "D": 8,
+                "E": 0,
+                "F": 0,
+                "TH": 0,
+                "total_evaluated": 76,
+                "mtm_pass_pct": 100.0
+            },
+            "BAHASA MELAYU": {
+                "A": 8,
+                "B": 7,
+                "C": 6,
+                "D": 1,
+                "E": 0,
+                "F": 0,
+                "TH": 0,
+                "total_evaluated": 22,
+                "mtm_pass_pct": 100.0
+            },
+            "BAHASA INGGERIS": {
+                "A": 7,
+                "B": 7,
+                "C": 2,
+                "D": 2,
+                "E": 0,
+                "F": 0,
+                "TH": 0,
+                "total_evaluated": 18,
+                "mtm_pass_pct": 100.0
+            },
+            "SAINS": {
+                "A": 6,
+                "B": 4,
+                "C": 5,
+                "D": 3,
+                "E": 0,
+                "F": 0,
+                "TH": 0,
+                "total_evaluated": 18,
+                "mtm_pass_pct": 100.0
+            },
+            "MATEMATIK": {
+                "A": 5,
+                "B": 5,
+                "C": 6,
+                "D": 2,
+                "E": 0,
+                "F": 0,
+                "TH": 0,
+                "total_evaluated": 18,
+                "mtm_pass_pct": 100.0
+            }
+        },
+        "Tahun 2": {
+            "Keseluruhan (Semua Subjek)": {
+                "A": 19,
+                "B": 22,
+                "C": 16,
+                "D": 6,
+                "E": 13,
+                "F": 8,
+                "TH": 0,
+                "total_evaluated": 84,
+                "mtm_pass_pct": 75.0
+            },
+            "BAHASA MELAYU": {
+                "A": 4,
+                "B": 7,
+                "C": 2,
+                "D": 1,
+                "E": 5,
+                "F": 2,
+                "TH": 0,
+                "total_evaluated": 21,
+                "mtm_pass_pct": 66.7
+            },
+            "BAHASA INGGERIS": {
+                "A": 10,
+                "B": 4,
+                "C": 1,
+                "D": 1,
+                "E": 3,
+                "F": 2,
+                "TH": 0,
+                "total_evaluated": 21,
+                "mtm_pass_pct": 76.2
+            },
+            "SAINS": {
+                "A": 3,
+                "B": 5,
+                "C": 6,
+                "D": 2,
+                "E": 4,
+                "F": 1,
+                "TH": 0,
+                "total_evaluated": 21,
+                "mtm_pass_pct": 76.2
+            },
+            "MATEMATIK": {
+                "A": 2,
+                "B": 6,
+                "C": 7,
+                "D": 2,
+                "E": 1,
+                "F": 3,
+                "TH": 0,
+                "total_evaluated": 21,
+                "mtm_pass_pct": 81.0
+            }
+        },
+        "Tahun 3": {
+            "Keseluruhan (Semua Subjek)": {
+                "A": 6,
+                "B": 34,
+                "C": 24,
+                "D": 10,
+                "E": 6,
+                "F": 6,
+                "TH": 4,
+                "total_evaluated": 90,
+                "mtm_pass_pct": 82.2
+            },
+            "BAHASA MELAYU": {
+                "A": 0,
+                "B": 16,
+                "C": 6,
+                "D": 1,
+                "E": 1,
+                "F": 1,
+                "TH": 1,
+                "total_evaluated": 26,
+                "mtm_pass_pct": 88.5
+            },
+            "BAHASA INGGERIS": {
+                "A": 5,
+                "B": 8,
+                "C": 6,
+                "D": 0,
+                "E": 0,
+                "F": 0,
+                "TH": 1,
+                "total_evaluated": 20,
+                "mtm_pass_pct": 95.0
+            },
+            "SAINS": {
+                "A": 0,
+                "B": 4,
+                "C": 9,
+                "D": 6,
+                "E": 0,
+                "F": 0,
+                "TH": 1,
+                "total_evaluated": 20,
+                "mtm_pass_pct": 95.0
+            },
+            "MATEMATIK": {
+                "A": 1,
+                "B": 6,
+                "C": 3,
+                "D": 3,
+                "E": 5,
+                "F": 5,
+                "TH": 1,
+                "total_evaluated": 24,
+                "mtm_pass_pct": 54.2
+            }
+        },
+        "Tahun 4": {
+            "Keseluruhan (Semua Subjek)": {
+                "A": 12,
+                "B": 21,
+                "C": 22,
+                "D": 26,
+                "E": 30,
+                "F": 38,
+                "TH": 1,
+                "total_evaluated": 150,
+                "mtm_pass_pct": 54.0
+            },
+            "BAHASA MELAYU": {
+                "A": 5,
+                "B": 12,
+                "C": 5,
+                "D": 2,
+                "E": 0,
+                "F": 3,
+                "TH": 0,
+                "total_evaluated": 27,
+                "mtm_pass_pct": 88.9
+            },
+            "BAHASA INGGERIS": {
+                "A": 1,
+                "B": 1,
+                "C": 5,
+                "D": 6,
+                "E": 6,
+                "F": 8,
+                "TH": 0,
+                "total_evaluated": 27,
+                "mtm_pass_pct": 48.1
+            },
+            "SAINS": {
+                "A": 1,
+                "B": 0,
+                "C": 3,
+                "D": 6,
+                "E": 12,
+                "F": 9,
+                "TH": 1,
+                "total_evaluated": 32,
+                "mtm_pass_pct": 31.2
+            },
+            "MATEMATIK": {
+                "A": 4,
+                "B": 1,
+                "C": 3,
+                "D": 2,
+                "E": 6,
+                "F": 16,
+                "TH": 0,
+                "total_evaluated": 32,
+                "mtm_pass_pct": 31.2
+            },
+            "SEJARAH": {
+                "A": 1,
+                "B": 7,
+                "C": 6,
+                "D": 10,
+                "E": 6,
+                "F": 2,
+                "TH": 0,
+                "total_evaluated": 32,
+                "mtm_pass_pct": 75.0
+            }
+        },
+        "Tahun 5": {
+            "Keseluruhan (Semua Subjek)": {
+                "A": 19,
+                "B": 20,
+                "C": 26,
+                "D": 21,
+                "E": 32,
+                "F": 41,
+                "TH": 0,
+                "total_evaluated": 159,
+                "mtm_pass_pct": 54.1
+            },
+            "BAHASA MELAYU": {
+                "A": 13,
+                "B": 5,
+                "C": 8,
+                "D": 4,
+                "E": 1,
+                "F": 1,
+                "TH": 0,
+                "total_evaluated": 32,
+                "mtm_pass_pct": 93.8
+            },
+            "BAHASA INGGERIS": {
+                "A": 3,
+                "B": 5,
+                "C": 6,
+                "D": 1,
+                "E": 7,
+                "F": 10,
+                "TH": 0,
+                "total_evaluated": 32,
+                "mtm_pass_pct": 46.9
+            },
+            "SAINS": {
+                "A": 1,
+                "B": 1,
+                "C": 5,
+                "D": 3,
+                "E": 8,
+                "F": 13,
+                "TH": 0,
+                "total_evaluated": 31,
+                "mtm_pass_pct": 32.3
+            },
+            "MATEMATIK": {
+                "A": 0,
+                "B": 2,
+                "C": 0,
+                "D": 7,
+                "E": 10,
+                "F": 13,
+                "TH": 0,
+                "total_evaluated": 32,
+                "mtm_pass_pct": 28.1
+            },
+            "SEJARAH": {
+                "A": 2,
+                "B": 7,
+                "C": 7,
+                "D": 6,
+                "E": 6,
+                "F": 4,
+                "TH": 0,
+                "total_evaluated": 32,
+                "mtm_pass_pct": 68.8
+            }
+        },
+        "Tahun 6": {
+            "Keseluruhan (Semua Subjek)": {
+                "A": 14,
+                "B": 18,
+                "C": 35,
+                "D": 20,
+                "E": 29,
+                "F": 24,
+                "TH": 0,
+                "total_evaluated": 140,
+                "mtm_pass_pct": 62.1
+            },
+            "BAHASA MELAYU": {
+                "A": 0,
+                "B": 5,
+                "C": 11,
+                "D": 7,
+                "E": 3,
+                "F": 2,
+                "TH": 0,
+                "total_evaluated": 28,
+                "mtm_pass_pct": 82.1
+            },
+            "BAHASA INGGERIS": {
+                "A": 12,
+                "B": 5,
+                "C": 5,
+                "D": 0,
+                "E": 4,
+                "F": 2,
+                "TH": 0,
+                "total_evaluated": 28,
+                "mtm_pass_pct": 78.6
+            },
+            "SAINS": {
+                "A": 0,
+                "B": 0,
+                "C": 8,
+                "D": 1,
+                "E": 11,
+                "F": 8,
+                "TH": 0,
+                "total_evaluated": 28,
+                "mtm_pass_pct": 32.1
+            },
+            "MATEMATIK": {
+                "A": 2,
+                "B": 2,
+                "C": 2,
+                "D": 6,
+                "E": 4,
+                "F": 12,
+                "TH": 0,
+                "total_evaluated": 28,
+                "mtm_pass_pct": 42.9
+            },
+            "SEJARAH": {
+                "A": 0,
+                "B": 6,
+                "C": 9,
+                "D": 6,
+                "E": 7,
+                "F": 0,
+                "TH": 0,
+                "total_evaluated": 28,
+                "mtm_pass_pct": 75.0
+            }
+        }
+    }
+}
