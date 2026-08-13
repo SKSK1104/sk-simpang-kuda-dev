@@ -339,7 +339,7 @@
             <div class="md:col-span-8 bento-card p-6 rounded-3xl flex flex-col justify-between">
                 <div class="mb-4">
                     <h3 class="font-bold text-lg text-white">Taburan Bilangan Murid Mengikut TP</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Carta Bar Tahap Penguasaan TP1 hingga TP6</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Carta Bar Tahap Penguasaan TP1 hingga TP6 (Layarkan tetikus untuk perincian)</p>
                 </div>
                 <div class="chart-container-box">
                     <canvas id="pbdChart"></canvas>
@@ -458,6 +458,40 @@
             updateUI();
         }
 
+        function getBreakdownForTP(tpIndex, currentClass, currentSubject) {
+            const tpKey = `TP${tpIndex}`;
+            const details = [];
+
+            if (currentSubject === "Keseluruhan (Semua Subjek)") {
+                // If viewing a class or school overall, iterate through subjects/classes to collect breakdown
+                if (currentClass.includes("Keseluruhan")) {
+                    // School-wide: search across all views and subjects
+                    Object.keys(masterData.views || {}).forEach(cls => {
+                        if (cls.includes("Keseluruhan")) return;
+                        const subView = masterData.views[cls];
+                        Object.keys(subView || {}).forEach(sub => {
+                            if (sub.includes("Keseluruhan")) return;
+                            const count = subView[sub][tpKey] || 0;
+                            if (count > 0) {
+                                details.push(`${cls} - ${sub}: ${count} murid`);
+                            }
+                        });
+                    });
+                } else {
+                    // Specific Class Keseluruhan: search across subjects inside this class
+                    const subView = masterData.views[currentClass] || {};
+                    Object.keys(subView).forEach(sub => {
+                        if (sub.includes("Keseluruhan")) return;
+                        const count = subView[sub][tpKey] || 0;
+                        if (count > 0) {
+                            details.push(`${sub}: ${count} murid`);
+                        }
+                    });
+                }
+            }
+            return details;
+        }
+
         function updateUI() {
             const selectedClass = document.getElementById('classSelect').value;
             const selectedSubject = document.getElementById('subjectSelect').value;
@@ -539,7 +573,24 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Jumlah: ${context.parsed.y} rekod`;
+                                },
+                                afterBody: function(context) {
+                                    const tpIndex = context[0].dataIndex + 1;
+                                    const breakdowns = getBreakdownForTP(tpIndex, selectedClass, selectedSubject);
+                                    if (breakdowns.length > 0) {
+                                        return ['\nPecahan Terperinci:', ...breakdowns];
+                                    }
+                                    return [];
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
                         y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', precision: 0 } }
