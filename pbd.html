@@ -51,19 +51,6 @@
             box-shadow: 0 20px 50px -10px rgba(16, 185, 129, 0.1);
         }
 
-        /* Custom Scrollbar for HTML Tooltip */
-        .tooltip-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-        .tooltip-scroll::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-        }
-        .tooltip-scroll::-webkit-scrollbar-thumb {
-            background: rgba(16, 185, 129, 0.4);
-            border-radius: 4px;
-        }
-
         /* Custom Styled Select Inputs */
         select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%3c94a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
@@ -99,7 +86,7 @@
                 padding-bottom: 0 !important;
             }
 
-            header, .no-print, nav, .glow-mesh, footer, #chartjs-tooltip {
+            header, .no-print, nav, .glow-mesh, footer, #detailModal {
                 display: none !important;
             }
 
@@ -130,7 +117,6 @@
                 margin-bottom: 6px !important;
             }
 
-            /* Un-split Bento grids for compact printing */
             .grid {
                 display: grid !important;
             }
@@ -230,9 +216,6 @@
     </style>
 </head>
 <body class="min-h-screen pb-12 relative overflow-x-hidden antialiased">
-
-    <!-- Floating Scrollable Tooltip Container -->
-    <div id="chartjs-tooltip" class="fixed opacity-0 pointer-events-none z-50 transition-all duration-150 transform -translate-x-1/2 -translate-y-full bg-slate-900/95 border border-slate-700 backdrop-blur-md rounded-xl p-3 shadow-2xl text-xs text-white max-w-xs w-64"></div>
 
     <!-- Ambient Lighting -->
     <div class="glow-mesh w-[500px] h-[500px] bg-emerald-500 -top-32 -left-32"></div>
@@ -355,10 +338,10 @@
             <div class="md:col-span-8 bento-card p-6 rounded-3xl flex flex-col justify-between">
                 <div class="mb-4">
                     <h3 class="font-bold text-lg text-white">Taburan Bilangan Murid Mengikut TP</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Carta Bar Tahap Penguasaan TP1 hingga TP6 (Layarkan tetikus untuk perincian)</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Carta Bar Tahap Penguasaan TP1 hingga TP6 (Klik bar untuk senarai perincian)</p>
                 </div>
                 <div class="chart-container-box">
-                    <canvas id="pbdChart"></canvas>
+                    <canvas id="pbdChart" class="cursor-pointer"></canvas>
                 </div>
             </div>
 
@@ -398,6 +381,27 @@
         </div>
 
     </main>
+
+    <!-- CLEAN CLICK-MODAL POPUP -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bento-card max-w-lg w-full rounded-3xl p-6 border border-white/10 shadow-2xl relative max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
+                <div>
+                    <h3 id="modalTitle" class="text-xl font-bold text-white">Perincian Rekod</h3>
+                    <p id="modalSubtitle" class="text-xs text-slate-400 mt-0.5">Pecahan mengikut kelas dan subjek</p>
+                </div>
+                <button onclick="closeModal()" class="h-8 w-8 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center border border-white/10 font-bold">✕</button>
+            </div>
+            
+            <!-- Clean Scrollable Body -->
+            <div id="modalList" class="overflow-y-auto space-y-2 pr-1 flex-1">
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-white/10 text-right">
+                <button onclick="closeModal()" class="px-5 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-white/10">Tutup</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="text-center text-xs text-slate-500 mt-12 py-4 relative z-10 border-t border-white/5">
@@ -505,49 +509,36 @@
             return details;
         }
 
-        /* Custom HTML Tooltip Handler with Scrollable List */
-        function externalTooltipHandler(context) {
-            const { chart, tooltip } = context;
-            const tooltipEl = document.getElementById('chartjs-tooltip');
+        function openModal(tpIndex, totalCount) {
+            const selectedClass = document.getElementById('classSelect').value;
+            const selectedSubject = document.getElementById('subjectSelect').value;
+            const breakdowns = getBreakdownForTP(tpIndex, selectedClass, selectedSubject);
 
-            if (tooltip.opacity === 0) {
-                tooltipEl.style.opacity = '0';
-                tooltipEl.style.pointerEvents = 'none';
-                return;
+            document.getElementById('modalTitle').innerText = `Perincian Tahap Penguasaan TP ${tpIndex}`;
+            document.getElementById('modalSubtitle').innerText = `${selectedClass} | ${selectedSubject} (${totalCount} Rekod)`;
+
+            const listContainer = document.getElementById('modalList');
+            listContainer.innerHTML = '';
+
+            if (breakdowns.length === 0) {
+                listContainer.innerHTML = `<div class="p-4 text-center text-slate-400 text-xs">Tiada pecahan subjek/kelas khusus untuk dipaparkan.</div>`;
+            } else {
+                breakdowns.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-white/5 text-xs';
+                    card.innerHTML = `
+                        <span class="text-slate-200 font-semibold">${item.label}</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 font-extrabold">${item.count} Murid</span>
+                    `;
+                    listContainer.appendChild(card);
+                });
             }
 
-            if (tooltip.body) {
-                const tpIndex = tooltip.dataPoints[0].dataIndex + 1;
-                const count = tooltip.dataPoints[0].raw;
-                const selectedClass = document.getElementById('classSelect').value;
-                const selectedSubject = document.getElementById('subjectSelect').value;
-                const breakdowns = getBreakdownForTP(tpIndex, selectedClass, selectedSubject);
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
 
-                let html = `<div class="font-bold border-b border-white/10 pb-1.5 mb-2 flex justify-between items-center">
-                    <span class="text-emerald-400">TP ${tpIndex}</span>
-                    <span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md font-extrabold text-[11px]">${count} Rekod</span>
-                </div>`;
-
-                if (breakdowns.length > 0) {
-                    html += `<p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Pecahan Terperinci (${breakdowns.length}):</p>`;
-                    html += `<div class="tooltip-scroll max-h-40 overflow-y-auto space-y-1 pr-1">`;
-                    breakdowns.forEach(item => {
-                        html += `<div class="flex justify-between items-center text-[11px] bg-slate-800/60 p-1.5 rounded-lg border border-white/5">
-                            <span class="text-slate-300 truncate pr-2">${item.label}</span>
-                            <span class="font-bold text-emerald-400 shrink-0">${item.count}</span>
-                        </div>`;
-                    });
-                    html += `</div>`;
-                }
-
-                tooltipEl.innerHTML = html;
-            }
-
-            const position = chart.canvas.getBoundingClientRect();
-            tooltipEl.style.opacity = '1';
-            tooltipEl.style.pointerEvents = 'auto';
-            tooltipEl.style.left = position.left + window.pageXOffset + tooltip.caretX + 'px';
-            tooltipEl.style.top = position.top + window.pageYOffset + tooltip.caretY - 10 + 'px';
+        function closeModal() {
+            document.getElementById('detailModal').classList.add('hidden');
         }
 
         function updateUI() {
@@ -579,7 +570,8 @@
                 const pct = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
                 
                 const card = document.createElement('div');
-                card.className = 'bento-card p-3 rounded-2xl text-center flex flex-col justify-center';
+                card.className = 'bento-card p-3 rounded-2xl text-center flex flex-col justify-center cursor-pointer hover:border-emerald-500/40 transition';
+                card.onclick = () => openModal(i, count);
                 card.innerHTML = `
                     <p class="text-[11px] font-bold ${tpColors[i-1]}">TP ${i}</p>
                     <p class="text-lg font-extrabold text-white mt-0.5">${count}</p>
@@ -597,7 +589,8 @@
                 const isMtm = i >= 3;
                 
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-slate-800/40 transition-colors duration-150';
+                row.className = 'hover:bg-slate-800/40 transition-colors duration-150 cursor-pointer';
+                row.onclick = () => openModal(i, count);
                 row.innerHTML = `
                     <td class="py-3.5 px-4 font-bold ${tpColors[i-1]}">TP ${i}</td>
                     <td class="py-3.5 px-4 text-slate-300 text-xs">${tpDescriptors[i-1]}</td>
@@ -631,12 +624,16 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            enabled: false,
-                            external: externalTooltipHandler
+                    onClick: (evt, activeElements) => {
+                        if (activeElements.length > 0) {
+                            const index = activeElements[0].index;
+                            const tpIndex = index + 1;
+                            const count = counts[index];
+                            openModal(tpIndex, count);
                         }
+                    },
+                    plugins: { 
+                        legend: { display: false }
                     },
                     scales: {
                         x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
