@@ -86,7 +86,7 @@
                 padding-bottom: 0 !important;
             }
 
-            header, .no-print, nav, .glow-mesh, footer {
+            header, .no-print, nav, .glow-mesh, footer, #detailModal {
                 display: none !important;
             }
 
@@ -335,7 +335,7 @@
 
         <!-- Grade Distribution Cards (A - F + TH) -->
         <div>
-            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3 px-1">Pecahan Bilangan & Peratusan Gred</h3>
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3 px-1">Pecahan Bilangan & Peratusan Gred (Klik untuk perincian)</h3>
             <div class="grid grid-cols-2 md:grid-cols-7 gap-3" id="gradeGrid"></div>
         </div>
 
@@ -344,11 +344,11 @@
             <div class="flex justify-between items-center mb-4">
                 <div>
                     <h3 class="font-bold text-lg text-white">Taburan Bilangan Calon Mengikut Gred</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Carta Bar Taburan Gred A hingga F serta TH</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Carta Bar Taburan Gred A hingga F serta TH (Klik bar untuk senarai perincian)</p>
                 </div>
             </div>
             <div class="chart-container-box">
-                <canvas id="ar1Chart"></canvas>
+                <canvas id="ar1Chart" class="cursor-pointer"></canvas>
             </div>
         </div>
 
@@ -380,6 +380,27 @@
         </div>
 
     </main>
+
+    <!-- CLEAN CLICK-MODAL POPUP -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bento-card max-w-lg w-full rounded-3xl p-6 border border-white/10 shadow-2xl relative max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
+                <div>
+                    <h3 id="modalTitle" class="text-xl font-bold text-white">Perincian Rekod</h3>
+                    <p id="modalSubtitle" class="text-xs text-slate-400 mt-0.5">Pecahan mengikut kelas dan subjek</p>
+                </div>
+                <button onclick="closeModal()" class="h-8 w-8 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center border border-white/10 font-bold">✕</button>
+            </div>
+            
+            <!-- Clean Scrollable Body -->
+            <div id="modalList" class="overflow-y-auto space-y-2 pr-1 flex-1">
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-white/10 text-right">
+                <button onclick="closeModal()" class="px-5 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-white/10">Tutup</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="text-center text-xs text-slate-500 mt-12 py-4 relative z-10 border-t border-white/5">
@@ -446,6 +467,70 @@
             updateUI();
         }
 
+        function getBreakdownForGrade(gradeKey, currentClass, currentSubject) {
+            const details = [];
+
+            if (currentSubject === "Keseluruhan (Semua Subjek)") {
+                if (currentClass.includes("Keseluruhan")) {
+                    // School-wide: search across all views and subjects
+                    Object.keys(masterData.views || {}).forEach(cls => {
+                        if (cls.includes("Keseluruhan")) return;
+                        const subView = masterData.views[cls];
+                        Object.keys(subView || {}).forEach(sub => {
+                            if (sub.includes("Keseluruhan")) return;
+                            const count = subView[sub][gradeKey] || 0;
+                            if (count > 0) {
+                                details.push({ label: `${cls} - ${sub}`, count: count });
+                            }
+                        });
+                    });
+                } else {
+                    // Specific Class Keseluruhan: search across subjects inside this class
+                    const subView = masterData.views[currentClass] || {};
+                    Object.keys(subView).forEach(sub => {
+                        if (sub.includes("Keseluruhan")) return;
+                        const count = subView[sub][gradeKey] || 0;
+                        if (count > 0) {
+                            details.push({ label: sub, count: count });
+                        }
+                    });
+                }
+            }
+            return details;
+        }
+
+        function openModal(gradeKey, totalCount) {
+            const selectedClass = document.getElementById('classSelect').value;
+            const selectedSubject = document.getElementById('subjectSelect').value;
+            const breakdowns = getBreakdownForGrade(gradeKey, selectedClass, selectedSubject);
+
+            document.getElementById('modalTitle').innerText = `Perincian Gred ${gradeKey}`;
+            document.getElementById('modalSubtitle').innerText = `${selectedClass} | ${selectedSubject} (${totalCount} Rekod)`;
+
+            const listContainer = document.getElementById('modalList');
+            listContainer.innerHTML = '';
+
+            if (breakdowns.length === 0) {
+                listContainer.innerHTML = `<div class="p-4 text-center text-slate-400 text-xs">Tiada pecahan subjek/kelas khusus untuk dipaparkan.</div>`;
+            } else {
+                breakdowns.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-white/5 text-xs';
+                    card.innerHTML = `
+                        <span class="text-slate-200 font-semibold">${item.label}</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 font-extrabold">${item.count} Calon</span>
+                    `;
+                    listContainer.appendChild(card);
+                });
+            }
+
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
         function updateUI() {
             const selectedClass = document.getElementById('classSelect').value;
             const selectedSubject = document.getElementById('subjectSelect').value;
@@ -474,7 +559,8 @@
                 const pct = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
                 
                 const card = document.createElement('div');
-                card.className = 'bento-card p-4 rounded-2xl text-center';
+                card.className = 'bento-card p-4 rounded-2xl text-center cursor-pointer hover:border-purple-500/40 transition';
+                card.onclick = () => openModal(m.gred, count);
                 card.innerHTML = `
                     <p class="text-xs font-bold ${m.col}">Gred ${m.gred}</p>
                     <p class="text-xl font-extrabold text-white mt-1">${count}</p>
@@ -492,7 +578,8 @@
                 const pct = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
                 
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-slate-800/40 transition-colors duration-150';
+                row.className = 'hover:bg-slate-800/40 transition-colors duration-150 cursor-pointer';
+                row.onclick = () => openModal(m.gred, count);
                 row.innerHTML = `
                     <td class="py-3.5 px-4 font-bold ${m.col}">Gred ${m.gred}</td>
                     <td class="py-3.5 px-4 text-slate-300 text-xs">${m.markah}</td>
@@ -510,6 +597,7 @@
             // Render Chart
             const ctx = document.getElementById('ar1Chart').getContext('2d');
             const counts = [subData.A, subData.B, subData.C, subData.D, subData.E, subData.F, subData.TH];
+            const labels = ['A', 'B', 'C', 'D', 'E', 'F', 'TH'];
 
             if (ar1ChartInstance) ar1ChartInstance.destroy();
 
@@ -527,6 +615,14 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    onClick: (evt, activeElements) => {
+                        if (activeElements.length > 0) {
+                            const index = activeElements[0].index;
+                            const gradeKey = labels[index];
+                            const count = counts[index];
+                            openModal(gradeKey, count);
+                        }
+                    },
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
