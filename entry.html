@@ -150,6 +150,20 @@
     </main>
 
     <script>
+        // PIN Verification Gate (PIN: 1104)
+        (function verifyStaffAccess() {
+            const sessionKey = "sk_staff_authenticated";
+            if (sessionStorage.getItem(sessionKey) === "true") return;
+
+            const accessPin = prompt("Kemasukan Markah SK Simpang Kuda\nSila masukkan PIN Guru:");
+            if (accessPin === "1104") {
+                sessionStorage.setItem(sessionKey, "true");
+            } else {
+                alert("Akses tidak dibenarkan.");
+                window.location.href = "index.html";
+            }
+        })();
+
         lucide.createIcons();
 
         // Supabase Initialization
@@ -207,12 +221,10 @@
             const rawData = await loadRosterSource();
             let baseStudents = [];
 
-            // Extract student names from JSON structure
             if (rawData && rawData[className]) {
                 if (Array.isArray(rawData[className].students)) {
                     baseStudents = rawData[className].students;
                 } else if (typeof rawData[className] === 'object') {
-                    // Try to scan inner student objects
                     const sampleSubj = Object.keys(rawData[className])[0];
                     if (rawData[className][sampleSubj] && Array.isArray(rawData[className][sampleSubj].students)) {
                         baseStudents = rawData[className][sampleSubj].students;
@@ -220,7 +232,6 @@
                 }
             }
 
-            // Fallback generation if no student names present in JSON
             if (baseStudents.length === 0) {
                 for (let i = 1; i <= 20; i++) {
                     baseStudents.push({
@@ -379,7 +390,6 @@
             }
         }
 
-        // Auto-run on page load
         window.addEventListener('DOMContentLoaded', renderStudentList);
     </script>
 </body>
