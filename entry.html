@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Optional External Roster Link -->
+    <!-- External Roster File -->
     <script src="roster.js"></script>
     <style>
         body {
@@ -35,7 +35,7 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white pb-12">
 
-    <!-- Auth Modal / Overlay (ID & Password) -->
+    <!-- Auth Modal / Overlay -->
     <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
         <div class="glass-card w-full max-w-md p-6 rounded-2xl border border-gray-700 shadow-2xl space-y-5">
             <div class="flex items-center gap-3">
@@ -51,7 +51,7 @@
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">ID Pengguna</label>
-                    <input type="text" id="auth-id" required placeholder="Contoh: admin"
+                    <input type="text" id="auth-id" required placeholder="admin"
                            class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
                 </div>
                 <div>
@@ -206,7 +206,6 @@
         const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // SK Simpang Kuda Embedded Roster
         const BACKUP_ROSTER = {
             "1 CAHAYA": [
                 "ALEX TAM ANAK ELMAN", "ALITHIA ANAK ALEY", "ANA ELISHA ANAK TUAN", "AYDANN XANDER ANAK NAWI",
@@ -271,7 +270,6 @@
             ]
         };
 
-        // Check active session on startup
         async function checkAuthSession() {
             const { data: { session } } = await db.auth.getSession();
             const modal = document.getElementById('auth-modal');
@@ -283,7 +281,6 @@
             }
         }
 
-        // Login Handler (supports typing just 'admin' as ID)
         async function handleLogin(e) {
             e.preventDefault();
             const rawId = document.getElementById('auth-id').value.trim().toLowerCase();
@@ -291,7 +288,8 @@
             const btn = document.getElementById('auth-submit-btn');
             const errDiv = document.getElementById('auth-error');
 
-            const email = rawId.includes('@') ? rawId : `${rawId}@sksimpangkuda.com`;
+            // Matches both simpangkuda.com and sksimpangkuda.com
+            const email = rawId.includes('@') ? rawId : `${rawId}@simpangkuda.com`;
 
             btn.disabled = true;
             btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memeriksa...`;
