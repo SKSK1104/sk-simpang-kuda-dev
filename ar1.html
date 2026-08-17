@@ -12,6 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Roster reference -->
+    <script src="roster.js"></script>
     <style>
         body {
             background-color: #0b0f19;
@@ -62,17 +64,13 @@
                         <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h1 class="text-sm font-semibold tracking-wide text-gray-100">Analisis Pencapaian AR1</h1>
+                        <h1 class="text-sm font-semibold tracking-wide text-gray-100">Analisis Pencapaian Akademik (AR1)</h1>
                         <p class="text-xs text-gray-400">SK Simpang Kuda (YBB1104)</p>
                     </div>
                 </div>
             </div>
             
             <div class="flex items-center gap-3">
-                <a href="entry.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md shadow-indigo-600/20">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                    Kemasukan Markah
-                </a>
                 <button onclick="window.print()" class="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors">
                     <i data-lucide="printer" class="w-4 h-4"></i>
                 </button>
@@ -87,20 +85,20 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Pilih Kelas</label>
-                    <select id="filter-class" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
-                        <option value="ALL">Semua Kelas (Keseluruhan)</option>
-                        <option value="1 CAHAYA">1 CAHAYA</option>
-                        <option value="2 CAHAYA">2 CAHAYA</option>
-                        <option value="3 CAHAYA">3 CAHAYA</option>
-                        <option value="4 CAHAYA">4 CAHAYA</option>
-                        <option value="5 CAHAYA">5 CAHAYA</option>
-                        <option value="6 GEMILANG">6 GEMILANG</option>
+                    <select id="filter-class" onchange="renderDashboard()" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                        <option value="ALL">Semua Kelas (Keseluruhan Sekolah)</option>
+                        <option value="1 CAHAYA">Tahun 1 (1 CAHAYA)</option>
+                        <option value="2 SINARAN">Tahun 2 (2 SINARAN)</option>
+                        <option value="3 KERLIPAN">Tahun 3 (3 KERLIPAN)</option>
+                        <option value="4 BESTARI">Tahun 4 (4 BESTARI)</option>
+                        <option value="5 BIJAKSANA">Tahun 5 (5 BIJAKSANA)</option>
+                        <option value="6 GEMILANG">Tahun 6 (6 GEMILANG)</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Pilih Mata Pelajaran</label>
-                    <select id="filter-subject" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                    <select id="filter-subject" onchange="renderDashboard()" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
                         <option value="ALL">Semua Mata Pelajaran</option>
                         <option value="BM">Bahasa Melayu (BM)</option>
                         <option value="BI">Bahasa Inggeris (BI)</option>
@@ -115,7 +113,7 @@
                 </div>
 
                 <div class="flex items-end">
-                    <button id="refresh-btn" onclick="initDashboardData()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-200 font-medium py-2.5 px-4 rounded-xl transition-all border border-gray-700 flex items-center justify-center gap-2">
+                    <button onclick="initDashboardData()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-200 font-medium py-2.5 px-4 rounded-xl transition-all border border-gray-700 flex items-center justify-center gap-2">
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                         Segar Semula Data
                     </button>
@@ -123,37 +121,48 @@
             </div>
         </section>
 
-        <!-- KPI Metric Bento Cards -->
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Calon & KPI Metrics Bento -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Calon Summary Card -->
             <div class="glass-card p-5 rounded-2xl">
-                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Jumlah Murid Dinilai</div>
-                <div id="kpi-total" class="text-2xl md:text-3xl font-bold text-white mt-1">0</div>
-                <div class="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                    <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-400"></i> Calon Berdaftar
+                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Bilangan Calon</div>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <span id="kpi-calon-hadir" class="text-2xl md:text-3xl font-bold text-white">0</span>
+                    <span class="text-xs text-gray-400">/ <span id="kpi-calon-daftar">0</span> Daftar</span>
+                </div>
+                <div class="text-xs text-gray-500 mt-2 flex items-center justify-between border-t border-gray-800/80 pt-2">
+                    <span class="text-emerald-400 font-medium"><span id="kpi-calon-hadir-count">0</span> Hadir</span>
+                    <span class="text-amber-400 font-medium"><span id="kpi-calon-th-count">0</span> TH</span>
                 </div>
             </div>
 
+            <!-- MTM Rate Card -->
             <div class="glass-card p-5 rounded-2xl">
-                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Kadar MTM (A-D)</div>
+                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Kadar MTM (A - D)</div>
                 <div id="kpi-mtm" class="text-2xl md:text-3xl font-bold text-emerald-400 mt-1">0.0%</div>
-                <div class="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                    <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i> Capai Tahap Minimum
+                <div class="text-xs text-gray-500 mt-2 flex items-center justify-between border-t border-gray-800/80 pt-2">
+                    <span>Bil. Lulus: <b id="kpi-lulus-count" class="text-emerald-400">0</b></span>
+                    <span class="text-xs text-gray-400">Capai Minimum</span>
                 </div>
             </div>
 
+            <!-- Belum Capai (E) Card -->
             <div class="glass-card p-5 rounded-2xl">
-                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Peratus Belum Capai (E)</div>
+                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Belum Capai MTM (E)</div>
                 <div id="kpi-fail" class="text-2xl md:text-3xl font-bold text-red-400 mt-1">0.0%</div>
-                <div class="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                    <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-red-400"></i> Intervensi Diperlukan
+                <div class="text-xs text-gray-500 mt-2 flex items-center justify-between border-t border-gray-800/80 pt-2">
+                    <span>Bil. Gagal: <b id="kpi-gagal-count" class="text-red-400">0</b></span>
+                    <span class="text-amber-400 text-xs">Perlu Intervensi</span>
                 </div>
             </div>
 
+            <!-- GP Card -->
             <div class="glass-card p-5 rounded-2xl">
                 <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Gred Purata (GP)</div>
                 <div id="kpi-gp" class="text-2xl md:text-3xl font-bold text-cyan-400 mt-1">0.00</div>
-                <div class="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                    <i data-lucide="trending-up" class="w-3.5 h-3.5 text-cyan-400"></i> Purata Keseluruhan
+                <div class="text-xs text-gray-500 mt-2 flex items-center justify-between border-t border-gray-800/80 pt-2">
+                    <span>Purata Skor: <b id="kpi-avg-score" class="text-cyan-400">0.0</b></span>
+                    <span class="text-xs text-gray-400">Skala 1 - 5</span>
                 </div>
             </div>
         </section>
@@ -163,7 +172,7 @@
             <div class="glass-card p-5 rounded-2xl lg:col-span-2">
                 <h3 class="text-sm font-semibold text-gray-200 mb-4 flex items-center gap-2">
                     <i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-400"></i>
-                    Taburan Gred Keseluruhan (A - E / TH)
+                    Taburan Bilangan Calon Mengikut Gred
                 </h3>
                 <div class="h-64">
                     <canvas id="gradeChart"></canvas>
@@ -173,7 +182,7 @@
             <div class="glass-card p-5 rounded-2xl">
                 <h3 class="text-sm font-semibold text-gray-200 mb-4 flex items-center gap-2">
                     <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i>
-                    Kadar Kelulusan MTM
+                    Pecahan Kelulusan MTM
                 </h3>
                 <div class="h-64 flex items-center justify-center">
                     <canvas id="mtmChart"></canvas>
@@ -181,12 +190,12 @@
             </div>
         </section>
 
-        <!-- Data Breakdown Table Bento -->
+        <!-- Subject Summary Table with Calon Breakdown -->
         <section class="glass-card rounded-2xl overflow-hidden shadow-xl">
             <div class="p-4 border-b border-gray-800 bg-gray-800/30 flex items-center justify-between">
                 <h3 class="text-sm font-semibold text-gray-200 flex items-center gap-2">
                     <i data-lucide="table" class="w-4 h-4 text-indigo-400"></i>
-                    Ringkasan Analisis Mengikut Mata Pelajaran
+                    Analisis Mata Pelajaran & Bilangan Calon
                 </h3>
             </div>
             <div class="overflow-x-auto custom-scrollbar">
@@ -194,20 +203,54 @@
                     <thead>
                         <tr class="border-b border-gray-800 bg-gray-800/50 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                             <th class="py-3 px-4">Mata Pelajaran</th>
-                            <th class="py-3 px-4 text-center">Bil Calon</th>
-                            <th class="py-3 px-4 text-center text-emerald-400">A</th>
-                            <th class="py-3 px-4 text-center text-blue-400">B</th>
-                            <th class="py-3 px-4 text-center text-cyan-400">C</th>
-                            <th class="py-3 px-4 text-center text-amber-400">D</th>
-                            <th class="py-3 px-4 text-center text-red-400">E</th>
-                            <th class="py-3 px-4 text-center text-gray-400">TH</th>
-                            <th class="py-3 px-4 text-center">MTM %</th>
-                            <th class="py-3 px-4 text-center">Purata Skor</th>
+                            <th class="py-3 px-3 text-center">Daftar</th>
+                            <th class="py-3 px-3 text-center">Hadir</th>
+                            <th class="py-3 px-3 text-center text-emerald-400">A</th>
+                            <th class="py-3 px-3 text-center text-blue-400">B</th>
+                            <th class="py-3 px-3 text-center text-cyan-400">C</th>
+                            <th class="py-3 px-3 text-center text-amber-400">D</th>
+                            <th class="py-3 px-3 text-center text-red-400">E</th>
+                            <th class="py-3 px-3 text-center text-gray-400">TH</th>
+                            <th class="py-3 px-4 text-center text-emerald-400">% MTM</th>
+                            <th class="py-3 px-4 text-center text-cyan-400">GPMP</th>
                         </tr>
                     </thead>
                     <tbody id="summary-table-body" class="divide-y divide-gray-800/60 text-sm">
                         <tr>
-                            <td colspan="10" class="py-8 text-center text-gray-500">Memuatkan data analisis...</td>
+                            <td colspan="11" class="py-8 text-center text-gray-500">Memuatkan data analisis...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Individual Student Marks Roster View (Reflecting Actual Calon) -->
+        <section class="glass-card rounded-2xl overflow-hidden shadow-xl">
+            <div class="p-4 border-b border-gray-800 bg-gray-800/30 flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-200 flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
+                        Senarai Calon & Markah Terperinci
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Memaparkan nama setiap calon berdaftar bagi pilihan tapisan semasa.</p>
+                </div>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar max-h-96">
+                <table class="w-full text-left border-collapse">
+                    <thead class="sticky top-0 bg-gray-900 z-10">
+                        <tr class="border-b border-gray-800 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            <th class="py-3 px-4 w-12 text-center">Bil</th>
+                            <th class="py-3 px-4">Nama Calon</th>
+                            <th class="py-3 px-4 w-32">Kelas</th>
+                            <th class="py-3 px-4 w-36">Mata Pelajaran</th>
+                            <th class="py-3 px-4 w-28 text-center">Markah</th>
+                            <th class="py-3 px-4 w-24 text-center">Gred</th>
+                            <th class="py-3 px-4 w-32 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-detail-body" class="divide-y divide-gray-800/60 text-sm">
+                        <tr>
+                            <td colspan="7" class="py-8 text-center text-gray-500">Sila pilih tapisan untuk melihat senarai calon.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -218,201 +261,184 @@
     <script>
         lucide.createIcons();
 
-        // Supabase Client Initialization
+        // Supabase Initialization
         const SUPABASE_URL = "https://cdmmkkbgjjowzvnpohrj.supabase.co";
         const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let masterData = {};
+        let liveRows = [];
         let gradeChartInstance = null;
         let mtmChartInstance = null;
 
-        // Hybrid Data Fetcher (Supabase -> Local JSON fallback)
-        async function initDashboardData() {
-            let dataset = null;
+        function calculateGrade(score) {
+            if (score === null || score === undefined || score === '' || isNaN(score)) {
+                return { grade: 'TH', desc: 'Tidak Hadir', color: 'text-gray-400 bg-gray-800' };
+            }
+            const s = Number(score);
+            if (s >= 80) return { grade: 'A', desc: 'Cemerlang', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' };
+            if (s >= 65) return { grade: 'B', desc: 'Kepujian', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' };
+            if (s >= 50) return { grade: 'C', desc: 'Baik', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' };
+            if (s >= 40) return { grade: 'D', desc: 'Memuaskan', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' };
+            return { grade: 'E', desc: 'Belum Capai', color: 'text-red-400 bg-red-500/10 border-red-500/20' };
+        }
 
+        async function initDashboardData() {
             try {
-                const { data: cloudMarks, error } = await db
+                const { data, error } = await db
                     .from('student_marks')
                     .select('*')
                     .eq('exam_type', 'AR1');
 
-                if (!error && cloudMarks && cloudMarks.length > 0) {
-                    console.log("Loaded live data from Supabase:", cloudMarks.length, "records");
-                    dataset = transformSupabaseToDashboardFormat(cloudMarks);
+                if (!error && data && data.length > 0) {
+                    liveRows = data;
+                } else {
+                    liveRows = [];
                 }
             } catch (err) {
-                console.warn("Supabase fetch skipped. Falling back to local JSON.", err);
+                console.warn("Supabase fetch failed", err);
             }
 
-            if (!dataset) {
-                try {
-                    const res = await fetch('ar1_extracted_summary.json');
-                    dataset = await res.json();
-                    console.log("Loaded fallback from ar1_extracted_summary.json");
-                } catch (jsonErr) {
-                    console.error("Local JSON fallback also failed:", jsonErr);
-                }
-            }
-
-            if (dataset) {
-                masterData = dataset;
-                renderDashboard();
-            } else {
-                document.getElementById('summary-table-body').innerHTML = `
-                    <tr><td colspan="10" class="py-8 text-center text-red-400">Tiada data dijumpai dalam database atau ar1_extracted_summary.json. Sila masukkan markah melalui borang kemasukan.</td></tr>
-                `;
-            }
+            renderDashboard();
         }
 
-        // Transform Supabase rows into Bento structure
-        function transformSupabaseToDashboardFormat(rows) {
-            const output = {};
-
-            rows.forEach(row => {
-                const cls = row.class_name;
-                const subj = row.subject_name;
-
-                if (!output[cls]) output[cls] = { subjects: {} };
-                if (!output[cls].subjects[subj]) {
-                    output[cls].subjects[subj] = {
-                        grades: { A: 0, B: 0, C: 0, D: 0, E: 0, TH: 0 },
-                        total: 0,
-                        passed: 0,
-                        average: 0,
-                        scores: []
-                    };
-                }
-
-                const sData = output[cls].subjects[subj];
-                const grade = row.grade_val || 'TH';
-
-                if (sData.grades[grade] !== undefined) sData.grades[grade]++;
-                
-                if (row.score_val !== null && !isNaN(row.score_val)) {
-                    sData.scores.push(Number(row.score_val));
-                    sData.total++;
-                    if (['A', 'B', 'C', 'D'].includes(grade)) sData.passed++;
-                } else if (grade === 'TH') {
-                    sData.total++;
-                }
-            });
-
-            Object.keys(output).forEach(cls => {
-                Object.keys(output[cls].subjects).forEach(subj => {
-                    const s = output[cls].subjects[subj];
-                    if (s.scores.length > 0) {
-                        const sum = s.scores.reduce((a, b) => a + b, 0);
-                        s.average = (sum / s.scores.length).toFixed(1);
-                    }
-                    s.mtm_rate = s.total > 0 ? ((s.passed / s.total) * 100).toFixed(1) : 0;
-                });
-            });
-
-            return output;
-        }
-
-        // Render Bento KPIs, Table & Charts
         function renderDashboard() {
             const selectedClass = document.getElementById('filter-class').value;
             const selectedSubj = document.getElementById('filter-subject').value;
 
-            let totalCandidates = 0;
-            let totalPassed = 0;
-            let totalFailed = 0;
-            let combinedScores = [];
-
-            let gradeTotals = { A: 0, B: 0, C: 0, D: 0, E: 0, TH: 0 };
-            let subjectSummaryMap = {};
-
-            const classKeys = selectedClass === 'ALL' ? Object.keys(masterData) : [selectedClass];
-
-            classKeys.forEach(cls => {
-                const clsData = masterData[cls];
-                if (!clsData || !clsData.subjects) return;
-
-                const subjKeys = selectedSubj === 'ALL' ? Object.keys(clsData.subjects) : [selectedSubj];
-
-                subjKeys.forEach(sb => {
-                    const sbData = clsData.subjects[sb];
-                    if (!sbData) return;
-
-                    if (!subjectSummaryMap[sb]) {
-                        subjectSummaryMap[sb] = { grades: { A:0,B:0,C:0,D:0,E:0,TH:0 }, total: 0, passed: 0, scores: [] };
-                    }
-
-                    Object.keys(gradeTotals).forEach(g => {
-                        const count = (sbData.grades && sbData.grades[g]) || 0;
-                        gradeTotals[g] += count;
-                        subjectSummaryMap[sb].grades[g] += count;
-                    });
-
-                    const tot = sbData.total || 0;
-                    const pass = sbData.passed || 0;
-                    totalCandidates += tot;
-                    totalPassed += pass;
-                    totalFailed += (tot - pass);
-
-                    subjectSummaryMap[sb].total += tot;
-                    subjectSummaryMap[sb].passed += pass;
-
-                    if (sbData.scores && sbData.scores.length > 0) {
-                        combinedScores.push(...sbData.scores);
-                        subjectSummaryMap[sb].scores.push(...sbData.scores);
-                    }
-                });
+            // Filter raw records
+            let filtered = liveRows.filter(r => {
+                const matchClass = (selectedClass === 'ALL' || r.class_name === selectedClass);
+                const matchSubj = (selectedSubj === 'ALL' || r.subject_name === selectedSubj);
+                return matchClass && matchSubj;
             });
 
-            // Update KPI cards
-            document.getElementById('kpi-total').textContent = totalCandidates;
-            const mtmPct = totalCandidates > 0 ? ((totalPassed / totalCandidates) * 100).toFixed(1) : "0.0";
-            const failPct = totalCandidates > 0 ? (((totalCandidates - totalPassed) / totalCandidates) * 100).toFixed(1) : "0.0";
+            // Calon counts
+            let totalDaftar = filtered.length;
+            let totalTH = filtered.filter(r => r.grade_val === 'TH' || r.score_val === null).length;
+            let totalHadir = totalDaftar - totalTH;
+
+            let gradeCounts = { A: 0, B: 0, C: 0, D: 0, E: 0, TH: 0 };
+            let totalScoreSum = 0;
+            let scoredCount = 0;
+            let totalLulus = 0;
+            let totalGagal = 0;
+
+            let subjectMap = {};
+
+            filtered.forEach(r => {
+                const g = r.grade_val || 'TH';
+                if (gradeCounts[g] !== undefined) gradeCounts[g]++;
+
+                if (r.score_val !== null && !isNaN(r.score_val)) {
+                    totalScoreSum += Number(r.score_val);
+                    scoredCount++;
+                }
+
+                if (['A', 'B', 'C', 'D'].includes(g)) totalLulus++;
+                else if (g === 'E') totalGagal++;
+
+                // Map per subject
+                const s = r.subject_name;
+                if (!subjectMap[s]) {
+                    subjectMap[s] = { daftar: 0, hadir: 0, th: 0, A:0, B:0, C:0, D:0, E:0, TH:0, totalPoints: 0 };
+                }
+                subjectMap[s].daftar++;
+                if (g === 'TH') {
+                    subjectMap[s].th++;
+                    subjectMap[s].TH++;
+                } else {
+                    subjectMap[s].hadir++;
+                    subjectMap[s][g]++;
+                    const point = g === 'A' ? 1 : g === 'B' ? 2 : g === 'C' ? 3 : g === 'D' ? 4 : 5;
+                    subjectMap[s].totalPoints += point;
+                }
+            });
+
+            // Update KPI Cards
+            document.getElementById('kpi-calon-hadir').textContent = totalHadir;
+            document.getElementById('kpi-calon-daftar').textContent = totalDaftar;
+            document.getElementById('kpi-calon-hadir-count').textContent = totalHadir;
+            document.getElementById('kpi-calon-th-count').textContent = totalTH;
+
+            const mtmPct = totalHadir > 0 ? ((totalLulus / totalHadir) * 100).toFixed(1) : "0.0";
+            const failPct = totalHadir > 0 ? ((totalGagal / totalHadir) * 100).toFixed(1) : "0.0";
             document.getElementById('kpi-mtm').textContent = `${mtmPct}%`;
             document.getElementById('kpi-fail').textContent = `${failPct}%`;
+            document.getElementById('kpi-lulus-count').textContent = totalLulus;
+            document.getElementById('kpi-gagal-count').textContent = totalGagal;
 
-            // Calculate GP (Grade Point Average)
-            const gpPoints = (gradeTotals.A * 1) + (gradeTotals.B * 2) + (gradeTotals.C * 3) + (gradeTotals.D * 4) + (gradeTotals.E * 5);
-            const gpTotalStudents = totalCandidates - gradeTotals.TH;
-            const gpa = gpTotalStudents > 0 ? (gpPoints / gpTotalStudents).toFixed(2) : "0.00";
-            document.getElementById('kpi-gp').textContent = gpa;
+            const totalGpPoints = (gradeCounts.A * 1) + (gradeCounts.B * 2) + (gradeCounts.C * 3) + (gradeCounts.D * 4) + (gradeCounts.E * 5);
+            const overallGp = totalHadir > 0 ? (totalGpPoints / totalHadir).toFixed(2) : "0.00";
+            const avgScore = scoredCount > 0 ? (totalScoreSum / scoredCount).toFixed(1) : "0.0";
 
-            // Populate Table
+            document.getElementById('kpi-gp').textContent = overallGp;
+            document.getElementById('kpi-avg-score').textContent = avgScore;
+
+            // Render Subject Summary Table
             const tbody = document.getElementById('summary-table-body');
             tbody.innerHTML = '';
 
-            const subjsToDisplay = Object.keys(subjectSummaryMap);
-            if (subjsToDisplay.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="py-8 text-center text-gray-500">Tiada rekod markah untuk pilihan ini.</td></tr>`;
+            const subjs = Object.keys(subjectMap);
+            if (subjs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" class="py-8 text-center text-gray-500">Tiada rekod calon dijumpai. Masukkan markah di borang kemasukan.</td></tr>`;
             } else {
-                subjsToDisplay.forEach(sb => {
-                    const rowData = subjectSummaryMap[sb];
-                    const rowMtm = rowData.total > 0 ? ((rowData.passed / rowData.total) * 100).toFixed(1) : '0.0';
-                    const avgScore = rowData.scores.length > 0 ? (rowData.scores.reduce((a,b)=>a+b, 0) / rowData.scores.length).toFixed(1) : '-';
+                subjs.forEach(sb => {
+                    const row = subjectMap[sb];
+                    const lulusCount = row.A + row.B + row.C + row.D;
+                    const mtm = row.hadir > 0 ? ((lulusCount / row.hadir) * 100).toFixed(1) : "0.0";
+                    const gpmp = row.hadir > 0 ? (row.totalPoints / row.hadir).toFixed(2) : "0.00";
 
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-gray-800/20 transition-colors';
                     tr.innerHTML = `
                         <td class="py-3 px-4 font-medium text-gray-200">${sb}</td>
-                        <td class="py-3 px-4 text-center font-bold">${rowData.total}</td>
-                        <td class="py-3 px-4 text-center text-emerald-400 font-bold">${rowData.grades.A}</td>
-                        <td class="py-3 px-4 text-center text-blue-400 font-bold">${rowData.grades.B}</td>
-                        <td class="py-3 px-4 text-center text-cyan-400 font-bold">${rowData.grades.C}</td>
-                        <td class="py-3 px-4 text-center text-amber-400 font-bold">${rowData.grades.D}</td>
-                        <td class="py-3 px-4 text-center text-red-400 font-bold">${rowData.grades.E}</td>
-                        <td class="py-3 px-4 text-center text-gray-400">${rowData.grades.TH}</td>
-                        <td class="py-3 px-4 text-center font-bold text-emerald-400">${rowMtm}%</td>
-                        <td class="py-3 px-4 text-center text-gray-300 font-mono">${avgScore}</td>
+                        <td class="py-3 px-3 text-center font-bold text-gray-300">${row.daftar}</td>
+                        <td class="py-3 px-3 text-center font-bold text-emerald-400">${row.hadir}</td>
+                        <td class="py-3 px-3 text-center text-emerald-400 font-bold">${row.A}</td>
+                        <td class="py-3 px-3 text-center text-blue-400 font-bold">${row.B}</td>
+                        <td class="py-3 px-3 text-center text-cyan-400 font-bold">${row.C}</td>
+                        <td class="py-3 px-3 text-center text-amber-400 font-bold">${row.D}</td>
+                        <td class="py-3 px-3 text-center text-red-400 font-bold">${row.E}</td>
+                        <td class="py-3 px-3 text-center text-gray-500 font-bold">${row.TH}</td>
+                        <td class="py-3 px-4 text-center font-bold text-emerald-400">${mtm}%</td>
+                        <td class="py-3 px-4 text-center font-bold text-cyan-400 font-mono">${gpmp}</td>
                     `;
                     tbody.appendChild(tr);
                 });
             }
 
-            renderCharts(gradeTotals, totalPassed, totalFailed);
+            // Render Calon Detail Table
+            const studentTbody = document.getElementById('student-detail-body');
+            studentTbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                studentTbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-gray-500">Tiada calon berdaftar untuk tapisan ini.</td></tr>`;
+            } else {
+                filtered.forEach((st, idx) => {
+                    const gradeInfo = calculateGrade(st.score_val);
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-800/20 transition-colors';
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-4 text-center text-gray-500 text-xs">${idx + 1}</td>
+                        <td class="py-2.5 px-4 font-medium text-gray-200">${st.student_name}</td>
+                        <td class="py-2.5 px-4 text-xs text-gray-400">${st.class_name}</td>
+                        <td class="py-2.5 px-4 text-xs text-gray-400">${st.subject_name}</td>
+                        <td class="py-2.5 px-4 text-center font-bold text-white">${st.score_val !== null ? st.score_val : '<span class="text-gray-500">TH</span>'}</td>
+                        <td class="py-2.5 px-4 text-center">
+                            <span class="inline-block w-7 py-0.5 rounded border text-xs font-bold ${gradeInfo.color}">
+                                ${gradeInfo.grade}
+                            </span>
+                        </td>
+                        <td class="py-2.5 px-4 text-center text-xs text-gray-400">${gradeInfo.desc}</td>
+                    `;
+                    studentTbody.appendChild(tr);
+                });
+            }
+
+            renderCharts(gradeCounts, totalLulus, totalGagal);
         }
 
-        // Render Chart.js
         function renderCharts(grades, passed, failed) {
-            // Bar Chart
             const ctxBar = document.getElementById('gradeChart').getContext('2d');
             if (gradeChartInstance) gradeChartInstance.destroy();
 
@@ -437,7 +463,6 @@
                 }
             });
 
-            // Doughnut Chart
             const ctxPie = document.getElementById('mtmChart').getContext('2d');
             if (mtmChartInstance) mtmChartInstance.destroy();
 
@@ -459,11 +484,6 @@
             });
         }
 
-        // Event listeners
-        document.getElementById('filter-class').addEventListener('change', renderDashboard);
-        document.getElementById('filter-subject').addEventListener('change', renderDashboard);
-
-        // Run on load
         window.addEventListener('DOMContentLoaded', initDashboardData);
     </script>
 </body>
