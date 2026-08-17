@@ -1,193 +1,159 @@
 <!DOCTYPE html>
-<html lang="ms" class="dark">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Analisis Prestasi Sekolah - SK Simpang Kuda</title>
+    <title>Portal Pengurusan Akademik & PBD | SK Simpang Kuda</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #030712; 
-            color: #f8fafc; 
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
-
-        /* Ambient Lighting */
-        .glow-mesh {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(150px);
-            opacity: 0.18;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Hero Bento Card */
-        .bento-hero {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 27, 75, 0.6) 100%);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Laser Border Card Effect */
-        .bento-card {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(16px);
+        .glass-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .bento-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-            opacity: 0;
-            transition: opacity 0.4s ease;
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
         }
-
-        .bento-pbd::before { background: linear-gradient(90deg, transparent, #10b981, transparent); }
-        .bento-ar1::before { background: linear-gradient(90deg, transparent, #a855f7, transparent); }
-
-        .bento-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-        }
-
-        .bento-card:hover::before {
-            opacity: 1;
-        }
-
-        /* Keyframe Animations */
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(24px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fillBar {
-            from { width: 0%; }
-            to { width: 100%; }
-        }
-
-        .anim-stagger-1 { animation: slideUpFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .anim-stagger-2 { animation: slideUpFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards; opacity: 0; }
-        .anim-stagger-3 { animation: slideUpFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; opacity: 0; }
-        
-        .animated-fill { animation: fillBar 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between p-6 relative overflow-x-hidden antialiased">
+<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
 
-    <!-- Ambient Glow Mesh Backgrounds -->
-    <div class="glow-mesh w-[600px] h-[600px] bg-cyan-500 -top-40 -left-40"></div>
-    <div class="glow-mesh w-[600px] h-[600px] bg-purple-600 -bottom-40 -right-40"></div>
-
-    <div class="max-w-6xl mx-auto w-full my-auto space-y-10 relative z-10">
-        
-        <!-- Header -->
-        <header class="text-center space-y-4 anim-stagger-1">
-            <div class="inline-block relative">
-                <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 opacity-40 blur-xl"></div>
-                <div class="relative h-24 w-24 mx-auto rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-center p-2 shadow-2xl backdrop-blur-md">
-                    <img src="logo.png" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'h-full w-full bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center font-bold text-white text-3xl rounded-xl\'>SK</div>';" alt="Logo Sekolah" class="object-contain h-full w-full drop-shadow-md">
+    <!-- Header Navigation -->
+    <header class="border-b border-gray-800/80 bg-gray-900/60 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                    <i data-lucide="school" class="w-5 h-5"></i>
                 </div>
-            </div>
-
-            <div class="space-y-2">
-                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-400">
-                    SEKOLAH KEBANGSAAN SIMPANG KUDA
-                </h1>
-                <p class="text-slate-400 text-sm md:text-base font-medium max-w-xl mx-auto flex items-center justify-center gap-2">
-                    <span>Portal Rasmi Analisis Prestasi</span>
-                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-600"></span>
-                    <span class="text-cyan-400 font-semibold">Sesi Akademik 2026</span>
-                </p>
-            </div>
-        </header>
-
-        <!-- Bento Grid Layout -->
-        <main class="grid grid-cols-1 md:grid-cols-12 gap-6 anim-stagger-2">
-            
-            <!-- Hero Tile: PBD Assessment (Spans 7 cols) -->
-            <a href="pbd.html" class="md:col-span-7 bento-card bento-pbd p-8 rounded-3xl block group">
-                <div class="flex items-center justify-between mb-8">
-                    <span class="p-3.5 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all duration-300">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                    </span>
-                    <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-500/20 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        Pertengahan 2026
-                    </span>
-                </div>
-
-                <div class="space-y-3">
-                    <h2 class="text-3xl font-extrabold text-white group-hover:text-emerald-400 transition-colors">Analisis PBD</h2>
-                    <p class="text-slate-400 text-sm leading-relaxed max-w-md">Pentaksiran Bilik Darjah (TP1 hingga TP6) mengikut standard Kurikulum Standard Sekolah Rendah (KSSR).</p>
-                </div>
-
-                <!-- Animated Visual Bar Indicator -->
-                <div class="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
-                    <div class="w-2/3 bg-slate-900 rounded-full h-2 overflow-hidden border border-white/5">
-                        <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full animated-fill" style="width: 100%;"></div>
-                    </div>
-                    <div class="flex items-center text-xs font-bold text-emerald-400 group-hover:translate-x-1.5 transition-transform duration-200">
-                        Buka Dashboard PBD <span class="ml-1">→</span>
-                    </div>
-                </div>
-            </a>
-
-            <!-- AR1 Assessment Tile (Spans 5 cols) -->
-            <a href="ar1.html" class="md:col-span-5 bento-card bento-ar1 p-8 rounded-3xl flex flex-col justify-between group">
                 <div>
-                    <div class="flex items-center justify-between mb-8">
-                        <span class="p-3.5 rounded-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20 group-hover:bg-purple-500 group-hover:text-slate-950 transition-all duration-300">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        </span>
-                        <span class="text-xs font-bold text-purple-400 bg-purple-500/10 px-3.5 py-1.5 rounded-full border border-purple-500/20 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
-                            AR 1
-                        </span>
-                    </div>
-
-                    <h2 class="text-3xl font-extrabold text-white group-hover:text-purple-400 transition-colors">Analisis AR 1</h2>
-                    <p class="text-slate-400 text-sm mt-3 leading-relaxed">Pentaksiran Akademik 1 (Gred A-F & Peratus MTM).</p>
+                    <h1 class="text-sm font-semibold tracking-wide text-gray-100">SK Simpang Kuda</h1>
+                    <p class="text-xs text-gray-400">Portal Pengurusan Pentaksiran (YBB1104)</p>
                 </div>
+            </div>
+            
+            <a href="entry.html" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md shadow-indigo-600/20">
+                <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                Kemasukan Guru
+            </a>
+        </div>
+    </header>
 
-                <div class="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
-                    <div class="w-1/2 bg-slate-900 rounded-full h-2 overflow-hidden border border-white/5">
-                        <div class="bg-gradient-to-r from-purple-500 to-indigo-400 h-full rounded-full animated-fill" style="width: 100%;"></div>
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 py-10 flex-1 w-full space-y-10">
+
+        <!-- Hero Section -->
+        <section class="text-center space-y-3 max-w-2xl mx-auto">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                Sesi Persekolahan 2026
+            </span>
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white">
+                Dashboard Analisis & Prestasi Murid
+            </h2>
+            <p class="text-sm text-gray-400">
+                Pilih modul penilaian di bawah untuk melihat rumusan gred, pencapaian MTM, analisis per subjek dan graf prestasi.
+            </p>
+        </section>
+
+        <!-- Module Navigation Bento Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Card 1: PBD Pentaksiran Bilik Darjah -->
+            <a href="pbd.html" class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                <div class="space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
                     </div>
-                    <div class="flex items-center text-xs font-bold text-purple-400 group-hover:translate-x-1.5 transition-transform duration-200">
-                        Buka Dashboard AR1 <span class="ml-1">→</span>
+                    <div>
+                        <div class="text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-1">Formatif & Sumatif</div>
+                        <h3 class="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">Pentaksiran Bilik Darjah (PBD)</h3>
+                        <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+                            Analisis Tahap Penguasaan (TP1 - TP6) merangkumi semua subjek dan kelas Tahun 1 hingga Tahun 6.
+                        </p>
                     </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-gray-800 flex items-center justify-between text-xs font-medium text-gray-400 group-hover:text-emerald-400 transition-colors">
+                    <span>Buka Dashboard PBD</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </div>
             </a>
 
-        </main>
+            <!-- Card 2: Analisis Peperiksaan / Akademik (AR1, AR2, UPSA, UASA) -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold uppercase tracking-wider text-indigo-400 mb-1">Peperiksaan Bertulis</div>
+                        <h3 class="text-lg font-bold text-white">Analisis Pentaksiran Akademik</h3>
+                        <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+                            Pencapaian markah, gred (A-E/TH), Gred Purata Mata Pelajaran, dan statistik peratus kelulusan MTM.
+                        </p>
+                    </div>
 
-        <!-- Footer -->
-        <footer class="text-center text-xs text-slate-500 pt-6 anim-stagger-3 border-t border-white/5">
-            Sekolah Kebangsaan Simpang Kuda © 2026. Hak Cipta Terpelihara.
-        </footer>
+                    <!-- Quick Exam Switcher Links -->
+                    <div class="grid grid-cols-2 gap-2 pt-2">
+                        <a href="ar1.html" class="px-3 py-2 rounded-xl bg-gray-800/80 hover:bg-indigo-600/30 border border-gray-700/60 hover:border-indigo-500/50 text-xs font-medium text-gray-200 text-center transition-all">
+                            AR1 (Akademik 1)
+                        </a>
+                        <a href="ar1.html?exam=AR2" class="px-3 py-2 rounded-xl bg-gray-800/80 hover:bg-indigo-600/30 border border-gray-700/60 hover:border-indigo-500/50 text-xs font-medium text-gray-200 text-center transition-all">
+                            AR2 (Akademik 2)
+                        </a>
+                        <a href="ar1.html?exam=UPSA" class="px-3 py-2 rounded-xl bg-gray-800/80 hover:bg-indigo-600/30 border border-gray-700/60 hover:border-indigo-500/50 text-xs font-medium text-gray-200 text-center transition-all">
+                            UPSA (Pertengahan)
+                        </a>
+                        <a href="ar1.html?exam=UASA" class="px-3 py-2 rounded-xl bg-gray-800/80 hover:bg-indigo-600/30 border border-gray-700/60 hover:border-indigo-500/50 text-xs font-medium text-gray-200 text-center transition-all">
+                            UASA (Akhir Sesi)
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-gray-800 flex items-center justify-between text-xs text-gray-500">
+                    <span>Pilih sesi ujian di atas</span>
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                </div>
+            </div>
 
-    </div>
+            <!-- Card 3: Kemasukan Markah Staf -->
+            <a href="entry.html" class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                <div class="space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i data-lucide="edit-3" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-1">Akses Guru</div>
+                        <h3 class="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">Kemasukan Markah (Cloud)</h3>
+                        <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+                            Borang guru untuk memasukkan atau mengemaskini markah murid bagi AR1, AR2, UPSA, dan UASA ke pangkalan data.
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-gray-800 flex items-center justify-between text-xs font-medium text-gray-400 group-hover:text-cyan-400 transition-colors">
+                    <span class="flex items-center gap-1"><i data-lucide="lock" class="w-3.5 h-3.5"></i> Memerlukan Log Masuk</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </div>
+            </a>
 
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800/80 bg-gray-900/40 py-6 text-center text-xs text-gray-500">
+        SK Simpang Kuda (YBB1104) &bull; Sistem Pengurusan Pentaksiran Berpusat 2026
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
