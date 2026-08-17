@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Borang Kemasukan Markah | SK Simpang Kuda</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Optional External Roster Link -->
+    <script src="roster.js"></script>
     <style>
         body {
             background-color: #0b0f19;
@@ -27,9 +32,48 @@
             border-radius: 9999px;
         }
     </style>
-    <script src="roster.js"></script>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white pb-12">
+
+    <!-- Auth Modal / Overlay (ID & Password) -->
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="glass-card w-full max-w-md p-6 rounded-2xl border border-gray-700 shadow-2xl space-y-5">
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    <i data-lucide="lock" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-semibold text-white">Log Masuk Staf SK Simpang Kuda</h2>
+                    <p class="text-xs text-gray-400">Akses rasmi kemasukan markah murid</p>
+                </div>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">ID Pengguna</label>
+                    <input type="text" id="auth-id" required placeholder="Contoh: admin"
+                           class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Kata Laluan</label>
+                    <input type="password" id="auth-password" required placeholder="••••••••"
+                           class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                </div>
+
+                <div id="auth-error" class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 p-2.5 rounded-lg"></div>
+
+                <div class="flex gap-3 pt-2">
+                    <a href="index.html" class="w-1/3 py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium text-center transition-all">
+                        Batal
+                    </a>
+                    <button type="submit" id="auth-submit-btn" class="w-2/3 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2">
+                        <span>Log Masuk</span>
+                        <i data-lucide="log-in" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Header Navigation -->
     <header class="border-b border-gray-800/80 bg-gray-900/60 backdrop-blur sticky top-0 z-40">
@@ -55,6 +99,10 @@
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                     Sedia Disimpan
                 </span>
+                <button onclick="handleLogout()" class="text-xs px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors flex items-center gap-1">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    Keluar
+                </button>
             </div>
         </div>
     </header>
@@ -76,12 +124,12 @@
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Kelas</label>
                     <select id="class-select" onchange="renderStudentList()" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
-                        <option value="1 CAHAYA">1 CAHAYA</option>
-                        <option value="2 CAHAYA">2 CAHAYA</option>
-                        <option value="3 CAHAYA">3 CAHAYA</option>
-                        <option value="4 CAHAYA">4 CAHAYA</option>
-                        <option value="5 CAHAYA">5 CAHAYA</option>
-                        <option value="6 GEMILANG">6 GEMILANG</option>
+                        <option value="1 CAHAYA">Tahun 1 (1 CAHAYA)</option>
+                        <option value="2 SINARAN">Tahun 2 (2 SINARAN)</option>
+                        <option value="3 KERLIPAN">Tahun 3 (3 KERLIPAN)</option>
+                        <option value="4 BESTARI">Tahun 4 (4 BESTARI)</option>
+                        <option value="5 BIJAKSANA">Tahun 5 (5 BIJAKSANA)</option>
+                        <option value="6 GEMILANG">Tahun 6 (6 GEMILANG)</option>
                     </select>
                 </div>
 
@@ -151,20 +199,6 @@
     </main>
 
     <script>
-        // PIN Verification Gate (PIN: 1104)
-        (function verifyStaffAccess() {
-            const sessionKey = "sk_staff_authenticated";
-            if (sessionStorage.getItem(sessionKey) === "true") return;
-
-            const accessPin = prompt("Kemasukan Markah SK Simpang Kuda\nSila masukkan PIN Guru:");
-            if (accessPin === "1104") {
-                sessionStorage.setItem(sessionKey, "true");
-            } else {
-                alert("Akses tidak dibenarkan.");
-                window.location.href = "index.html";
-            }
-        })();
-
         lucide.createIcons();
 
         // Supabase Initialization
@@ -172,7 +206,136 @@
         const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let cachedJsonData = null;
+        // SK Simpang Kuda Embedded Roster
+        const BACKUP_ROSTER = {
+            "1 CAHAYA": [
+                "ALEX TAM ANAK ELMAN", "ALITHIA ANAK ALEY", "ANA ELISHA ANAK TUAN", "AYDANN XANDER ANAK NAWI",
+                "BERNARD BEN ANAK DENNIS", "CHRISTIAN FERNANDES ANAK ALEY", "DEAN IVANDER ANAK FICTION",
+                "ELZIRA EVE ANAK HAYWARD", "EMILIUS ANAK BONNY", "FELLYNA ADRIANA ANAK DOBIN", "JEREMY ANAK ROLAND",
+                "LESTER ANAK WAYNIEKER", "MARTHA ANAK SOBLI", "PAULA AZALEA ANAK LOMAN", "PETER JEREMIA ANAK JILOT",
+                "STEFANO SHERMAN ANAK ANDREW JACKSON", "VELNESA MELL ANAK VELSTER", "VERONICCA VANIA ELINDRA"
+            ],
+            "2 SINARAN": [
+                "ADRIANNA ADELLE ANAK GARY", "ALFRED RYAN ANAK AUDREY", "CALDWELL ASHER ANAK CYRIL CHRISTIAN",
+                "CAROLINE ANAK DILAM", "CHARLES MARTIN ANAK ELTON", "CHRISTIAN CLAUS ANAK CAREI JEO",
+                "CLAYVIA SAMANTHA ANAK MORRIS", "DENNIS HAMILTON ANAK SHEM", "EASTER JOVELYN ANAK JENIOS",
+                "ELFIEREN ANAK DOUGLAS AUGUSTUS", "EMMANUEL ISAAC ANAK CHRISTI", "EZEKIEL MARCEL ANAK AUGUSTINE",
+                "JESSICA ANAK RITIKOS", "KYOLVIN LEE ZHEN DECK", "LIZBETH ORLEE ANAK ODID",
+                "MAXIME MORRISON ANAK MAT MORRIS", "MIEKAIL OZZIE ANAK ASU", "MUHAMMAD ADDAM BIN ABDULLAH",
+                "NUR AIRA ALEESHA BINTI SUGIMAN", "PRISCILLA AELCY ANAK PAUL TERRANCE", "TOM HERER ANAK ELMAN"
+            ],
+            "3 KERLIPAN": [
+                "ABBYGAIL AUDREY ANAK RICKY", "ABIGAIL LEANDRA ANAK RICARDO", "AIDEN ANGELO BIN ANDRESS",
+                "ALVEENA ANAK FRANCIS KONDI", "ANTONELLA DARLENE ANAK DAMIAN", "CLARA ALESANDRA ANAK PANING",
+                "EASTER ABELIN ANAK ANDREW JACKSON", "EMILIAN ZACHARY ANAK ANDREW LIBIS", "ERENDIRA SANCHA ANAK HAYWARD",
+                "FERGUS FEDINA EBOT", "JAMES VIBLENT ANAK VIVIAN", "JOELLA CARLVIANA ANAK JOSTINE",
+                "KENNY ANAK JENNAS", "MARIA GABRIELLA ANAK LENNIE-LEE", "MATHIEW DIAZ ANAK MIKES",
+                "MATTHEW BELVIN ANAK BOBBY", "MIYA SERENA TAN", "PASCAL CHRISTIAN ANAK STEVE",
+                "RYAN ANDERSON ANAK NELSON", "SPENCER TERANCE ANAK SOPIN"
+            ],
+            "4 BESTARI": [
+                "ADAM MIKHAIL BIN MUHAMMAD MORNI", "ADELLYNA HIEW", "AIDAN DAVIS ANAK YITONG",
+                "ALVIENA VIONETTA ANAK MICHAEL NIKSON", "ALVINSTER ERWIN ANAK RACHELLI", "AMBROSE BIN HAIRYSON",
+                "ANTHEA CASSANDRA ANAK PAUL JOHNNY", "AVA SCARLETT SANGON", "CANISIUS VEXSTER ANAK NYOGING",
+                "CARLISSA ABBIE ANAK CAREI JEO", "CATHLYN WYONA ANAK TILIA", "CHELLSTON ANTHONY ANAK ELTON",
+                "EDRIAN ELMO ANAK SAMUEL", "ELIENIA MAGDALENE ANAK JAMES HARRY", "ELIZABETH CLARISSA ANAK LISSTER",
+                "ELLIZA ELABELLE SULING ANAK DANNY", "FELICIA ERYNA ANAK DOBIN", "FRISCHERLY FECYEA ANAK DINOR",
+                "GRACE ANAK SOBLI", "GRACE ASHLEY EDWIN", "IVAN DYLAN ANAK MIKE HOUSTON",
+                "MAGDALINE KELLY ANAK JUDA", "MICHELVIN ANAK LORI", "PUTRA ARASH DANIEL BIN ABDULLAH",
+                "RAYCHELL ANAK FICTION", "SIMON DOUGLAS ANAK JOHN LOMI", "WYATT EZEKIEL ANAK JOHN BRANDON"
+            ],
+            "5 BIJAKSANA": [
+                "ADELE ALEXIS BINTI ANDRESS", "ALVINSON ANAK SATEE", "ANDRIAN SYLVESTER ANAK DAWENG",
+                "ANGEL FANELIS ANAK ANDY", "AQIL KHALISH BIN FAIZAL", "CAROLINE ANAK TITOBIN",
+                "CATHERINA ELLYSA ANAK CYRILL CLIFF", "CHELLSEA VERONICA ANAK ELTON", "CHRISTIAN ALEXIS ANAK PATRICK NEWMAN",
+                "CLIFF SHEARSON ANAK MORRIS", "ELISSA ANAK EDWARD FURLON", "ELIZABETH EMILY CAYLE ANAK PETER ZARIO",
+                "EMERSON MAXMILLIAN ANAK MATTHEW", "EMMANUEL EFFAN REYES ANAK KENNY", "EZEKIEL ANAK CHRISTOPHA",
+                "FRANCIS JAVIER ANAK KARMA", "GABRIEL JOANIS ANAK ANTHONY ATHUR", "HAFIZ BIN ABDULLAH MORNI",
+                "JASPER GARELD ANAK TONY", "JOSEPH JUSTIN ANAK PAYJO", "KELLYZIA ANAK NICOLAS",
+                "KYLA ANAK RACHEL TIFFANY", "MAGDALANE ARORA ANAK PETER CONNERY", "MATTHEW CLEVERLY ANAK ROCK FORD",
+                "NELVENLEE ANAK NITON", "NICHOLAS ELLEN ANAK BONNY", "PETER ALDEN ANAK PAUL TERRANCE",
+                "PHIAXENDRA MAXVIENY ANAK PAUL", "RACHEL SHELLA TIEW", "RACHEL VUN MING YUE",
+                "VELBELLA MARSHASA ANAK VELSTER", "ZUHAIQAL ARASH BIN SUZAIMIN"
+            ],
+            "6 GEMILANG": [
+                "ABNER PRISCO ANAK PAUL TERRANCE", "ALEXANDER FERNANDES ANAK PAUL JOHNNY", "ALEXANDRIAN ANAK MANYIA",
+                "ANDRIAN OWEN ANAK ANDREW JACKSON", "ANNASTASIA STEPHANIE ANAK RICKY", "ARELIE MARIEL NYRA ANAK NORMAN",
+                "BIBIANA ANAK SENTANA", "CAROLUS JUNIOR YEO CAROLUS", "CARRICJUNELL SLODICK ANAK ZAINAL",
+                "CHRISTINA IRENE ANAK NELSON", "DANIEL OLSEN ANAK SAMUEL", "DARREL OZIL ANAK MOSSTEVEN",
+                "ELLYSSA RIVERA ELVIN", "EMMANUEL MATIUS ANAK LISSTER", "ENDELICA ANAK HAYWARD",
+                "GABRIELLA ZOEY ANAK MIKE HOUSTON", "GRACIE ANAK DIDIE", "HERNANDEZ ANAK RICARDO",
+                "JESSE ELEAZAR JEN HO", "LAWRENCE ALVIN ANAK RACHELLI", "MAGDALEN AMBER ANAK SOBLI",
+                "MARY BOOKLYN ANAK JILOT", "MARY SHERLYNA ELYSSA ANAK MINO", "OLIVIA GRACE ANAK GINGO",
+                "PUTRA FARIESH DANIEL BIN ABDULLAH", "SEBASTIAN HARVEY ANAK LOUIS FERNANDEZ",
+                "VANESSA CELINE ANAK LAHIM", "XANDER EPOI EMILE WAN"
+            ]
+        };
+
+        // Check active session on startup
+        async function checkAuthSession() {
+            const { data: { session } } = await db.auth.getSession();
+            const modal = document.getElementById('auth-modal');
+            if (session) {
+                modal.classList.add('hidden');
+                renderStudentList();
+            } else {
+                modal.classList.remove('hidden');
+            }
+        }
+
+        // Login Handler (supports typing just 'admin' as ID)
+        async function handleLogin(e) {
+            e.preventDefault();
+            const rawId = document.getElementById('auth-id').value.trim().toLowerCase();
+            const password = document.getElementById('auth-password').value;
+            const btn = document.getElementById('auth-submit-btn');
+            const errDiv = document.getElementById('auth-error');
+
+            const email = rawId.includes('@') ? rawId : `${rawId}@sksimpangkuda.com`;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memeriksa...`;
+            lucide.createIcons();
+            errDiv.classList.add('hidden');
+
+            const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+            btn.disabled = false;
+            btn.innerHTML = `<span>Log Masuk</span><i data-lucide="log-in" class="w-4 h-4"></i>`;
+            lucide.createIcons();
+
+            if (error) {
+                errDiv.textContent = "Log masuk gagal: ID atau Kata Laluan tidak sah.";
+                errDiv.classList.remove('hidden');
+            } else {
+                document.getElementById('auth-modal').classList.add('hidden');
+                renderStudentList();
+            }
+        }
+
+        async function handleLogout() {
+            await db.auth.signOut();
+            window.location.reload();
+        }
+
+        function getStudentNames(className) {
+            if (typeof SCHOOL_ROSTER !== 'undefined') {
+                if (SCHOOL_ROSTER[className]) return SCHOOL_ROSTER[className];
+                for (let yr in SCHOOL_ROSTER) {
+                    if (SCHOOL_ROSTER[yr][className]) return SCHOOL_ROSTER[yr][className];
+                }
+            }
+            return BACKUP_ROSTER[className] || [];
+        }
+
+        function getStudentReligion(name) {
+            const muslimKeywords = ["BIN", "BINTI", "MUHAMMAD", "NUR", "AQIL", "HAFIZ", "ZUHAIQAL", "PUTRA"];
+            const parts = name.toUpperCase().split(/\s+/);
+            for (let kw of muslimKeywords) {
+                if (parts.includes(kw)) return "ISLAM";
+            }
+            return "MORAL";
+        }
 
         function calculateGrade(score) {
             if (score === null || score === undefined || score === '' || isNaN(score)) {
@@ -186,26 +349,14 @@
             return { grade: 'E', desc: 'Belum Capai', color: 'text-red-400 bg-red-500/10 border-red-500/20' };
         }
 
-        async function loadRosterSource() {
-            if (cachedJsonData) return cachedJsonData;
-            try {
-                let res = await fetch('pbd_extracted_summary.json');
-                if (res.ok) {
-                    cachedJsonData = await res.json();
-                    return cachedJsonData;
-                }
-            } catch (e) {}
-            try {
-                let res = await fetch('ar1_extracted_summary.json');
-                if (res.ok) {
-                    cachedJsonData = await res.json();
-                    return cachedJsonData;
-                }
-            } catch (e) {}
-            return {};
-        }
+        async function renderStudentList() {
+            const className = document.getElementById('class-select').value;
+            const subjectName = document.getElementById('subject-select').value;
+            const examType = document.getElementById('exam-select').value;
+            const tableBody = document.getElementById('student-table-body');
 
-        async function fetchStudentRoster(className, subjectName, examType) {
+            const studentNames = getStudentNames(className);
+
             let existingMarks = [];
             try {
                 const { data, error } = await db
@@ -216,77 +367,35 @@
                     .eq('exam_type', examType);
                 if (!error && data) existingMarks = data;
             } catch (err) {
-                console.warn("Supabase fetch failed", err);
+                console.warn("Supabase fetch error", err);
             }
 
-            const rawData = await loadRosterSource();
-            let baseStudents = [];
-
-            if (rawData && rawData[className]) {
-                if (Array.isArray(rawData[className].students)) {
-                    baseStudents = rawData[className].students;
-                } else if (typeof rawData[className] === 'object') {
-                    const sampleSubj = Object.keys(rawData[className])[0];
-                    if (rawData[className][sampleSubj] && Array.isArray(rawData[className][sampleSubj].students)) {
-                        baseStudents = rawData[className][sampleSubj].students;
-                    }
-                }
-            }
-
-            if (baseStudents.length === 0) {
-                for (let i = 1; i <= 20; i++) {
-                    baseStudents.push({
-                        id: i,
-                        name: `MURID ${i} (${className})`,
-                        religion: (i % 4 === 0) ? 'ISLAM' : 'MORAL'
-                    });
-                }
-            }
-
-            return baseStudents.map((st, idx) => {
-                const studentId = st.id || (idx + 1);
-                const studentName = st.name || st.student_name || `MURID ${idx + 1}`;
-                const found = existingMarks.find(m => String(m.student_id) === String(studentId) || m.student_name === studentName);
-                
-                return {
-                    id: studentId,
-                    name: studentName,
-                    religion: st.religion || 'MORAL',
-                    score: found ? (found.score_val !== null ? found.score_val : '') : ''
-                };
-            });
-        }
-
-        async function renderStudentList() {
-            const className = document.getElementById('class-select').value;
-            const subjectName = document.getElementById('subject-select').value;
-            const examType = document.getElementById('exam-select').value;
-            const tableBody = document.getElementById('student-table-body');
-
-            tableBody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-indigo-400 animate-pulse">Memuatkan data murid ${className}...</td></tr>`;
-
-            const roster = await fetchStudentRoster(className, subjectName, examType);
             tableBody.innerHTML = '';
 
-            roster.forEach((st, idx) => {
-                const gradeInfo = calculateGrade(st.score);
+            studentNames.forEach((name, idx) => {
+                const studentId = idx + 1;
+                const religion = getStudentReligion(name);
+                const match = existingMarks.find(m => m.student_name === name || Number(m.student_id) === studentId);
+                const score = match && match.score_val !== null ? match.score_val : '';
+                const gradeInfo = calculateGrade(score);
+
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-800/20 transition-colors';
                 tr.innerHTML = `
-                    <td class="py-3 px-4 text-center text-gray-400 text-xs">${idx + 1}</td>
-                    <td class="py-3 px-4 font-medium text-gray-200">${st.name}</td>
+                    <td class="py-3 px-4 text-center text-gray-400 text-xs">${studentId}</td>
+                    <td class="py-3 px-4 font-medium text-gray-200">${name}</td>
                     <td class="py-3 px-4 text-center">
-                        <span class="text-xs px-2 py-0.5 rounded ${st.religion === 'ISLAM' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-gray-800 text-gray-400'}">
-                            ${st.religion}
+                        <span class="text-xs px-2 py-0.5 rounded ${religion === 'ISLAM' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-gray-800 text-gray-400'}">
+                            ${religion}
                         </span>
                     </td>
                     <td class="py-3 px-4 text-center">
                         <input type="number" min="0" max="100" 
-                               value="${st.score !== '' ? st.score : ''}"
+                               value="${score}"
                                placeholder="TH"
-                               data-student-id="${st.id}"
-                               data-student-name="${st.name}"
-                               data-religion="${st.religion}"
+                               data-student-id="${studentId}"
+                               data-student-name="${name}"
+                               data-religion="${religion}"
                                class="mark-input w-24 bg-gray-900 border border-gray-700 rounded-lg px-2.5 py-1 text-center font-bold text-white focus:outline-none focus:border-indigo-500 transition-all text-sm">
                     </td>
                     <td class="py-3 px-4 text-center">
@@ -387,11 +496,11 @@
             } else {
                 syncStatus.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
                 syncStatus.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Berjaya Disimpan`;
-                alert(`Markah bagi ${className} (${subjectName}) telah berjaya disimpan ke database!`);
+                alert(`Markah bagi ${className} (${subjectName}) telah berjaya disimpan ke Supabase!`);
             }
         }
 
-        window.addEventListener('DOMContentLoaded', renderStudentList);
+        window.addEventListener('DOMContentLoaded', checkAuthSession);
     </script>
 </body>
 </html>
