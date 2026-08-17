@@ -116,6 +116,7 @@
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Jenis Penilaian</label>
                     <select id="exam-select" onchange="renderStudentList()" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
                         <option value="AR1">AR1 (Akademik 1)</option>
+                        <option value="AR2">AR2 (Akademik 2)</option>
                         <option value="UPSA">UPSA (Pertengahan Sesi)</option>
                         <option value="UASA">UASA (Akhir Sesi)</option>
                     </select>
@@ -206,6 +207,7 @@
         const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // SK Simpang Kuda Complete Roster
         const BACKUP_ROSTER = {
             "1 CAHAYA": [
                 "ALEX TAM ANAK ELMAN", "ALITHIA ANAK ALEY", "ANA ELISHA ANAK TUAN", "AYDANN XANDER ANAK NAWI",
@@ -270,6 +272,23 @@
             ]
         };
 
+        // Explicit Muslim Students Whitelist
+        const ISLAM_STUDENTS = [
+            "MUHAMMAD ADDAM BIN ABDULLAH",
+            "NUR AIRA ALEESHA BINTI SUGIMAN",
+            "ADAM MIKHAIL BIN MUHAMMAD MORNI",
+            "PUTRA ARASH DANIEL BIN ABDULLAH",
+            "AQIL KHALISH BIN FAIZAL",
+            "HAFIZ BIN ABDULLAH MORNI",
+            "ZUHAIQAL ARASH BIN SUZAIMIN",
+            "PUTRA FARIESH DANIEL BIN ABDULLAH"
+        ];
+
+        function getStudentReligion(name) {
+            const cleanName = (name || "").trim().toUpperCase();
+            return ISLAM_STUDENTS.includes(cleanName) ? "ISLAM" : "MORAL";
+        }
+
         async function checkAuthSession() {
             const { data: { session } } = await db.auth.getSession();
             const modal = document.getElementById('auth-modal');
@@ -288,7 +307,6 @@
             const btn = document.getElementById('auth-submit-btn');
             const errDiv = document.getElementById('auth-error');
 
-            // Matches both simpangkuda.com and sksimpangkuda.com
             const email = rawId.includes('@') ? rawId : `${rawId}@simpangkuda.com`;
 
             btn.disabled = true;
@@ -324,15 +342,6 @@
                 }
             }
             return BACKUP_ROSTER[className] || [];
-        }
-
-        function getStudentReligion(name) {
-            const muslimKeywords = ["BIN", "BINTI", "MUHAMMAD", "NUR", "AQIL", "HAFIZ", "ZUHAIQAL", "PUTRA"];
-            const parts = name.toUpperCase().split(/\s+/);
-            for (let kw of muslimKeywords) {
-                if (parts.includes(kw)) return "ISLAM";
-            }
-            return "MORAL";
         }
 
         function calculateGrade(score) {
