@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kemasukan Markah Murid | SK Simpang Kuda</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Borang Kemasukan Markah | SK Simpang Kuda</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -63,23 +60,21 @@
 
     <main class="max-w-7xl mx-auto px-4 mt-6 flex-1 w-full space-y-6">
 
-        <!-- Top Filter Selection Bento -->
+        <!-- Selection Controls -->
         <section class="glass-card rounded-2xl p-5 shadow-xl">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Sesi / Peperiksaan -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Jenis Penilaian</label>
-                    <select id="exam-select" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                    <select id="exam-select" onchange="renderStudentList()" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
                         <option value="AR1">AR1 (Akademik 1)</option>
                         <option value="UPSA">UPSA (Pertengahan Sesi)</option>
                         <option value="UASA">UASA (Akhir Sesi)</option>
                     </select>
                 </div>
 
-                <!-- Kelas -->
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Kelas</label>
-                    <select id="class-select" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                    <select id="class-select" onchange="renderStudentList()" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
                         <option value="1 CAHAYA">1 CAHAYA</option>
                         <option value="2 CAHAYA">2 CAHAYA</option>
                         <option value="3 CAHAYA">3 CAHAYA</option>
@@ -89,10 +84,9 @@
                     </select>
                 </div>
 
-                <!-- Mata Pelajaran -->
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Mata Pelajaran</label>
-                    <select id="subject-select" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                    <select id="subject-select" onchange="renderStudentList()" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
                         <option value="BM">Bahasa Melayu (BM)</option>
                         <option value="BI">Bahasa Inggeris (BI)</option>
                         <option value="MAT">Matematik (MAT)</option>
@@ -104,18 +98,10 @@
                         <option value="RBT">Reka Bentuk & Teknologi (RBT)</option>
                     </select>
                 </div>
-
-                <!-- Load Button -->
-                <div class="flex items-end">
-                    <button id="load-btn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-xl transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2">
-                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                        Papar Senarai
-                    </button>
-                </div>
             </div>
         </section>
 
-        <!-- Summary & Action Bar -->
+        <!-- Stats & Save Action Bar -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-900/40 p-4 rounded-2xl border border-gray-800">
             <div class="flex items-center gap-3">
                 <div class="text-xs text-gray-400">
@@ -131,13 +117,13 @@
                 </div>
             </div>
 
-            <button id="save-btn" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
+            <button id="save-btn" onclick="saveMarks()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
                 <i data-lucide="save" class="w-4 h-4"></i>
                 Simpan Markah ke Cloud
             </button>
         </div>
 
-        <!-- Student Data Entry Table -->
+        <!-- Student Entry Table -->
         <section class="glass-card rounded-2xl overflow-hidden shadow-xl">
             <div class="overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse">
@@ -146,15 +132,15 @@
                             <th class="py-3 px-4 w-12 text-center">Bil</th>
                             <th class="py-3 px-4">Nama Murid</th>
                             <th class="py-3 px-4 w-28 text-center">Agama / Moral</th>
-                            <th class="py-3 px-4 w-36 text-center">Markah (0-100 / TH)</th>
+                            <th class="py-3 px-4 w-36 text-center">Markah (0-100)</th>
                             <th class="py-3 px-4 w-24 text-center">Gred</th>
                             <th class="py-3 px-4 w-28 text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody id="student-table-body" class="divide-y divide-gray-800/60 text-sm">
                         <tr>
-                            <td colspan="6" class="py-12 text-center text-gray-500">
-                                Sila klik butang <strong>"Papar Senarai"</strong> untuk memuatkan senarai murid.
+                            <td colspan="6" class="py-12 text-center text-indigo-400 animate-pulse">
+                                Memuatkan senarai data murid...
                             </td>
                         </tr>
                     </tbody>
@@ -164,7 +150,6 @@
     </main>
 
     <script>
-        // Lucide Icons init
         lucide.createIcons();
 
         // Supabase Initialization
@@ -172,7 +157,8 @@
         const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Grade Evaluator (Primary School Standard)
+        let cachedJsonData = null;
+
         function calculateGrade(score) {
             if (score === null || score === undefined || score === '' || isNaN(score)) {
                 return { grade: 'TH', desc: 'Tidak Hadir', color: 'text-gray-400 bg-gray-800' };
@@ -185,31 +171,57 @@
             return { grade: 'E', desc: 'Belum Capai', color: 'text-red-400 bg-red-500/10 border-red-500/20' };
         }
 
-        // Student Data Roster Generation (PBD / Class cohort fallback)
-        async function fetchStudentRoster(className, subjectName) {
-            // First check if there are existing marks in Supabase
-            const examType = document.getElementById('exam-select').value;
-            const { data: existingMarks, error } = await db
-                .from('student_marks')
-                .select('*')
-                .eq('class_name', className)
-                .eq('subject_name', subjectName)
-                .eq('exam_type', examType);
-
-            // Attempt to load base student names from ar1 JSON if available, otherwise generate cohort placeholders
-            let baseStudents = [];
+        async function loadRosterSource() {
+            if (cachedJsonData) return cachedJsonData;
             try {
-                const res = await fetch('ar1_extracted_summary.json');
-                const rawJson = await res.json();
-                if (rawJson && rawJson[className] && rawJson[className].students) {
-                    baseStudents = rawJson[className].students;
+                let res = await fetch('pbd_extracted_summary.json');
+                if (res.ok) {
+                    cachedJsonData = await res.json();
+                    return cachedJsonData;
                 }
-            } catch (e) {
-                console.log("Using dynamic cohort generator.");
+            } catch (e) {}
+            try {
+                let res = await fetch('ar1_extracted_summary.json');
+                if (res.ok) {
+                    cachedJsonData = await res.json();
+                    return cachedJsonData;
+                }
+            } catch (e) {}
+            return {};
+        }
+
+        async function fetchStudentRoster(className, subjectName, examType) {
+            let existingMarks = [];
+            try {
+                const { data, error } = await db
+                    .from('student_marks')
+                    .select('*')
+                    .eq('class_name', className)
+                    .eq('subject_name', subjectName)
+                    .eq('exam_type', examType);
+                if (!error && data) existingMarks = data;
+            } catch (err) {
+                console.warn("Supabase fetch failed", err);
             }
 
+            const rawData = await loadRosterSource();
+            let baseStudents = [];
+
+            // Extract student names from JSON structure
+            if (rawData && rawData[className]) {
+                if (Array.isArray(rawData[className].students)) {
+                    baseStudents = rawData[className].students;
+                } else if (typeof rawData[className] === 'object') {
+                    // Try to scan inner student objects
+                    const sampleSubj = Object.keys(rawData[className])[0];
+                    if (rawData[className][sampleSubj] && Array.isArray(rawData[className][sampleSubj].students)) {
+                        baseStudents = rawData[className][sampleSubj].students;
+                    }
+                }
+            }
+
+            // Fallback generation if no student names present in JSON
             if (baseStudents.length === 0) {
-                // Default fallback cohort roster (20 students)
                 for (let i = 1; i <= 20; i++) {
                     baseStudents.push({
                         id: i,
@@ -219,27 +231,29 @@
                 }
             }
 
-            // Merge with existing Supabase records if any
             return baseStudents.map((st, idx) => {
-                const found = existingMarks ? existingMarks.find(m => m.student_id === (st.id || idx + 1)) : null;
+                const studentId = st.id || (idx + 1);
+                const studentName = st.name || st.student_name || `MURID ${idx + 1}`;
+                const found = existingMarks.find(m => String(m.student_id) === String(studentId) || m.student_name === studentName);
+                
                 return {
-                    id: st.id || (idx + 1),
-                    name: st.name || st.student_name,
+                    id: studentId,
+                    name: studentName,
                     religion: st.religion || 'MORAL',
-                    score: found ? found.score_val : ''
+                    score: found ? (found.score_val !== null ? found.score_val : '') : ''
                 };
             });
         }
 
-        // Render Table
         async function renderStudentList() {
             const className = document.getElementById('class-select').value;
             const subjectName = document.getElementById('subject-select').value;
+            const examType = document.getElementById('exam-select').value;
             const tableBody = document.getElementById('student-table-body');
 
-            tableBody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-indigo-400 animate-pulse">Memuatkan senarai data...</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-indigo-400 animate-pulse">Memuatkan data murid ${className}...</td></tr>`;
 
-            const roster = await fetchStudentRoster(className, subjectName);
+            const roster = await fetchStudentRoster(className, subjectName, examType);
             tableBody.innerHTML = '';
 
             roster.forEach((st, idx) => {
@@ -256,7 +270,7 @@
                     </td>
                     <td class="py-3 px-4 text-center">
                         <input type="number" min="0" max="100" 
-                               value="${st.score !== null && st.score !== undefined ? st.score : ''}"
+                               value="${st.score !== '' ? st.score : ''}"
                                placeholder="TH"
                                data-student-id="${st.id}"
                                data-student-name="${st.name}"
@@ -279,7 +293,6 @@
             updateLiveStats();
         }
 
-        // Live input event listeners for dynamic grade updates
         function bindInputEvents() {
             document.querySelectorAll('.mark-input').forEach(input => {
                 input.addEventListener('input', (e) => {
@@ -298,15 +311,13 @@
             });
         }
 
-        // Update top stats summary
         function updateLiveStats() {
             const inputs = document.querySelectorAll('.mark-input');
-            let total = 0, pass = 0, fail = 0;
+            let pass = 0, fail = 0;
 
             inputs.forEach(inp => {
                 const val = inp.value;
                 if (val !== '' && !isNaN(val)) {
-                    total++;
                     const s = Number(val);
                     if (s >= 40) pass++;
                     else fail++;
@@ -318,8 +329,7 @@
             document.getElementById('fail-count').textContent = fail;
         }
 
-        // Save Button Handler (Direct to Supabase)
-        document.getElementById('save-btn').addEventListener('click', async () => {
+        async function saveMarks() {
             const className = document.getElementById('class-select').value;
             const subjectName = document.getElementById('subject-select').value;
             const examType = document.getElementById('exam-select').value;
@@ -365,12 +375,12 @@
             } else {
                 syncStatus.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
                 syncStatus.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Berjaya Disimpan`;
-                alert(`Markah bagi kelas ${className} (${subjectName}) telah berjaya disimpan!`);
+                alert(`Markah bagi ${className} (${subjectName}) telah berjaya disimpan ke database!`);
             }
-        });
+        }
 
-        // Trigger load button
-        document.getElementById('load-btn').addEventListener('click', renderStudentList);
+        // Auto-run on page load
+        window.addEventListener('DOMContentLoaded', renderStudentList);
     </script>
 </body>
 </html>
