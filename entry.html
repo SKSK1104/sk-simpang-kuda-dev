@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kemasukan Markah Murid | SK Simpang Kuda</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        .glass-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white pb-12">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-gray-800/80 bg-gray-900/60 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <div class="h-6 w-px bg-gray-800"></div>
+                <div class="flex items-center gap-2.5">
+                    <div class="p-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                        <i data-lucide="edit-3" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-semibold tracking-wide text-gray-100">Borang Kemasukan Markah</h1>
+                        <p class="text-xs text-gray-400">SK Simpang Kuda (YBB1104)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <span id="sync-status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Sedia Disimpan
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 mt-6 flex-1 w-full space-y-6">
+
+        <!-- Top Filter Selection Bento -->
+        <section class="glass-card rounded-2xl p-5 shadow-xl">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Sesi / Peperiksaan -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Jenis Penilaian</label>
+                    <select id="exam-select" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                        <option value="AR1">AR1 (Akademik 1)</option>
+                        <option value="UPSA">UPSA (Pertengahan Sesi)</option>
+                        <option value="UASA">UASA (Akhir Sesi)</option>
+                    </select>
+                </div>
+
+                <!-- Kelas -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Kelas</label>
+                    <select id="class-select" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                        <option value="1 CAHAYA">1 CAHAYA</option>
+                        <option value="2 CAHAYA">2 CAHAYA</option>
+                        <option value="3 CAHAYA">3 CAHAYA</option>
+                        <option value="4 CAHAYA">4 CAHAYA</option>
+                        <option value="5 CAHAYA">5 CAHAYA</option>
+                        <option value="6 GEMILANG">6 GEMILANG</option>
+                    </select>
+                </div>
+
+                <!-- Mata Pelajaran -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Mata Pelajaran</label>
+                    <select id="subject-select" class="w-full bg-gray-800/90 border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-indigo-500 transition-colors">
+                        <option value="BM">Bahasa Melayu (BM)</option>
+                        <option value="BI">Bahasa Inggeris (BI)</option>
+                        <option value="MAT">Matematik (MAT)</option>
+                        <option value="SN">Sains (SN)</option>
+                        <option value="SEJ">Sejarah (SEJ)</option>
+                        <option value="PI">Pendidikan Islam (PI)</option>
+                        <option value="PM">Pendidikan Moral (PM)</option>
+                        <option value="BI_IBAN">Bahasa Iban (BI_IBAN)</option>
+                        <option value="RBT">Reka Bentuk & Teknologi (RBT)</option>
+                    </select>
+                </div>
+
+                <!-- Load Button -->
+                <div class="flex items-end">
+                    <button id="load-btn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-xl transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        Papar Senarai
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary & Action Bar -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-900/40 p-4 rounded-2xl border border-gray-800">
+            <div class="flex items-center gap-3">
+                <div class="text-xs text-gray-400">
+                    Jumlah Murid: <span id="total-count" class="font-bold text-gray-100">0</span>
+                </div>
+                <div class="h-4 w-px bg-gray-800"></div>
+                <div class="text-xs text-gray-400">
+                    Lulus (A-D): <span id="pass-count" class="font-bold text-emerald-400">0</span>
+                </div>
+                <div class="h-4 w-px bg-gray-800"></div>
+                <div class="text-xs text-gray-400">
+                    Gagal (E): <span id="fail-count" class="font-bold text-red-400">0</span>
+                </div>
+            </div>
+
+            <button id="save-btn" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                Simpan Markah ke Cloud
+            </button>
+        </div>
+
+        <!-- Student Data Entry Table -->
+        <section class="glass-card rounded-2xl overflow-hidden shadow-xl">
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-800 bg-gray-800/40 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                            <th class="py-3 px-4 w-12 text-center">Bil</th>
+                            <th class="py-3 px-4">Nama Murid</th>
+                            <th class="py-3 px-4 w-28 text-center">Agama / Moral</th>
+                            <th class="py-3 px-4 w-36 text-center">Markah (0-100 / TH)</th>
+                            <th class="py-3 px-4 w-24 text-center">Gred</th>
+                            <th class="py-3 px-4 w-28 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body" class="divide-y divide-gray-800/60 text-sm">
+                        <tr>
+                            <td colspan="6" class="py-12 text-center text-gray-500">
+                                Sila klik butang <strong>"Papar Senarai"</strong> untuk memuatkan senarai murid.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Lucide Icons init
+        lucide.createIcons();
+
+        // Supabase Initialization
+        const SUPABASE_URL = "https://cdmmkkbgjjowzvnpohrj.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Grade Evaluator (Primary School Standard)
+        function calculateGrade(score) {
+            if (score === null || score === undefined || score === '' || isNaN(score)) {
+                return { grade: 'TH', desc: 'Tidak Hadir', color: 'text-gray-400 bg-gray-800' };
+            }
+            const s = Number(score);
+            if (s >= 80) return { grade: 'A', desc: 'Cemerlang', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' };
+            if (s >= 65) return { grade: 'B', desc: 'Kepujian', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' };
+            if (s >= 50) return { grade: 'C', desc: 'Baik', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' };
+            if (s >= 40) return { grade: 'D', desc: 'Memuaskan', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' };
+            return { grade: 'E', desc: 'Belum Capai', color: 'text-red-400 bg-red-500/10 border-red-500/20' };
+        }
+
+        // Student Data Roster Generation (PBD / Class cohort fallback)
+        async function fetchStudentRoster(className, subjectName) {
+            // First check if there are existing marks in Supabase
+            const examType = document.getElementById('exam-select').value;
+            const { data: existingMarks, error } = await db
+                .from('student_marks')
+                .select('*')
+                .eq('class_name', className)
+                .eq('subject_name', subjectName)
+                .eq('exam_type', examType);
+
+            // Attempt to load base student names from ar1 JSON if available, otherwise generate cohort placeholders
+            let baseStudents = [];
+            try {
+                const res = await fetch('ar1_extracted_summary.json');
+                const rawJson = await res.json();
+                if (rawJson && rawJson[className] && rawJson[className].students) {
+                    baseStudents = rawJson[className].students;
+                }
+            } catch (e) {
+                console.log("Using dynamic cohort generator.");
+            }
+
+            if (baseStudents.length === 0) {
+                // Default fallback cohort roster (20 students)
+                for (let i = 1; i <= 20; i++) {
+                    baseStudents.push({
+                        id: i,
+                        name: `MURID ${i} (${className})`,
+                        religion: (i % 4 === 0) ? 'ISLAM' : 'MORAL'
+                    });
+                }
+            }
+
+            // Merge with existing Supabase records if any
+            return baseStudents.map((st, idx) => {
+                const found = existingMarks ? existingMarks.find(m => m.student_id === (st.id || idx + 1)) : null;
+                return {
+                    id: st.id || (idx + 1),
+                    name: st.name || st.student_name,
+                    religion: st.religion || 'MORAL',
+                    score: found ? found.score_val : ''
+                };
+            });
+        }
+
+        // Render Table
+        async function renderStudentList() {
+            const className = document.getElementById('class-select').value;
+            const subjectName = document.getElementById('subject-select').value;
+            const tableBody = document.getElementById('student-table-body');
+
+            tableBody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-indigo-400 animate-pulse">Memuatkan senarai data...</td></tr>`;
+
+            const roster = await fetchStudentRoster(className, subjectName);
+            tableBody.innerHTML = '';
+
+            roster.forEach((st, idx) => {
+                const gradeInfo = calculateGrade(st.score);
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-800/20 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-center text-gray-400 text-xs">${idx + 1}</td>
+                    <td class="py-3 px-4 font-medium text-gray-200">${st.name}</td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="text-xs px-2 py-0.5 rounded ${st.religion === 'ISLAM' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-gray-800 text-gray-400'}">
+                            ${st.religion}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <input type="number" min="0" max="100" 
+                               value="${st.score !== null && st.score !== undefined ? st.score : ''}"
+                               placeholder="TH"
+                               data-student-id="${st.id}"
+                               data-student-name="${st.name}"
+                               data-religion="${st.religion}"
+                               class="mark-input w-24 bg-gray-900 border border-gray-700 rounded-lg px-2.5 py-1 text-center font-bold text-white focus:outline-none focus:border-indigo-500 transition-all text-sm">
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="grade-badge inline-block w-8 py-0.5 rounded border text-xs font-bold ${gradeInfo.color}">
+                            ${gradeInfo.grade}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center text-xs desc-text text-gray-400">
+                        ${gradeInfo.desc}
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            bindInputEvents();
+            updateLiveStats();
+        }
+
+        // Live input event listeners for dynamic grade updates
+        function bindInputEvents() {
+            document.querySelectorAll('.mark-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const val = e.target.value;
+                    const row = e.target.closest('tr');
+                    const gradeBadge = row.querySelector('.grade-badge');
+                    const descText = row.querySelector('.desc-text');
+
+                    const gradeInfo = calculateGrade(val);
+                    gradeBadge.textContent = gradeInfo.grade;
+                    gradeBadge.className = `grade-badge inline-block w-8 py-0.5 rounded border text-xs font-bold ${gradeInfo.color}`;
+                    descText.textContent = gradeInfo.desc;
+
+                    updateLiveStats();
+                });
+            });
+        }
+
+        // Update top stats summary
+        function updateLiveStats() {
+            const inputs = document.querySelectorAll('.mark-input');
+            let total = 0, pass = 0, fail = 0;
+
+            inputs.forEach(inp => {
+                const val = inp.value;
+                if (val !== '' && !isNaN(val)) {
+                    total++;
+                    const s = Number(val);
+                    if (s >= 40) pass++;
+                    else fail++;
+                }
+            });
+
+            document.getElementById('total-count').textContent = inputs.length;
+            document.getElementById('pass-count').textContent = pass;
+            document.getElementById('fail-count').textContent = fail;
+        }
+
+        // Save Button Handler (Direct to Supabase)
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            const className = document.getElementById('class-select').value;
+            const subjectName = document.getElementById('subject-select').value;
+            const examType = document.getElementById('exam-select').value;
+            const saveBtn = document.getElementById('save-btn');
+            const syncStatus = document.getElementById('sync-status');
+
+            const inputs = document.querySelectorAll('.mark-input');
+            if (inputs.length === 0) return;
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan...`;
+            lucide.createIcons();
+
+            const records = Array.from(inputs).map(inp => {
+                const scoreVal = (inp.value === '' || isNaN(inp.value)) ? null : Number(inp.value);
+                const grade = calculateGrade(scoreVal).grade;
+                return {
+                    school_year: '2026',
+                    class_name: className,
+                    subject_name: subjectName,
+                    exam_type: examType,
+                    student_id: parseInt(inp.dataset.studentId),
+                    student_name: inp.dataset.studentName,
+                    religion: inp.dataset.religion || 'MORAL',
+                    score_val: scoreVal,
+                    grade_val: grade,
+                    updated_at: new Date().toISOString()
+                };
+            });
+
+            const { data, error } = await db
+                .from('student_marks')
+                .upsert(records, { onConflict: 'class_name,subject_name,student_id,exam_type' });
+
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Simpan Markah ke Cloud`;
+            lucide.createIcons();
+
+            if (error) {
+                alert("Ralat semasa menyimpan: " + error.message);
+                syncStatus.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20";
+                syncStatus.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Gagal Disimpan`;
+            } else {
+                syncStatus.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                syncStatus.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Berjaya Disimpan`;
+                alert(`Markah bagi kelas ${className} (${subjectName}) telah berjaya disimpan!`);
+            }
+        });
+
+        // Trigger load button
+        document.getElementById('load-btn').addEventListener('click', renderStudentList);
+    </script>
+</body>
+</html>
