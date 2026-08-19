@@ -49,7 +49,7 @@
                     <h1 class="text-base font-extrabold tracking-tight uppercase text-white flex items-center gap-2">
                         PORTAL PENGURUSAN AKADEMIK <span class="text-xs bg-blue-600/30 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-bold">2026</span>
                     </h1>
-                    <p class="text-xs text-slate-400">SK Simpang Kuda (YBB1104) &bull; Modul Headcount &amp; Analisis Prestasi</p>
+                    <p class="text-xs text-slate-400">SK Simpang Kuda (YBB1104) &bull; Dialog Prestasi &amp; Headcount Murid</p>
                 </div>
             </div>
             
@@ -63,7 +63,7 @@
 
     <main class="max-w-[1500px] mx-auto px-4 lg:px-6 mt-6 flex-1 w-full space-y-6">
 
-        <!-- Login Gate -->
+        <!-- Login Section -->
         <section id="login-section" class="dashboard-card rounded-2xl p-8 max-w-md mx-auto shadow-2xl mt-12">
             <div class="text-center mb-6">
                 <div class="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 mx-auto mb-3">
@@ -92,7 +92,7 @@
         <!-- Main Workspace -->
         <section id="portal-section" class="hidden space-y-6">
 
-            <!-- Module Navigation -->
+            <!-- Module Switcher -->
             <div id="main-nav-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button onclick="setMainModule('entry')" id="nav-btn-entry" class="p-5 rounded-2xl border-2 border-blue-500 bg-blue-600/10 text-left flex items-center gap-5 transition hover:bg-blue-600/20 group">
                     <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/30">
@@ -100,8 +100,8 @@
                     </div>
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-0.5">Modul 1</span>
-                        <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH HEADCOUNT</h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Isi TOV (ETR dikira automatik), AR1, dan skor UASA.</p>
+                        <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Pilih AR1 atau UASA dan isi markah mengikut kelas.</p>
                     </div>
                 </button>
 
@@ -112,17 +112,31 @@
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Modul 2</span>
                         <h2 class="text-base md:text-lg font-extrabold text-slate-200 group-hover:text-white transition-colors">DIALOG PRESTASI &amp; HC3</h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Ringkasan KPI, % MTM, graf headcount, dan analisis HC3.</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Paparan eksekutif, perbandingan skor, % MTM, dan laporan HC3.</p>
                     </div>
                 </button>
             </div>
 
-            <!-- Filters & ETR Settings -->
+            <!-- SELECTION PANEL -->
             <div id="selection-panel" class="dashboard-card rounded-2xl p-5 border border-slate-800">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <!-- 1. Pentaksiran Selector -->
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
                             <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">1</span>
+                            Jenis Pentaksiran
+                        </label>
+                        <select id="select-exam" onchange="handleExamChange()" class="w-full bg-[#090f1f] border border-blue-500/50 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
+                            <option value="AR1">AR1 (Ujian Pertengahan Sesi)</option>
+                            <option value="UASA">UASA (Ujian Akhir Sesi Akademik)</option>
+                        </select>
+                    </div>
+
+                    <!-- 2. Kelas Selector -->
+                    <div>
+                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">2</span>
                             Pilih Kelas
                         </label>
                         <select id="select-class" onchange="handleClassChange()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
@@ -139,41 +153,31 @@
                         </select>
                     </div>
 
+                    <!-- 3. Subjek Selector -->
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">2</span>
+                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">3</span>
                             Pilih Mata Pelajaran
                         </label>
                         <select id="select-subject" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
+                            <!-- Populated dynamically based on Exam & Tahap -->
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-orange-600 text-white text-[11px] flex items-center justify-center font-bold">3</span>
-                            Sasaran Peningkatan ETR (+Markah)
-                        </label>
-                        <select id="select-etr-increment" onchange="applyGlobalEtrIncrement()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-orange-400 focus:outline-none focus:border-orange-500">
-                            <option value="3">+3 Markah daripada TOV</option>
-                            <option value="5" selected>+5 Markah daripada TOV (Standard)</option>
-                            <option value="8">+8 Markah daripada TOV</option>
-                            <option value="10">+10 Markah daripada TOV (Cemerlang)</option>
-                        </select>
-                    </div>
                 </div>
             </div>
 
-            <!-- ================= VIEW 1: HEADCOUNT ENTRY TABLE ================= -->
+            <!-- ================= VIEW 1: ENTRY TABLE ================= -->
             <div id="view-entry" class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl space-y-0">
                 <div class="p-5 bg-slate-900/80 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div>
                         <h3 class="text-base font-extrabold text-white uppercase tracking-wide flex items-center gap-2">
-                            <i data-lucide="clipboard-edit" class="w-5 h-5 text-blue-400"></i> Borang Pengisian Headcount Lengkap
+                            <i data-lucide="clipboard-edit" class="w-5 h-5 text-blue-400"></i> Borang Pengisian Markah Murid
                         </h3>
-                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi TOV $\rightarrow$ ETR terjana secara automatik $\rightarrow$ Masukkan markah AR1 dan UASA.</p>
+                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi markah bagi pentaksiran yang dipilih.</p>
                     </div>
-                    <button onclick="saveAllMarks()" id="save-marks-btn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
-                        <i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Semua Markah ke Cloud
+                    <button onclick="saveCurrentAssessmentMarks()" id="save-marks-btn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
+                        <i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Markah ke Cloud
                     </button>
                 </div>
 
@@ -183,12 +187,10 @@
                             <tr>
                                 <th class="py-3.5 px-3 w-10 text-center">Bil</th>
                                 <th class="py-3.5 px-4">Nama Penuh Murid</th>
-                                <th class="py-3.5 px-2 w-24 text-center text-slate-300">TOV (Asas)</th>
-                                <th class="py-3.5 px-2 w-24 text-center text-orange-400">ETR (Sasaran)</th>
-                                <th class="py-3.5 px-2 w-24 text-center text-sky-400">AR1 (Ujian 1)</th>
-                                <th class="py-3.5 px-2 w-16 text-center text-sky-400">Gred AR1</th>
-                                <th class="py-3.5 px-2 w-24 text-center text-emerald-400">UASA (Akhir)</th>
-                                <th class="py-3.5 px-2 w-16 text-center text-emerald-400">Gred UASA</th>
+                                <th class="py-3.5 px-2 w-28 text-center text-slate-300">TOV (Asas)</th>
+                                <th class="py-3.5 px-2 w-28 text-center text-orange-400">ETR (Sasaran)</th>
+                                <th class="py-3.5 px-2 w-32 text-center text-sky-400" id="th-selected-exam">Markah AR1</th>
+                                <th class="py-3.5 px-2 w-20 text-center">Gred</th>
                             </tr>
                         </thead>
                         <tbody id="entry-table-body" class="divide-y divide-slate-800/80 text-slate-200">
@@ -201,7 +203,7 @@
                 </div>
             </div>
 
-            <!-- ================= VIEW 2: DASHBOARD DIALOG PRESTASI ================= -->
+            <!-- ================= VIEW 2: DASHBOARD ================= -->
             <div id="view-dashboard" class="hidden space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-gradient-to-br from-[#134e96] to-[#0d2f66] rounded-2xl p-5 shadow-lg border border-blue-400/20 text-white">
@@ -226,7 +228,7 @@
                                 <div class="p-2.5 rounded-xl bg-white/10 w-fit mb-2">
                                     <i data-lucide="check-circle" class="w-6 h-6"></i>
                                 </div>
-                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">% Menduduki AR1</div>
+                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">% Kehadiran</div>
                             </div>
                             <div id="kpi-hadir-rate" class="text-3xl font-black">0.0%</div>
                         </div>
@@ -242,12 +244,12 @@
                                 <div class="p-2.5 rounded-xl bg-white/10 w-fit mb-2">
                                     <i data-lucide="award" class="w-6 h-6"></i>
                                 </div>
-                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">Capai MTM AR1 (A - E)</div>
+                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">Capai MTM (A - E)</div>
                             </div>
                             <div id="kpi-mtm-count" class="text-3xl font-black">0 <span id="kpi-mtm-rate" class="text-sm font-bold">(0%)</span></div>
                         </div>
                         <div class="mt-4 pt-3 border-t border-white/10 flex justify-between text-xs font-semibold opacity-90">
-                            <span>Lulus (A-E): <b id="kpi-lulus-count">0</b></span>
+                            <span>Lulus: <b id="kpi-lulus-count">0</b></span>
                             <span>Belum Capai (F): <b id="kpi-gagal-count">0</b></span>
                         </div>
                     </div>
@@ -258,12 +260,12 @@
                                 <div class="p-2.5 rounded-xl bg-white/10 w-fit mb-2">
                                     <i data-lucide="target" class="w-6 h-6"></i>
                                 </div>
-                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">Pencapaian UASA</div>
+                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">Purata Skor</div>
                             </div>
-                            <div id="kpi-uasa-count" class="text-3xl font-black">0 <span id="kpi-uasa-rate" class="text-sm font-bold">(0%)</span></div>
+                            <div id="kpi-avg-score" class="text-3xl font-black">0.0</div>
                         </div>
                         <div class="mt-4 pt-3 border-t border-white/10 flex justify-between text-xs font-semibold opacity-90">
-                            <span>Purata UASA: <b id="kpi-uasa-avg">0.0</b></span>
+                            <span>Purata TOV: <b id="kpi-tov-avg">0.0</b></span>
                             <span>Purata ETR: <b id="kpi-etr-avg">0.0</b></span>
                         </div>
                     </div>
@@ -274,12 +276,12 @@
                         <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
                             <div>
                                 <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400"></i> Perbandingan Skor: TOV vs AR1 vs ETR vs UASA
+                                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400"></i> Perbandingan Headcount (TOV vs AR1 vs ETR vs UASA)
                                 </h3>
-                                <p class="text-xs text-slate-400">Analisis perkembangan skor murid</p>
+                                <p class="text-xs text-slate-400">Purata markah keseluruhan kelas</p>
                             </div>
                             <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center gap-2 transition border border-slate-700">
-                                <i data-lucide="printer" class="w-4 h-4"></i> Cetak HC3
+                                <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan
                             </button>
                         </div>
                         <div class="h-72 w-full">
@@ -290,9 +292,9 @@
                     <div class="dashboard-card rounded-2xl p-5 border border-slate-800 shadow-xl flex flex-col justify-between">
                         <div>
                             <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-1">
-                                <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Taburan Gred Terkini (AR1)
+                                <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Taburan Gred Pentaksiran
                             </h3>
-                            <p class="text-xs text-slate-400 mb-4">Pecahan gred semasa kelas</p>
+                            <p class="text-xs text-slate-400 mb-4" id="pie-subtitle">Pecahan gred semasa</p>
                             <div class="h-56 w-full flex items-center justify-center">
                                 <canvas id="gradeDistributionChart"></canvas>
                             </div>
@@ -305,7 +307,7 @@
                 <div class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
                     <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex justify-between items-center">
                         <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                            <i data-lucide="table" class="w-4 h-4 text-blue-400"></i> Senarai Headcount Lengkap (TOV ➔ ETR ➔ AR1 ➔ UASA)
+                            <i data-lucide="table" class="w-4 h-4 text-blue-400"></i> Analisis Headcount Lengkap Murid (HC3)
                         </h3>
                         <span id="dash-calon-badge" class="text-xs font-bold px-3 py-1 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">0 Calon</span>
                     </div>
@@ -320,7 +322,7 @@
                                     <th class="py-3 px-3 text-center text-sky-400">AR1</th>
                                     <th class="py-3 px-3 text-center text-emerald-400">UASA</th>
                                     <th class="py-3 px-3 text-center">Jurang (AR1 - TOV)</th>
-                                    <th class="py-3 px-3 text-center">Pencapaian UASA</th>
+                                    <th class="py-3 px-3 text-center">Status Pencapaian</th>
                                 </tr>
                             </thead>
                             <tbody id="dash-table-body" class="divide-y divide-slate-800 text-slate-200">
@@ -345,7 +347,24 @@
         let perfChartInstance = null;
         let gradeChartInstance = null;
 
-        const SUBJECTS_TAHAP_1 = [
+        // AR1 Subjects (NO PI, NO PM)
+        const SUBJECTS_AR1_TAHAP_1 = [
+            { code: "BM", name: "Bahasa Melayu (BM)" },
+            { code: "BI", name: "Bahasa Inggeris (BI)" },
+            { code: "MT", name: "Matematik (MT)" },
+            { code: "SN", name: "Sains (SN)" }
+        ];
+
+        const SUBJECTS_AR1_TAHAP_2 = [
+            { code: "BM", name: "Bahasa Melayu (BM)" },
+            { code: "BI", name: "Bahasa Inggeris (BI)" },
+            { code: "MT", name: "Matematik (MT)" },
+            { code: "SN", name: "Sains (SN)" },
+            { code: "SEJ", name: "Sejarah (SEJ)" }
+        ];
+
+        // UASA Subjects (WITH PI & PM)
+        const SUBJECTS_UASA_TAHAP_1 = [
             { code: "BM", name: "Bahasa Melayu (BM)" },
             { code: "BI", name: "Bahasa Inggeris (BI)" },
             { code: "MT", name: "Matematik (MT)" },
@@ -354,7 +373,7 @@
             { code: "PM", name: "Pendidikan Moral (PM)" }
         ];
 
-        const SUBJECTS_TAHAP_2 = [
+        const SUBJECTS_UASA_TAHAP_2 = [
             { code: "BM", name: "Bahasa Melayu (BM)" },
             { code: "BI", name: "Bahasa Inggeris (BI)" },
             { code: "MT", name: "Matematik (MT)" },
@@ -370,11 +389,20 @@
 
         function populateSubjects() {
             const classVal = document.getElementById('select-class').value;
+            const examVal = document.getElementById('select-exam').value;
             const subjSelect = document.getElementById('select-subject');
             const currentVal = subjSelect.value;
             subjSelect.innerHTML = '';
 
-            const list = isTahap1(classVal) ? SUBJECTS_TAHAP_1 : SUBJECTS_TAHAP_2;
+            let list = [];
+            const tahap1 = isTahap1(classVal);
+
+            if (examVal === 'AR1') {
+                list = tahap1 ? SUBJECTS_AR1_TAHAP_1 : SUBJECTS_AR1_TAHAP_2;
+            } else {
+                list = tahap1 ? SUBJECTS_UASA_TAHAP_1 : SUBJECTS_UASA_TAHAP_2;
+            }
+
             list.forEach(sub => {
                 const opt = document.createElement('option');
                 opt.value = sub.code;
@@ -387,6 +415,11 @@
             } else {
                 subjSelect.value = "BM";
             }
+        }
+
+        function handleExamChange() {
+            populateSubjects();
+            refreshCurrentView();
         }
 
         function handleClassChange() {
@@ -520,74 +553,36 @@
         async function refreshCurrentView() {
             const selectedClass = document.getElementById('select-class').value;
             const selectedSubj = document.getElementById('select-subject').value;
+            const selectedExam = document.getElementById('select-exam').value;
             if (!selectedSubj) return;
 
             await fetchMarks(selectedClass, selectedSubj);
 
             if (activeModule === 'entry') {
-                renderEntryForm(selectedClass, selectedSubj);
+                renderEntryForm(selectedClass, selectedSubj, selectedExam);
             } else {
-                renderDashboardView(selectedClass, selectedSubj);
+                renderDashboardView(selectedClass, selectedSubj, selectedExam);
             }
         }
 
-        function onTovInput(tovInput, idx) {
-            const val = tovInput.value.trim();
-            const etrInput = document.getElementById(`etr-input-${idx}`);
-            if (!etrInput) return;
-
-            if (val === '') {
-                etrInput.value = '';
-                return;
-            }
-
-            const inc = Number(document.getElementById('select-etr-increment').value) || 5;
-            const tovScore = Number(val);
-            const calculatedEtr = Math.min(100, tovScore + inc);
-            
-            // Auto-fill ETR only if empty or standard
-            etrInput.value = calculatedEtr;
-        }
-
-        function applyGlobalEtrIncrement() {
-            const inc = Number(document.getElementById('select-etr-increment').value) || 5;
-            const tovInputs = document.querySelectorAll('.tov-input');
-            
-            tovInputs.forEach((tovInput, idx) => {
-                const val = tovInput.value.trim();
-                const etrInput = document.getElementById(`etr-input-${idx}`);
-                if (val !== '' && etrInput) {
-                    etrInput.value = Math.min(100, Number(val) + inc);
-                }
-            });
-        }
-
-        function renderEntryForm(selectedClass, selectedSubj) {
+        function renderEntryForm(selectedClass, selectedSubj, selectedExam) {
             const students = getStudents(selectedClass, selectedSubj);
             const tbody = document.getElementById('entry-table-body');
             tbody.innerHTML = '';
 
-            document.getElementById('entry-subtitle').textContent = `Headcount Murid | Kelas: ${selectedClass} | Subjek: ${selectedSubj}`;
+            document.getElementById('th-selected-exam').textContent = `Markah ${selectedExam}`;
+            document.getElementById('entry-subtitle').textContent = `Pentaksiran: ${selectedExam} | Kelas: ${selectedClass} | Subjek: ${selectedSubj}`;
 
             if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-500 font-bold">Tiada calon berdaftar untuk subjek ini dalam kelas ${selectedClass}.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500 font-bold">Tiada calon berdaftar untuk subjek ini dalam kelas ${selectedClass}.</td></tr>`;
                 return;
             }
 
             students.forEach((name, idx) => {
                 const tov = cachedMarks[name]?.['TOV'] ?? '';
-                let etr = cachedMarks[name]?.['ETR'] ?? '';
-                const ar1 = cachedMarks[name]?.['AR1'] ?? '';
-                const uasa = cachedMarks[name]?.['UASA'] ?? '';
-                
-                // Auto calculate ETR if TOV exists but ETR is blank
-                if (tov !== '' && etr === '') {
-                    const inc = Number(document.getElementById('select-etr-increment').value) || 5;
-                    etr = Math.min(100, Number(tov) + inc);
-                }
-
-                const gradeInfoAr1 = calculateUasaGrade(ar1);
-                const gradeInfoUasa = calculateUasaGrade(uasa);
+                const etr = cachedMarks[name]?.['ETR'] ?? '';
+                const currentScore = cachedMarks[name]?.[selectedExam] ?? '';
+                const gradeInfo = calculateUasaGrade(currentScore);
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-800/40 transition-colors';
@@ -596,45 +591,37 @@
                     <td class="py-3 px-4 font-bold text-white text-xs md:text-sm">${name}</td>
                     <td class="py-3 px-2 text-center">
                         <input type="number" min="0" max="100" value="${tov}" data-student="${name}" data-type="TOV" placeholder="-"
-                            oninput="onTovInput(this, ${idx})"
-                            class="mark-input tov-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-white font-bold focus:outline-none focus:border-blue-500">
+                            class="mark-input w-24 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-white font-bold focus:outline-none focus:border-blue-500">
                     </td>
                     <td class="py-3 px-2 text-center">
-                        <input type="number" min="0" max="100" value="${etr}" id="etr-input-${idx}" data-student="${name}" data-type="ETR" placeholder="-"
-                            class="mark-input w-20 text-center bg-[#090f1f] border border-orange-500/40 rounded-lg py-1.5 text-xs text-orange-300 font-extrabold focus:outline-none focus:border-orange-500">
+                        <input type="number" min="0" max="100" value="${etr}" data-student="${name}" data-type="ETR" placeholder="-"
+                            class="mark-input w-24 text-center bg-[#090f1f] border border-orange-500/30 rounded-lg py-1.5 text-xs text-orange-300 font-bold focus:outline-none focus:border-orange-500">
                     </td>
                     <td class="py-3 px-2 text-center">
-                        <input type="number" min="0" max="100" value="${ar1}" data-student="${name}" data-type="AR1" placeholder="-"
-                            oninput="onMarkInput(this, 'ar1-badge-${idx}')"
-                            class="mark-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-sky-300 font-extrabold focus:outline-none focus:border-blue-500">
+                        <input type="number" min="0" max="100" value="${currentScore}" data-student="${name}" data-type="${selectedExam}" placeholder="-"
+                            oninput="onSingleMarkInput(this, 'badge-${idx}')"
+                            class="mark-input w-28 text-center bg-[#090f1f] border border-sky-500/50 rounded-lg py-1.5 text-sm text-sky-300 font-extrabold focus:outline-none focus:border-sky-400">
                     </td>
                     <td class="py-3 px-2 text-center">
-                        <span id="ar1-badge-${idx}" class="inline-block w-8 py-0.5 rounded border text-[11px] font-black ${gradeInfoAr1.color}">${gradeInfoAr1.grade}</span>
-                    </td>
-                    <td class="py-3 px-2 text-center">
-                        <input type="number" min="0" max="100" value="${uasa}" data-student="${name}" data-type="UASA" placeholder="-"
-                            oninput="onMarkInput(this, 'uasa-badge-${idx}')"
-                            class="mark-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-emerald-300 font-extrabold focus:outline-none focus:border-blue-500">
-                    </td>
-                    <td class="py-3 px-2 text-center">
-                        <span id="uasa-badge-${idx}" class="inline-block w-8 py-0.5 rounded border text-[11px] font-black ${gradeInfoUasa.color}">${gradeInfoUasa.grade}</span>
+                        <span id="badge-${idx}" class="inline-block w-10 py-1 rounded-lg border text-xs font-black ${gradeInfo.color}">${gradeInfo.grade}</span>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function onMarkInput(elem, badgeId) {
+        function onSingleMarkInput(elem, badgeId) {
             const gradeInfo = calculateUasaGrade(elem.value);
             const badge = document.getElementById(badgeId);
             if (badge) {
-                badge.className = `inline-block w-8 py-0.5 rounded border text-[11px] font-black ${gradeInfo.color}`;
+                badge.className = `inline-block w-10 py-1 rounded-lg border text-xs font-black ${gradeInfo.color}`;
                 badge.textContent = gradeInfo.grade;
             }
         }
 
-        function renderDashboardView(selectedClass, selectedSubj) {
+        function renderDashboardView(selectedClass, selectedSubj, selectedExam) {
             document.getElementById('kpi-subj-label').textContent = selectedSubj;
+            document.getElementById('pie-subtitle').textContent = `Pecahan Gred Pentaksiran (${selectedExam})`;
             const students = getStudents(selectedClass, selectedSubj);
 
             document.getElementById('kpi-enrolment').textContent = students.length;
@@ -644,8 +631,7 @@
             let thCount = 0;
             let mtmCount = 0;
             let gagalCount = 0;
-            let uasaPassCount = 0;
-            let totalAr1 = 0;
+            let totalExamScore = 0;
             let totalTov = 0;
             let totalEtr = 0;
             let totalUasa = 0;
@@ -659,14 +645,15 @@
 
             students.forEach((name, idx) => {
                 const tov = cachedMarks[name]?.['TOV'] ?? null;
-                const ar1 = cachedMarks[name]?.['AR1'] ?? null;
                 const etr = cachedMarks[name]?.['ETR'] ?? null;
+                const ar1 = cachedMarks[name]?.['AR1'] ?? null;
                 const uasa = cachedMarks[name]?.['UASA'] ?? null;
+                const currentScore = cachedMarks[name]?.[selectedExam] ?? null;
 
-                if (ar1 !== null && ar1 !== '') {
+                if (currentScore !== null && currentScore !== '') {
                     hadirCount++;
-                    const score = Number(ar1);
-                    totalAr1 += score;
+                    const score = Number(currentScore);
+                    totalExamScore += score;
                     const gradeInfo = calculateUasaGrade(score);
                     gradeCounts[gradeInfo.grade]++;
 
@@ -680,23 +667,9 @@
                     gradeCounts['TH']++;
                 }
 
-                if (tov !== null && tov !== '') {
-                    totalTov += Number(tov);
-                    validTovCount++;
-                }
-                if (etr !== null && etr !== '') {
-                    totalEtr += Number(etr);
-                    validEtrCount++;
-                }
-                if (uasa !== null && uasa !== '') {
-                    const uScore = Number(uasa);
-                    totalUasa += uScore;
-                    validUasaCount++;
-                    const uGrade = calculateUasaGrade(uScore).grade;
-                    if (['A', 'B', 'C', 'D', 'E'].includes(uGrade)) {
-                        uasaPassCount++;
-                    }
-                }
+                if (tov !== null && tov !== '') { totalTov += Number(tov); validTovCount++; }
+                if (etr !== null && etr !== '') { totalEtr += Number(etr); validEtrCount++; }
+                if (uasa !== null && uasa !== '') { totalUasa += Number(uasa); validUasaCount++; }
 
                 const tovNum = Number(tov) || 0;
                 const ar1Num = Number(ar1) || 0;
@@ -729,11 +702,10 @@
 
             const hadirRate = students.length > 0 ? ((hadirCount / students.length) * 100).toFixed(1) : '0.0';
             const mtmRate = hadirCount > 0 ? ((mtmCount / hadirCount) * 100).toFixed(1) : '0.0';
-            const uasaRate = validUasaCount > 0 ? ((uasaPassCount / validUasaCount) * 100).toFixed(1) : '0.0';
-            
-            const avgAr1 = hadirCount > 0 ? (totalAr1 / hadirCount).toFixed(1) : '0.0';
+            const avgExamScore = hadirCount > 0 ? (totalExamScore / hadirCount).toFixed(1) : '0.0';
             const avgTov = validTovCount > 0 ? (totalTov / validTovCount).toFixed(1) : '0.0';
             const avgEtr = validEtrCount > 0 ? (totalEtr / validEtrCount).toFixed(1) : '0.0';
+            const avgAr1 = (cachedMarks && Object.values(cachedMarks).filter(m => m.AR1 != null).length > 0) ? (Object.values(cachedMarks).reduce((a, b) => a + (Number(b.AR1) || 0), 0) / Object.values(cachedMarks).filter(m => m.AR1 != null).length).toFixed(1) : '0.0';
             const avgUasa = validUasaCount > 0 ? (totalUasa / validUasaCount).toFixed(1) : '0.0';
 
             document.getElementById('kpi-hadir-rate').textContent = `${hadirRate}%`;
@@ -744,8 +716,8 @@
             document.getElementById('kpi-lulus-count').textContent = mtmCount;
             document.getElementById('kpi-gagal-count').textContent = gagalCount;
 
-            document.getElementById('kpi-uasa-count').innerHTML = `${validUasaCount} <span class="text-sm font-bold">(${uasaRate}% Lulus)</span>`;
-            document.getElementById('kpi-uasa-avg').textContent = avgUasa;
+            document.getElementById('kpi-avg-score').textContent = avgExamScore;
+            document.getElementById('kpi-tov-avg').textContent = avgTov;
             document.getElementById('kpi-etr-avg').textContent = avgEtr;
 
             renderBarChart(avgTov, avgAr1, avgEtr, avgUasa);
@@ -822,9 +794,10 @@
             `;
         }
 
-        async function saveAllMarks() {
+        async function saveCurrentAssessmentMarks() {
             const selectedClass = document.getElementById('select-class').value;
             const selectedSubj = document.getElementById('select-subject').value;
+            const selectedExam = document.getElementById('select-exam').value;
             const statusDiv = document.getElementById('save-status');
             const saveBtn = document.getElementById('save-marks-btn');
 
@@ -859,13 +832,13 @@
                     .upsert(rowsToUpsert, { onConflict: 'student_name,class_name,subject_name,exam_type' });
 
                 if (error) throw error;
-                statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold text-sm">✓ SEMUA MARKAH HEADCOUNT BERJAYA DISIMPAN KE CLOUD!</span>`;
+                statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold text-sm">✓ SEMUA DATA (${selectedExam}, TOV &amp; ETR) BERJAYA DISIMPAN KE CLOUD!</span>`;
             } catch (err) {
                 console.error(err);
                 statusDiv.innerHTML = `<span class="text-rose-400 font-extrabold text-sm">Ralat menyimpan ke cloud. Sila cuba lagi.</span>`;
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerHTML = `<i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Semua Markah ke Cloud`;
+                saveBtn.innerHTML = `<i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Markah ke Cloud`;
                 lucide.createIcons();
             }
         }
