@@ -338,7 +338,15 @@
 
             tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-gray-500">Memuatkan data murid...</td></tr>`;
 
-            let students = (typeof ROSTER !== 'undefined' && ROSTER[selectedClass]) ? [...ROSTER[selectedClass]] : [];
+            let students = [];
+            if (typeof SCHOOL_ROSTER !== 'undefined') {
+                for (const year in SCHOOL_ROSTER) {
+                    if (SCHOOL_ROSTER[year][selectedClass]) {
+                        students = [...SCHOOL_ROSTER[year][selectedClass]];
+                        break;
+                    }
+                }
+            }
 
             if (selectedSubj === 'PI') {
                 students = students.filter(name => MUSLIM_WHITELIST.includes(name.trim().toUpperCase()));
@@ -356,7 +364,6 @@
             await fetchMarks(selectedClass, selectedSubj);
 
             if (currentMode === 'entry') {
-                // ENTRY HEADERS
                 thead.innerHTML = `
                     <tr class="border-b border-gray-800 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                         <th class="py-3 px-3 w-12 text-center">Bil</th>
@@ -402,7 +409,6 @@
                     tbody.appendChild(tr);
                 });
             } else {
-                // HEADCOUNT ANALYSIS HEADERS
                 thead.innerHTML = `
                     <tr class="border-b border-gray-800 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                         <th class="py-3 px-3 w-10 text-center">Bil</th>
