@@ -8,6 +8,200 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+const SCHOOL_ROSTER = {
+    "Tahun 1": {
+        "1 CAHAYA": [
+            "ALEX TAM ANAK ELMAN",
+            "ALITHIA ANAK ALEY",
+            "ANA ELISHA ANAK TUAN",
+            "AYDANN XANDER ANAK NAWI",
+            "BERNARD BEN ANAK DENNIS",
+            "CHRISTIAN FERNANDES ANAK ALEY",
+            "DEAN IVANDER ANAK FICTION",
+            "ELZIRA EVE ANAK HAYWARD",
+            "EMILIUS ANAK BONNY",
+            "FELLYNA ADRIANA ANAK DOBIN",
+            "JEREMY ANAK ROLAND",
+            "LESTER ANAK WAYNIEKER",
+            "MARTHA ANAK SOBLI",
+            "PAULA AZALEA ANAK LOMAN",
+            "PETER JEREMIA ANAK JILOT",
+            "STEFANO SHERMAN ANAK ANDREW JACKSON",
+            "VELNESA MELL ANAK VELSTER",
+            "VERONICCA VANIA ELINDRA"
+        ]
+    },
+    "Tahun 2": {
+        "2 SINARAN": [
+            "ADRIANNA ADELLE ANAK GARY",
+            "ALFRED RYAN ANAK AUDREY",
+            "CALDWELL ASHER ANAK CYRIL CHRISTIAN",
+            "CAROLINE ANAK DILAM",
+            "CHARLES MARTIN ANAK ELTON",
+            "CHRISTIAN CLAUS ANAK CAREI JEO",
+            "CLAYVIA SAMANTHA ANAK MORRIS",
+            "DENNIS HAMILTON ANAK SHEM",
+            "EASTER JOVELYN ANAK JENIOS",
+            "ELFIEREN ANAK DOUGLAS AUGUSTUS",
+            "EMMANUEL ISAAC ANAK CHRISTI",
+            "EZEKIEL MARCEL ANAK AUGUSTINE",
+            "JESSICA ANAK RITIKOS",
+            "KYOLVIN LEE ZHEN DECK",
+            "LIZBETH ORLEE ANAK ODID",
+            "MAXIME MORRISON ANAK MAT MORRIS",
+            "MIEKAIL OZZIE ANAK ASU",
+            "MUHAMMAD ADDAM BIN ABDULLAH",
+            "NUR AIRA ALEESHA BINTI SUGIMAN",
+            "PRISCILLA AELCY ANAK PAUL TERRANCE",
+            "TOM HERER ANAK ELMAN"
+        ]
+    },
+    "Tahun 3": {
+        "3 KERLIPAN": [
+            "ABBYGAIL AUDREY ANAK RICKY",
+            "ABIGAIL LEANDRA ANAK RICARDO",
+            "AIDEN ANGELO BIN ANDRESS",
+            "ALVEENA ANAK FRANCIS KONDI",
+            "ANTONELLA DARLENE ANAK DAMIAN",
+            "CLARA ALESANDRA ANAK PANING",
+            "EASTER ABELIN ANAK ANDREW JACKSON",
+            "EMILIAN ZACHARY ANAK ANDREW LIBIS",
+            "ERENDIRA SANCHA ANAK HAYWARD",
+            "FERGUS FEDINA EBOT",
+            "JAMES VIBLENT ANAK VIVIAN",
+            "JOELLA CARLVIANA ANAK JOSTINE",
+            "KENNY ANAK JENNAS",
+            "MARIA GABRIELLA ANAK LENNIE-LEE",
+            "MATHIEW DIAZ ANAK MIKES",
+            "MATTHEW BELVIN ANAK BOBBY",
+            "MIYA SERENA TAN",
+            "PASCAL CHRISTIAN ANAK STEVE",
+            "RYAN ANDERSON ANAK NELSON",
+            "SPENCER TERANCE ANAK SOPIN"
+        ]
+    },
+    "Tahun 4": {
+        "4 BESTARI": [
+            "ADAM MIKHAIL BIN MUHAMMAD MORNI",
+            "ADELLYNA HIEW",
+            "AIDAN DAVIS ANAK YITONG",
+            "ALVIENA VIONETTA ANAK MICHAEL NIKSON",
+            "ALVINSTER ERWIN ANAK RACHELLI",
+            "AMBROSE BIN HAIRYSON",
+            "ANTHEA CASSANDRA ANAK PAUL JOHNNY",
+            "AVA SCARLETT SANGON",
+            "CANISIUS VEXSTER ANAK NYOGING",
+            "CARLISSA ABBIE ANAK CAREI JEO",
+            "CATHLYN WYONA ANAK TILIA",
+            "CHELLSTON ANTHONY ANAK ELTON",
+            "EDRIAN ELMO ANAK SAMUEL",
+            "ELIENIA MAGDALENE ANAK JAMES HARRY",
+            "ELIZABETH CLARISSA ANAK LISSTER",
+            "ELLIZA ELABELLE SULING ANAK DANNY",
+            "FELICIA ERYNA ANAK DOBIN",
+            "FRISCHERLY FECYEA ANAK DINOR",
+            "GRACE ANAK SOBLI",
+            "GRACE ASHLEY EDWIN",
+            "IVAN DYLAN ANAK MIKE HOUSTON",
+            "MAGDALINE KELLY ANAK JUDA",
+            "MICHELVIN ANAK LORI",
+            "PUTRA ARASH DANIEL BIN ABDULLAH",
+            "RAYCHELL ANAK FICTION",
+            "SIMON DOUGLAS ANAK JOHN LOMI",
+            "WYATT EZEKIEL ANAK JOHN BRANDON"
+        ]
+    },
+    "Tahun 5": {
+        "5 BIJAKSANA": [
+            "ADELE ALEXIS BINTI ANDRESS",
+            "ALVINSON ANAK SATEE",
+            "ANDRIAN SYLVESTER ANAK DAWENG",
+            "ANGEL FANELIS ANAK ANDY",
+            "AQIL KHALISH BIN FAIZAL",
+            "CAROLINE ANAK TITOBIN",
+            "CATHERINA ELLYSA ANAK CYRILL CLIFF",
+            "CHELLSEA VERONICA ANAK ELTON",
+            "CHRISTIAN ALEXIS ANAK PATRICK NEWMAN",
+            "CLIFF SHEARSON ANAK MORRIS",
+            "ELISSA ANAK EDWARD FURLON",
+            "ELIZABETH EMILY CAYLE ANAK PETER ZARIO",
+            "EMERSON MAXMILLIAN ANAK MATTHEW",
+            "EMMANUEL EFFAN REYES ANAK KENNY",
+            "EZEKIEL ANAK CHRISTOPHA",
+            "FRANCIS JAVIER ANAK KARMA",
+            "GABRIEL JOANIS ANAK ANTHONY ATHUR",
+            "HAFIZ BIN ABDULLAH MORNI",
+            "JASPER GARELD ANAK TONY",
+            "JOSEPH JUSTIN ANAK PAYJO",
+            "KELLYZIA ANAK NICOLAS",
+            "KYLA ANAK RACHEL TIFFANY",
+            "MAGDALANE ARORA ANAK PETER CONNERY",
+            "MATTHEW CLEVERLY ANAK ROCK FORD",
+            "NELVENLEE ANAK NITON",
+            "NICHOLAS ELLEN ANAK BONNY",
+            "PETER ALDEN ANAK PAUL TERRANCE",
+            "PHIAXENDRA MAXVIENY ANAK PAUL",
+            "RACHEL SHELLA TIEW",
+            "RACHEL VUN MING YUE",
+            "VELBELLA MARSHASA ANAK VELSTER",
+            "ZUHAIQAL ARASH BIN SUZAIMIN"
+        ]
+    },
+    "Tahun 6": {
+        "6 GEMILANG": [
+            "ABNER PRISCO ANAK PAUL TERRANCE",
+            "ALEXANDER FERNANDES ANAK PAUL JOHNNY",
+            "ALEXANDRIAN ANAK MANYIA",
+            "ANDRIAN OWEN ANAK ANDREW JACKSON",
+            "ANNASTASIA STEPHANIE ANAK RICKY",
+            "ARELIE MARIEL NYRA ANAK NORMAN",
+            "BIBIANA ANAK SENTANA",
+            "CAROLUS JUNIOR YEO CAROLUS",
+            "CARRICJUNELL SLODICK ANAK ZAINAL",
+            "CHRISTINA IRENE ANAK NELSON",
+            "DANIEL OLSEN ANAK SAMUEL",
+            "DARREL OZIL ANAK MOSSTEVEN",
+            "ELLYSSA RIVERA ELVIN",
+            "EMMANUEL MATIUS ANAK LISSTER",
+            "ENDELICA ANAK HAYWARD",
+            "GABRIELLA ZOEY ANAK MIKE HOUSTON",
+            "GRACIE ANAK DIDIE",
+            "HERNANDEZ ANAK RICARDO",
+            "JESSE ELEAZAR JEN HO",
+            "LAWRENCE ALVIN ANAK RACHELLI",
+            "MAGDALEN AMBER ANAK SOBLI",
+            "MARY BOOKLYN ANAK JILOT",
+            "MARY SHERLYNA ELYSSA ANAK MINO",
+            "OLIVIA GRACE ANAK GINGO",
+            "PUTRA FARIESH DANIEL BIN ABDULLAH",
+            "SEBASTIAN HARVEY ANAK LOUIS FERNANDEZ",
+            "VANESSA CELINE ANAK LAHIM",
+            "XANDER EPOI EMILE WAN"
+        ]
+    }
+};
+
+const PENDIDIKAN_ISLAM_ROSTER = {
+    "2 SINARAN": [
+        "MUHAMMAD ADDAM BIN ABDULLAH",
+        "NUR AIRA ALEESHA BINTI SUGIMAN"
+    ],
+    "4 BESTARI": [
+        "ADAM MIKHAIL BIN MUHAMMAD MORNI",
+        "PUTRA ARASH DANIEL BIN ABDULLAH"
+    ],
+    "5 BIJAKSANA": [
+        "AQIL KHALISH BIN FAIZAL",
+        "HAFIZ BIN ABDULLAH MORNI",
+        "ZUHAIQAL ARASH BIN SUZAIMIN"
+    ],
+    "6 GEMILANG": [
+        "PUTRA FARIESH DANIEL BIN ABDULLAH"
+    ]
+};
+
+    </script>
     <style>
         body {
             background-color: #0c1427;
@@ -70,7 +264,7 @@
                 </div>
                 <div>
                     <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-0.5">Modul 1</span>
-                    <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH HEADCOUNT</h2>
+                    <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH</h2>
                     <p class="text-xs text-slate-400 mt-0.5">Isi markah TOV, ETR dan markah pentaksiran semasa (AR / UASA).</p>
                 </div>
             </button>
@@ -81,8 +275,8 @@
                 </div>
                 <div>
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Modul 2</span>
-                    <h2 class="text-base md:text-lg font-extrabold text-slate-200 group-hover:text-white transition-colors">DIALOG PRESTASI &amp; HC3</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Paparan analisis eksekutif, perbandingan skor, % MTM, graf dan headcount HC3.</p>
+                    <h2 class="text-base md:text-lg font-extrabold text-slate-200 group-hover:text-white transition-colors">ANALISIS HEADCOUNT</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Paparan analisis markah, pencapaian, intervensi dan headcount murid.</p>
                 </div>
             </button>
         </div>
@@ -97,10 +291,11 @@
                         <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">1</span>
                         Jenis Pentaksiran (Switcher)
                     </label>
-                    <select id="select-exam-type" onchange="handleExamTypeChange()" class="w-full bg-[#090f1f] border border-blue-500/50 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                        <option value="AR" selected>AR (Ujian Pertengahan Sesi)</option>
-                        <option value="UASA">UASA (Ujian Akhir Sesi Akademik)</option>
-                    </select>
+                    <input type="hidden" id="select-exam-type" value="AR">
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-[#090f1f] border border-blue-500/50 rounded-xl">
+                        <button type="button" id="exam-btn-ar" onclick="setExamType('AR')" class="px-4 py-2.5 rounded-lg text-sm font-extrabold bg-blue-600 text-white shadow transition">AR</button>
+                        <button type="button" id="exam-btn-uasa" onclick="setExamType('UASA')" class="px-4 py-2.5 rounded-lg text-sm font-extrabold text-slate-400 hover:text-white hover:bg-slate-800 transition">UASA</button>
+                    </div>
                 </div>
 
                 <!-- 2. Pilih Kelas -->
@@ -178,7 +373,7 @@
             </div>
         </div>
 
-        <!-- ================= VIEW 2: DIALOG PRESTASI DASHBOARD ================= -->
+        <!-- ================= VIEW 2: ANALISIS HEADCOUNT ================= -->
         <div id="view-dashboard" class="hidden space-y-6">
             
             <!-- KPI CARDS -->
@@ -282,6 +477,36 @@
                 </div>
             </div>
 
+            <!-- PERLU INTERVENSI: GRED F -->
+            <div class="dashboard-card rounded-2xl overflow-hidden border border-rose-500/30 shadow-xl">
+                <div class="p-4 bg-rose-950/30 border-b border-rose-500/20 flex flex-col md:flex-row md:items-center justify-between gap-2">
+                    <div>
+                        <h3 class="text-sm font-bold text-rose-300 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="triangle-alert" class="w-4 h-4 text-rose-400"></i> Perlu Intervensi
+                        </h3>
+                        <p id="intervention-subtitle" class="text-xs text-slate-400 mt-1">Murid yang memperoleh Gred F.</p>
+                    </div>
+                    <span id="intervention-count-badge" class="text-xs font-bold px-3 py-1 rounded-xl bg-rose-500/10 text-rose-300 border border-rose-500/20">0 Murid</span>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar max-h-72">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-[#090f1f] text-slate-400 uppercase font-bold sticky top-0 z-10 border-b border-slate-800">
+                            <tr>
+                                <th class="py-3 px-3 w-10 text-center">Bil</th>
+                                <th class="py-3 px-4 min-w-[220px]">Nama Murid</th>
+                                <th class="py-3 px-3 text-center">Markah</th>
+                                <th class="py-3 px-3 text-center text-rose-400">Gred</th>
+                            </tr>
+                        </thead>
+                        <tbody id="intervention-table-body" class="divide-y divide-slate-800 text-slate-200">
+                            <tr>
+                                <td colspan="4" class="py-6 px-4 text-center text-slate-500">Tiada murid Gred F.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- HC3 DETAILED TABLE -->
             <div class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
                 <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex justify-between items-center">
@@ -321,109 +546,55 @@
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // SENARAI MURID RASMI 2026
-        const HARDCODED_ROSTER = {
-            "1 CAHAYA": [
-                "ALEX TAM ANAK ELMAN", "ALITHIA ANAK ALEY", "ANA ELISHA ANAK TUAN", "AREANNA FAYE ANAK RICKY",
-                "AVERY VALENTINE ANAK STANLEY", "AWANG HARRAZ ZAFRAN BIN AWANG HAFIZZUDDIN", "DEAN IVANDER ANAK FICTION",
-                "ELZIRA EVE ANAK HAYWARD", "EMILIUS ANAK BONNY", "FELLYNA ADRIANA ANAK DOBIN", "JEREMY ANAK ROLAND",
-                "LESTER ANAK WAYNIEKER", "MARTHA ANAK SOBLI", "PAULA AZALEA ANAK LOMAN", "PETER JEREMIA ANAK JILOT",
-                "STEFANO SHERMAN ANAK ANDREW JACKSON", "VELNESA MELL ANAK VELSTER", "VERONICCA VANIA ELINDRA"
-            ],
-            "2 SINARAN": [
-                "ADRIANNA ADELLE ANAK GARY", "ALFRED RYAN ANAK AUDREY", "CALDWELL ASHER ANAK CYRIL CHRISTIAN",
-                "CHRISTINA VELONA ANAK VALENTINE", "DAWSON STEVE ANAK DAVID", "ELVIANA SIMA ANAK STEVEN",
-                "ESMERALDA ERIKA ANAK MATHEW", "EVELYNN JOYCE ANAK EDWIN", "FEDELIA NGIAN ANAK FREDRICK",
-                "GABRIELLA ROSE ANAK JELUMPU", "GWYNETH GWENDOLINE ANAK JERRY", "JACKERY BRYSON ANAK JOCKY",
-                "LUCAS LIAM ANAK GERALD", "MUHAMMAD AMIN FARHAN BIN ABDULLAH", "NICHOLAS ARISSON ANAK GARRY",
-                "NUR HUMAIRA AZZAHRA BINTI MOHD SHAFIEE", "PATRICK DINGGAT ANAK LOMAN", "PRISCILLA GLORIA ANAK AUGUSTINE",
-                "ROSE VALERIE ANAK JILIN", "VIOLET JANE ANAK VELSTER", "WYATT VALENTINO ANAK CHRISTOPHER"
-            ],
-            "3 KERLIPAN": [
-                "ABBYGAIL AUDREY ANAK RICKY", "ABIGAIL LEANDRA ANAK RICARDO", "AIDEN ANGELO BIN ANDRESS",
-                "ALEXCIA ANGGA ANAK GENDANG", "ANGELICA ANAK ALEY", "ANNABELLA AUDREY ANAK RICKY",
-                "ANNALICIA ELVINA ANAK HENRY", "ARIANA NATASHA ANAK SATEE", "ASHER DANIEL ANAK ALBERT",
-                "AVRIL ZAIRA ANAK STANLEY", "CHELSEA NICKITA ANAK CRISTOPHER", "DARREN ISAAC ANAK FICTION",
-                "ELVINA CHELSEA ANAK NICHOLAS", "EMILY NATALIA ANAK JONATHAN", "GABRIEL NICHOLAS ANAK ALAN",
-                "HENLEY ABEL ANAK JILIN", "JASHER ASHER ANAK JOCKY", "LORENZO LARRY ANAK ROLAND",
-                "NATHANIEL VALENTINE ANAK NYAING", "VALLERIE MARCELLA ANAK NICHOLAS"
-            ],
-            "4 BESTARI": [
-                "ADAM MIKHAIL BIN MUHAMMAD MORNI", "ADELLYNA HIEW", "AIDAN DAVIS ANAK YITONG",
-                "ALLEXSON ANAK MANYIA", "ALVERONICKA SITI ANAK SAIT", "AMBERLYN FLORENCE ANAK AUGUSTINE",
-                "ANGELINA ANAK BONNY", "AZARIA BINTI ANDRESS", "BRAYEN HEZRON ANAK DOBIN",
-                "CALEB GABRIEL ANAK CYRIL CHRISTIAN", "CHALISHA GABRIELLA ANAK CRISTOPHER", "CHERYL EMMANUELLA ANAK JERRY",
-                "DARREN NYALONG ANAK DOMINIC", "DERRICK MATTHEW ANAK STEVEN", "ELVIN EDWIN ANAK CRISTOPHER",
-                "ERNEST JOEL ANAK GENDANG", "EVELYN JANE ANAK DAVID", "EZRA EZEKIEL ANAK GERALD",
-                "FERNANDEZ NYANDANG ANAK FREDRICK", "FREDELIA RINAI ANAK FREDRICK", "GABRIEL NYELANG ANAK GARRY",
-                "LEONARDO LARRY ANAK ROLAND", "MOHAMAD AMZAR AIMAN BIN ABDULLAH", "MOHAMAD FARHAN BIN ABDULLAH",
-                "NICHOLAS RYAN ANAK AUDREY", "ROVIERRA CHIEW ANAK ANDREW JACKSON", "ROWENNA ELIZABETH ANAK JONATHAN"
-            ],
-            "5 BIJAKSANA": [
-                "ADELE ALEXIS BINTI ANDRESS", "ALVINSON ANAK SATEE", "ANDRIAN SYLVESTER ANAK DAWENG",
-                "ARIANA BINTI ANDRESS", "BEATRICE ANAK ALEY", "CAROLINE ANAK BONNY",
-                "CATHERINE SENIA ANAK MICHAEL", "CELESTINA CORRINE ANAK CRISTOPHER", "DICKSON AMBROSE ANAK DAVID",
-                "DOMINIC ELVIS ANAK CRISTOPHER", "DONAVAN EINSTEIN ANAK JERRY", "DONNA ELLISHA ANAK DONNY",
-                "ECLAN KASIEL ANAK HAYWARD", "EDDWARD GENDANG ANAK NYAING", "ELSIE ANAK MATHEW",
-                "ELVIANA SHELLY ANAK NICHOLAS", "ELVIRA JANE ANAK EDWIN", "EMILIANA ANAK BONNY",
-                "EMMANUEL LUKAS ANAK GERALD", "EMMANUELLA LUSIA ANAK GERALD", "FERRER FRAYER ANAK DOBIN",
-                "FIONA RURAN ANAK JELUMPU", "GRACE ROWENA ANAK STEPHEN", "HENDRY KEDIT ANAK KENNEDY",
-                "ISABELLA ANAK JOHNATHAN", "JAZPER ENJAP ANAK JOCKY", "MOHAMMAD AIRIEL HILMAN BIN ABDULLAH",
-                "MOHAMMAD DANIAL SHAHPUTRA BIN MOHD SHAFIEE", "NUR KHAIRUNNISA BINTI ABDULLAH", "RHEA NATALIE BINTI ABDULLAH",
-                "RONALDO ANAK ROLAND", "TYRONE NICHOLAS ANAK VALENTINE"
-            ],
-            "6 GEMILANG": [
-                "ABNER PRISCO ANAK PAUL TERRANCE", "ALEXANDER FERNANDES ANAK PAUL JOHNNY", "ALEXANDRIAN ANAK MANYIA",
-                "ALVIN ABEL ANAK ALAN", "ALVIRENA RURAN ANAK JELUMPU", "AMELDA ADRIANA ANAK GARY",
-                "ANASTASIA ANAK ALEY", "ANGELICA ANAK JOHNATHAN", "ANNABELLA GRACE ANAK JILIN",
-                "ARDELLA BINTI ANDRESS", "AURELIA VALERIE ANAK NYAING", "AXEL EZEKIEL ANAK GERALD",
-                "BRENDA CHRISTIE ANAK BRAYAN", "CELLESTINE CHRISTY ANAK CRISTOPHER", "CHRISPINA NATHALIA ANAK CHRISTOPHER",
-                "DOMINIC EMPENIT ANAK LOMAN", "ELISHA AUDREY ANAK JONATHAN", "ELIZABETH CHELSEA ANAK NICHOLAS",
-                "FELICIA LAURA ANAK HENRY", "FIONA KERRY ANAK FREDRICK", "FLORIANNA FAYE ANAK FICTION",
-                "FRANCISCA STEFFI ANAK STEVEN", "HEZRON ISAAC ANAK ALBERT", "JAYVIS JAWING ANAK JOCKY",
-                "MOHAMAD FITRI BIN ABDULLAH", "NICKOLAS NICHOL ANAK SATEE", "PAULA ARISSA ANAK LOMAN",
-                "STACY NICOLE ANAK AUGUSTINE"
-            ]
-        };
 
         let activeModule = 'entry';
         let cachedMarks = {};
         let perfChartInstance = null;
         let gradeChartInstance = null;
 
-        // 1. AR Subjects (BM, BI, MT, SN untuk Tahap 1 | BM, BI, MT, SN, SEJ untuk Tahap 2)
+        // AR SUBJECTS
         const SUBJECTS_AR_TAHAP_1 = [
             { code: "BM", name: "BAHASA MELAYU (BM)" },
-            { code: "BI", name: "ENGLISH (BI)" },
-            { code: "MT", name: "MATEMATIK (MT)" },
+            { code: "BI", name: "BAHASA INGGERIS (BI)" },
+            { code: "MAT", name: "MATEMATIK (MAT)" },
             { code: "SN", name: "SAINS (SN)" }
         ];
 
         const SUBJECTS_AR_TAHAP_2 = [
             { code: "BM", name: "BAHASA MELAYU (BM)" },
-            { code: "BI", name: "ENGLISH (BI)" },
-            { code: "MT", name: "MATEMATIK (MT)" },
+            { code: "BI", name: "BAHASA INGGERIS (BI)" },
+            { code: "MAT", name: "MATEMATIK (MAT)" },
             { code: "SN", name: "SAINS (SN)" },
             { code: "SEJ", name: "SEJARAH (SEJ)" }
         ];
 
-        // 2. UASA Subjects (Termasuk PI & PM)
+        // UASA SUBJECTS — FULL SCHOOL SUBJECT SET
         const SUBJECTS_UASA_TAHAP_1 = [
             { code: "BM", name: "BAHASA MELAYU (BM)" },
-            { code: "BI", name: "ENGLISH (BI)" },
-            { code: "MT", name: "MATEMATIK (MT)" },
+            { code: "BI", name: "BAHASA INGGERIS (BI)" },
+            { code: "MAT", name: "MATEMATIK (MAT)" },
             { code: "SN", name: "SAINS (SN)" },
             { code: "PI", name: "PENDIDIKAN ISLAM (PI)" },
-            { code: "PM", name: "PENDIDIKAN MORAL (PM)" }
+            { code: "PM", name: "PENDIDIKAN MORAL (PM)" },
+            { code: "BI_IBAN", name: "BAHASA IBAN" },
+            { code: "MUZIK", name: "PENDIDIKAN MUZIK (MUZIK)" },
+            { code: "PSV", name: "PENDIDIKAN SENI VISUAL (PSV)" },
+            { code: "PJPK", name: "PENDIDIKAN JASMANI DAN PENDIDIKAN KESIHATAN (PJPK)" }
         ];
 
         const SUBJECTS_UASA_TAHAP_2 = [
             { code: "BM", name: "BAHASA MELAYU (BM)" },
-            { code: "BI", name: "ENGLISH (BI)" },
-            { code: "MT", name: "MATEMATIK (MT)" },
+            { code: "BI", name: "BAHASA INGGERIS (BI)" },
+            { code: "MAT", name: "MATEMATIK (MAT)" },
             { code: "SN", name: "SAINS (SN)" },
-            { code: "SEJ", name: "SEJARAH (SEJ)" },
             { code: "PI", name: "PENDIDIKAN ISLAM (PI)" },
-            { code: "PM", name: "PENDIDIKAN MORAL (PM)" }
+            { code: "PM", name: "PENDIDIKAN MORAL (PM)" },
+            { code: "BI_IBAN", name: "BAHASA IBAN" },
+            { code: "MUZIK", name: "PENDIDIKAN MUZIK (MUZIK)" },
+            { code: "PSV", name: "PENDIDIKAN SENI VISUAL (PSV)" },
+            { code: "PJPK", name: "PENDIDIKAN JASMANI DAN PENDIDIKAN KESIHATAN (PJPK)" },
+            { code: "RBT", name: "REKA BENTUK & TEKNOLOGI (RBT)" },
+            { code: "SEJ", name: "SEJARAH (SEJ)" }
         ];
 
         function isTahap1(className) {
@@ -467,6 +638,18 @@
             }
         }
 
+        function setExamType(type) {
+            document.getElementById('select-exam-type').value = type;
+            const arBtn = document.getElementById('exam-btn-ar');
+            const uasaBtn = document.getElementById('exam-btn-uasa');
+            const activeClass = "px-4 py-2.5 rounded-lg text-sm font-extrabold bg-blue-600 text-white shadow transition";
+            const inactiveClass = "px-4 py-2.5 rounded-lg text-sm font-extrabold text-slate-400 hover:text-white hover:bg-slate-800 transition";
+            arBtn.className = type === 'AR' ? activeClass : inactiveClass;
+            uasaBtn.className = type === 'UASA' ? activeClass : inactiveClass;
+            populateSubjects();
+            refreshCurrentView();
+        }
+
         function handleExamTypeChange() {
             populateSubjects();
             refreshCurrentView();
@@ -491,12 +674,26 @@
         }
 
         function getStudents(selectedClass, selectedSubj) {
-            let students = HARDCODED_ROSTER[selectedClass] || [];
-            if (selectedSubj === 'PI') {
-                students = students.filter(name => isMuslimStudent(name));
-            } else if (selectedSubj === 'PM') {
-                students = students.filter(name => !isMuslimStudent(name));
+            let students = [];
+
+            if (typeof SCHOOL_ROSTER !== 'undefined') {
+                for (const yearGroup of Object.values(SCHOOL_ROSTER)) {
+                    if (yearGroup[selectedClass]) {
+                        students = [...yearGroup[selectedClass]];
+                        break;
+                    }
+                }
             }
+
+            if (selectedSubj === 'PI') {
+                return [...(PENDIDIKAN_ISLAM_ROSTER[selectedClass] || [])];
+            }
+
+            if (selectedSubj === 'PM') {
+                const islamSet = new Set(PENDIDIKAN_ISLAM_ROSTER[selectedClass] || []);
+                return students.filter(name => !islamSet.has(name));
+            }
+
             return students;
         }
 
@@ -614,7 +811,7 @@
             }
         }
 
-        // ================= MODUL 2: DIALOG PRESTASI =================
+        // ================= MODUL 2: ANALISIS HEADCOUNT =================
         function renderDashboardView(selectedClass, selectedSubj, examType) {
             document.getElementById('kpi-subj-label').textContent = selectedSubj;
             const examLabel = (examType === 'AR') ? 'AR (Ujian Semasa)' : 'UASA (Akhir)';
@@ -631,7 +828,10 @@
 
             const gradeCounts = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, TH: 0 };
             const dashTbody = document.getElementById('dash-table-body');
+            const interventionTbody = document.getElementById('intervention-table-body');
+            const interventionStudents = [];
             dashTbody.innerHTML = '';
+            interventionTbody.innerHTML = '';
 
             students.forEach((name, idx) => {
                 const tov = cachedMarks[name]?.['TOV'] ?? null;
@@ -649,6 +849,9 @@
                         mtmCount++;
                     } else {
                         gagalCount++;
+                        if (gradeInfo.grade === 'F') {
+                            interventionStudents.push({ name, score });
+                        }
                     }
                 } else {
                     thCount++;
@@ -684,6 +887,31 @@
                 `;
                 dashTbody.appendChild(tr);
             });
+
+            document.getElementById('intervention-subtitle').textContent = `Murid Gred F bagi ${examLabel} • ${selectedClass} • ${selectedSubj}`;
+            document.getElementById('intervention-count-badge').textContent = `${interventionStudents.length} Murid`;
+
+            if (interventionStudents.length === 0) {
+                interventionTbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="py-6 px-4 text-center text-emerald-400 font-bold">Tiada murid Gred F untuk pilihan ini.</td>
+                    </tr>
+                `;
+            } else {
+                interventionStudents.forEach((student, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-rose-950/20 transition-colors';
+                    row.innerHTML = `
+                        <td class="py-2.5 px-3 text-center text-slate-500">${index + 1}</td>
+                        <td class="py-2.5 px-4 font-bold text-white">${student.name}</td>
+                        <td class="py-2.5 px-3 text-center text-rose-300 font-extrabold">${student.score}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <span class="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-300 border border-rose-500/20 font-black">F</span>
+                        </td>
+                    `;
+                    interventionTbody.appendChild(row);
+                });
+            }
 
             const hadirRate = students.length > 0 ? ((hadirCount / students.length) * 100).toFixed(1) : '0.0';
             const mtmRate = hadirCount > 0 ? ((mtmCount / hadirCount) * 100).toFixed(1) : '0.0';
