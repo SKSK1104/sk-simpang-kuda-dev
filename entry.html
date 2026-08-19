@@ -97,7 +97,7 @@
         <!-- Main Portal Workspace (Protected) -->
         <section id="portal-section" class="hidden space-y-6">
 
-            <!-- MAIN ACTION MODULE NAVIGATION CARDS -->
+            <!-- MAIN ACTION NAVIGATION CARDS -->
             <div id="main-nav-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Card 1: Pengisian Markah -->
                 <button onclick="setMainModule('entry')" id="nav-btn-entry" class="p-5 rounded-2xl border-2 border-blue-500 bg-blue-600/10 text-left flex items-center gap-5 transition hover:bg-blue-600/20 group">
@@ -107,7 +107,7 @@
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-0.5">Modul 1</span>
                         <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH MURID</h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Pilih jenis pentaksiran (AR / UASA / TOV / ETR), kelas, dan subjek.</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Pilih jenis pentaksiran, kelas, dan subjek mengikut Tahap.</p>
                     </div>
                 </button>
 
@@ -135,10 +135,10 @@
                             Jenis Pentaksiran
                         </label>
                         <select id="select-exam" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <option value="AR1">AR1 (Ujian Semasa / Pertengahan)</option>
+                            <option value="AR1">AR1 (Ujian Semasa)</option>
                             <option value="UASA">UASA (Ujian Akhir Sesi Akademik)</option>
-                            <option value="TOV">TOV (Take-Off Value / Markah Asas)</option>
-                            <option value="ETR">ETR (Expected Target / Sasaran Akhir)</option>
+                            <option value="TOV">TOV (Markah Asas)</option>
+                            <option value="ETR">ETR (Sasaran Akhir)</option>
                         </select>
                     </div>
 
@@ -162,14 +162,14 @@
                         </select>
                     </div>
 
-                    <!-- 3. Subjek Selector (Populated dynamically) -->
+                    <!-- 3. Subjek Selector -->
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
                             <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">3</span>
                             Pilih Mata Pelajaran
                         </label>
                         <select id="select-subject" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <!-- Populated by JS -->
+                            <!-- Populated dynamically -->
                         </select>
                     </div>
 
@@ -368,48 +368,37 @@
         let perfChartInstance = null;
         let gradeChartInstance = null;
 
-        // Subject lists per Tahap
+        // Subject lists separated by Tahap
         const SUBJECTS_TAHAP_1 = [
             { code: "BM", name: "Bahasa Melayu (BM)" },
             { code: "BI", name: "Bahasa Inggeris (BI)" },
-            { code: "MAT", name: "Matematik (MAT)" },
+            { code: "MT", name: "Matematik (MT)" },
             { code: "SN", name: "Sains (SN)" },
             { code: "PI", name: "Pendidikan Islam (PI)" },
-            { code: "PM", name: "Pendidikan Moral (PM)" },
-            { code: "BI_IBAN", name: "Bahasa Iban (BI_IBAN)" }
+            { code: "PM", name: "Pendidikan Moral (PM)" }
         ];
 
         const SUBJECTS_TAHAP_2 = [
             { code: "BM", name: "Bahasa Melayu (BM)" },
             { code: "BI", name: "Bahasa Inggeris (BI)" },
-            { code: "MAT", name: "Matematik (MAT)" },
+            { code: "MT", name: "Matematik (MT)" },
             { code: "SN", name: "Sains (SN)" },
             { code: "SEJ", name: "Sejarah (SEJ)" },
-            { code: "RBT", name: "Reka Bentuk & Teknologi (RBT)" },
             { code: "PI", name: "Pendidikan Islam (PI)" },
-            { code: "PM", name: "Pendidikan Moral (PM)" },
-            { code: "BI_IBAN", name: "Bahasa Iban (BI_IBAN)" }
-        ];
-
-        const MUSLIM_WHITELIST = [
-            "MOHAMAD AMZAR AIMAN BIN ABDULLAH", "MOHAMAD FARHAN BIN ABDULLAH", "MOHAMMAD FAHRIN BIN ROSLI",
-            "MUHAMMAD ARIF HAZIQ BIN MOHAMAD FAIZUL", "NUR AFIFA NAJWA BINTI SUHAIMI", "NUR AMIRA DANIA BINTI ABDUL RAHMAN",
-            "NUR AMIRA MAISARAH BINTI RAZALI", "NUR DANIA BATRISYA BINTI ZAINAL", "NUR FARISHA AMIRA BINTI MOHD FAIZAL",
-            "NUR IZZAH INSYIRAH BINTI KHAIRUL", "NUR SYAFIQAH BINTI MOHD SHAH", "NURUL AINA NAJWA BINTI ABDULLAH",
-            "NURUL FARHANA BINTI ISMAIL", "PUTERA NUR IMAN BIN ABDULLAH", "SITI NUR AISYAH BINTI MAT DAUD",
-            "SITI NUR FATIHAH BINTI ABDULLAH"
+            { code: "PM", name: "Pendidikan Moral (PM)" }
         ];
 
         function isTahap1(className) {
             return className.startsWith("1") || className.startsWith("2") || className.startsWith("3");
         }
 
-        function populateSubjects(className) {
+        function populateSubjects() {
+            const classVal = document.getElementById('select-class').value;
             const subjSelect = document.getElementById('select-subject');
-            const previousVal = subjSelect.value;
+            const currentVal = subjSelect.value;
             subjSelect.innerHTML = '';
 
-            const list = isTahap1(className) ? SUBJECTS_TAHAP_1 : SUBJECTS_TAHAP_2;
+            const list = isTahap1(classVal) ? SUBJECTS_TAHAP_1 : SUBJECTS_TAHAP_2;
             list.forEach(sub => {
                 const opt = document.createElement('option');
                 opt.value = sub.code;
@@ -417,17 +406,23 @@
                 subjSelect.appendChild(opt);
             });
 
-            if (list.some(s => s.code === previousVal)) {
-                subjSelect.value = previousVal;
+            if (list.some(s => s.code === currentVal)) {
+                subjSelect.value = currentVal;
             } else {
                 subjSelect.value = "BM";
             }
         }
 
         function handleClassChange() {
-            const selectedClass = document.getElementById('select-class').value;
-            populateSubjects(selectedClass);
+            populateSubjects();
             refreshCurrentView();
+        }
+
+        function isMuslimStudent(name) {
+            const n = name.toUpperCase();
+            return n.includes(' BIN ') || n.includes(' BINTI ') || n.includes(' BIN. ') || n.includes(' BINTI. ') || 
+                   n.startsWith('MUHAMMAD ') || n.startsWith('MOHAMAD ') || n.startsWith('MOHD ') || 
+                   n.startsWith('NUR ') || n.startsWith('SITI ') || n.includes(' ABDULLAH ');
         }
 
         function calculateUasaGrade(score) {
@@ -519,9 +514,9 @@
                 }
             }
             if (selectedSubj === 'PI') {
-                students = students.filter(name => MUSLIM_WHITELIST.includes(name.trim().toUpperCase()));
+                students = students.filter(name => isMuslimStudent(name));
             } else if (selectedSubj === 'PM') {
-                students = students.filter(name => !MUSLIM_WHITELIST.includes(name.trim().toUpperCase()));
+                students = students.filter(name => !isMuslimStudent(name));
             }
             return students;
         }
