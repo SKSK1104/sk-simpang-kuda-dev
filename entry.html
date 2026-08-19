@@ -361,9 +361,81 @@ const PENDIDIKAN_ISLAM_ROSTER = {
                 max-height: 220px !important;
             }
         }
+    
+        #auth-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #0c1427;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #auth-gate.hidden {
+            display: none !important;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background: #111c38;
+            border: 1px solid #1e293b;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 24px 60px rgba(0,0,0,.35);
+        }
+
+        .auth-input {
+            width: 100%;
+            background: #090f1f;
+            color: #f8fafc;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 12px 14px;
+            outline: none;
+        }
+
+        .auth-input:focus {
+            border-color: #3b82f6;
+        }
+
+        @media print {
+            #auth-gate { display: none !important; }
+        }
+
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased pb-12">
+    <div id="auth-gate">
+        <div class="auth-card">
+            <div class="mb-6">
+                <div class="text-xs font-bold uppercase tracking-[0.18em] text-blue-400 mb-2">Akses Guru</div>
+                <h1 class="text-2xl font-extrabold text-white">Portal Pengisian Markah</h1>
+                <p class="text-sm text-slate-400 mt-2">Masukkan ID pentadbir dan kata laluan.</p>
+            </div>
+
+            <form onsubmit="return handleSupabaseLogin(event)" class="space-y-4">
+                <div>
+                    <label for="admin-id" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">ID Pentadbir</label>
+                    <input id="admin-id" class="auth-input" type="text" autocomplete="username" placeholder="admin" required>
+                </div>
+
+                <div>
+                    <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Kata Laluan</label>
+                    <input id="admin-password" class="auth-input" type="password" autocomplete="current-password" placeholder="Masukkan kata laluan" required>
+                </div>
+
+                <div id="auth-error" class="hidden text-sm font-bold text-rose-400"></div>
+
+                <button id="login-btn" type="submit" class="w-full rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3 transition">
+                    Masuk
+                </button>
+            </form>
+        </div>
+    </div>
+
 
     <!-- Header -->
     <header class="bg-[#090f1f] border-b border-slate-800 sticky top-0 z-50">
@@ -384,6 +456,9 @@ const PENDIDIKAN_ISLAM_ROSTER = {
                 <span class="text-xs text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
                     <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Portal Guru Aktif
                 </span>
+                <button onclick="logoutSupabase()" class="no-print text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg transition">
+                    Log Keluar
+                </button>
             </div>
         </div>
     </header>
@@ -690,6 +765,81 @@ const PENDIDIKAN_ISLAM_ROSTER = {
         const SUPABASE_URL = "https://cdmmkkbgjjowzvnpohrj.supabase.co";
         const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const ADMIN_AUTH_EMAIL = "admin@simpangkuda.com";
+
+        async function handleSupabaseLogin(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('admin-id').value.trim().toLowerCase();
+            const password = document.getElementById('admin-password').value;
+            const errorBox = document.getElementById('auth-error');
+            const loginBtn = document.getElementById('login-btn');
+
+            errorBox.classList.add('hidden');
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Menyemak...';
+
+            if (id !== 'admin') {
+                errorBox.textContent = 'ID pentadbir tidak betul.';
+                errorBox.classList.remove('hidden');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Masuk';
+                return false;
+            }
+
+            const { error } = await db.auth.signInWithPassword({
+                email: ADMIN_AUTH_EMAIL,
+                password
+            });
+
+            if (error) {
+                console.error('AUTH ERROR:', error);
+                errorBox.textContent = 'ID atau kata laluan tidak betul.';
+                errorBox.classList.remove('hidden');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Masuk';
+                return false;
+            }
+
+            document.getElementById('admin-password').value = '';
+            document.getElementById('auth-gate').classList.add('hidden');
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Masuk';
+            return false;
+        }
+
+        async function checkSupabaseSession() {
+            const { data, error } = await db.auth.getSession();
+            if (error) {
+                console.error('SESSION ERROR:', error);
+            }
+
+            const session = data?.session;
+            const gate = document.getElementById('auth-gate');
+
+            if (session?.user?.email === ADMIN_AUTH_EMAIL) {
+                gate.classList.add('hidden');
+            } else {
+                gate.classList.remove('hidden');
+            }
+        }
+
+        async function logoutSupabase() {
+            await db.auth.signOut();
+            document.getElementById('auth-gate').classList.remove('hidden');
+            document.getElementById('admin-password').value = '';
+        }
+
+        db.auth.onAuthStateChange((_event, session) => {
+            const gate = document.getElementById('auth-gate');
+            if (session?.user?.email === ADMIN_AUTH_EMAIL) {
+                gate.classList.add('hidden');
+            } else {
+                gate.classList.remove('hidden');
+            }
+        });
+
 
         // SENARAI MURID RASMI 2026
 
@@ -1368,6 +1518,7 @@ const PENDIDIKAN_ISLAM_ROSTER = {
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            await checkSupabaseSession();
             document.getElementById('select-exam-type').value = 'AR1';
             await loadAssessmentTabs();
             handleClassChange();
