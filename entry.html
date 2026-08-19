@@ -4,15 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Pengurusan Akademik | SK Simpang Kuda</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Shared Roster -->
     <script src="roster.js"></script>
     <style>
         body {
@@ -54,7 +49,7 @@
                     <h1 class="text-base font-extrabold tracking-tight uppercase text-white flex items-center gap-2">
                         PORTAL PENGURUSAN AKADEMIK <span class="text-xs bg-blue-600/30 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-bold">2026</span>
                     </h1>
-                    <p class="text-xs text-slate-400">SK Simpang Kuda (YBB1104) &bull; Dialog Prestasi &amp; Pengisian Markah</p>
+                    <p class="text-xs text-slate-400">SK Simpang Kuda (YBB1104) &bull; Dialog Prestasi &amp; Headcount Murid</p>
                 </div>
             </div>
             
@@ -94,31 +89,29 @@
             </form>
         </section>
 
-        <!-- Main Portal Workspace (Protected) -->
+        <!-- Main Portal Workspace -->
         <section id="portal-section" class="hidden space-y-6">
 
             <!-- MAIN ACTION NAVIGATION CARDS -->
             <div id="main-nav-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Card 1: Pengisian Markah -->
                 <button onclick="setMainModule('entry')" id="nav-btn-entry" class="p-5 rounded-2xl border-2 border-blue-500 bg-blue-600/10 text-left flex items-center gap-5 transition hover:bg-blue-600/20 group">
                     <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/30">
                         <i data-lucide="edit-3" class="w-7 h-7"></i>
                     </div>
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-0.5">Modul 1</span>
-                        <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH MURID</h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Pilih jenis pentaksiran, kelas, dan subjek mengikut Tahap.</p>
+                        <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH &amp; HEADCOUNT</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Isi markah TOV, Ujian Semasa (AR1), Sasaran (ETR), dan Akhir Sesi (UASA).</p>
                     </div>
                 </button>
 
-                <!-- Card 2: Dialog Prestasi / Analisis -->
                 <button onclick="setMainModule('dashboard')" id="nav-btn-dash" class="p-5 rounded-2xl border border-slate-800 bg-[#111c38] text-left flex items-center gap-5 transition hover:bg-slate-800/80 group">
                     <div class="w-14 h-14 rounded-2xl bg-slate-800 text-slate-300 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center flex-shrink-0 transition">
                         <i data-lucide="layout-dashboard" class="w-7 h-7"></i>
                     </div>
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Modul 2</span>
-                        <h2 class="text-base md:text-lg font-extrabold text-slate-200 group-hover:text-white transition-colors">DIALOG PRESTASI &amp; HEADCOUNT</h2>
+                        <h2 class="text-base md:text-lg font-extrabold text-slate-200 group-hover:text-white transition-colors">DIALOG PRESTASI &amp; HC3</h2>
                         <p class="text-xs text-slate-400 mt-0.5">Paparan eksekutif, perbandingan skor, % MTM, dan laporan HC3.</p>
                     </div>
                 </button>
@@ -126,26 +119,12 @@
 
             <!-- SELECTION PANEL -->
             <div id="selection-panel" class="dashboard-card rounded-2xl p-5 border border-slate-800">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
-                    <!-- 1. Assessment Switcher -->
+                    <!-- 1. Kelas Selector -->
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
                             <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">1</span>
-                            Jenis Pentaksiran
-                        </label>
-                        <select id="select-exam" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <option value="AR1">AR1 (Ujian Semasa)</option>
-                            <option value="UASA">UASA (Ujian Akhir Sesi Akademik)</option>
-                            <option value="TOV">TOV (Markah Asas)</option>
-                            <option value="ETR">ETR (Sasaran Akhir)</option>
-                        </select>
-                    </div>
-
-                    <!-- 2. Kelas Selector -->
-                    <div>
-                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">2</span>
                             Pilih Kelas
                         </label>
                         <select id="select-class" onchange="handleClassChange()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
@@ -162,31 +141,31 @@
                         </select>
                     </div>
 
-                    <!-- 3. Subjek Selector -->
+                    <!-- 2. Subjek Selector -->
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">3</span>
+                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">2</span>
                             Pilih Mata Pelajaran
                         </label>
                         <select id="select-subject" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <!-- Populated dynamically -->
+                            <!-- Populated by JS -->
                         </select>
                     </div>
 
                 </div>
             </div>
 
-            <!-- ================= VIEW 1: PENGISIAN MARKAH ================= -->
+            <!-- ================= VIEW 1: PENGISIAN MARKAH HEADCOUNT ================= -->
             <div id="view-entry" class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl space-y-0">
                 <div class="p-5 bg-slate-900/80 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div>
                         <h3 class="text-base font-extrabold text-white uppercase tracking-wide flex items-center gap-2">
-                            <i data-lucide="clipboard-edit" class="w-5 h-5 text-blue-400"></i> Borang Pengisian Markah Murid
+                            <i data-lucide="clipboard-edit" class="w-5 h-5 text-blue-400"></i> Borang Pengisian Headcount Murid
                         </h3>
-                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi markah (0 - 100). Gred dikira secara automatik.</p>
+                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi markah TOV, AR1, ETR, dan UASA secara serentak.</p>
                     </div>
-                    <button onclick="saveCurrentAssessmentMarks()" id="save-marks-btn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
-                        <i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Markah ke Cloud
+                    <button onclick="saveAllMarks()" id="save-marks-btn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
+                        <i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Semua Markah ke Cloud
                     </button>
                 </div>
 
@@ -194,14 +173,18 @@
                     <table class="w-full text-left text-sm border-collapse">
                         <thead class="bg-[#090f1f] text-slate-400 uppercase font-extrabold sticky top-0 z-10 border-b border-slate-800 text-xs">
                             <tr>
-                                <th class="py-3.5 px-4 w-12 text-center">Bil</th>
-                                <th class="py-3.5 px-5">Nama Penuh Murid</th>
-                                <th class="py-3.5 px-4 w-40 text-center text-sky-400" id="th-exam-name">Markah</th>
-                                <th class="py-3.5 px-4 w-32 text-center">Gred Pencapaian</th>
+                                <th class="py-3.5 px-3 w-10 text-center">Bil</th>
+                                <th class="py-3.5 px-4">Nama Penuh Murid</th>
+                                <th class="py-3.5 px-2 w-24 text-center">TOV (Asas)</th>
+                                <th class="py-3.5 px-2 w-24 text-center text-sky-400">AR1 (Ujian 1)</th>
+                                <th class="py-3.5 px-2 w-16 text-center text-sky-400">Gred AR1</th>
+                                <th class="py-3.5 px-2 w-24 text-center text-orange-400">ETR (Sasaran)</th>
+                                <th class="py-3.5 px-2 w-24 text-center text-emerald-400">UASA (Akhir)</th>
+                                <th class="py-3.5 px-2 w-16 text-center text-emerald-400">Gred UASA</th>
                             </tr>
                         </thead>
                         <tbody id="entry-table-body" class="divide-y divide-slate-800/80 text-slate-200">
-                            <!-- Injected by JS -->
+                            <!-- Populated via JS -->
                         </tbody>
                     </table>
                 </div>
@@ -216,7 +199,6 @@
 
                 <!-- 4 Top Executive KPI Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Enrolmen -->
                     <div class="bg-gradient-to-br from-[#134e96] to-[#0d2f66] rounded-2xl p-5 shadow-lg border border-blue-400/20 text-white">
                         <div class="flex justify-between items-start">
                             <div>
@@ -233,7 +215,6 @@
                         </div>
                     </div>
 
-                    <!-- Kehadiran AR1 -->
                     <div class="bg-gradient-to-br from-[#0284c7] to-[#0369a1] rounded-2xl p-5 shadow-lg border border-sky-400/20 text-white">
                         <div class="flex justify-between items-start">
                             <div>
@@ -250,7 +231,6 @@
                         </div>
                     </div>
 
-                    <!-- Capai MTM AR1 -->
                     <div class="bg-gradient-to-br from-[#15803d] to-[#166534] rounded-2xl p-5 shadow-lg border border-emerald-400/20 text-white">
                         <div class="flex justify-between items-start">
                             <div>
@@ -267,7 +247,6 @@
                         </div>
                     </div>
 
-                    <!-- UASA Sebenar vs ETR -->
                     <div class="bg-gradient-to-br from-[#c2410c] to-[#9a3412] rounded-2xl p-5 shadow-lg border border-orange-400/20 text-white">
                         <div class="flex justify-between items-start">
                             <div>
@@ -291,9 +270,9 @@
                         <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
                             <div>
                                 <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400"></i> Perbandingan Skor Headcount: TOV vs AR1 vs ETR vs UASA
+                                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400"></i> Perbandingan Skor: TOV vs AR1 vs ETR vs UASA
                                 </h3>
-                                <p class="text-xs text-slate-400">Analisis purata skor murid bagi subjek semasa</p>
+                                <p class="text-xs text-slate-400">Analisis kemajuan purata murid sepanjang sesi akademik</p>
                             </div>
                             <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center gap-2 transition border border-slate-700">
                                 <i data-lucide="printer" class="w-4 h-4"></i> Cetak HC3
@@ -307,9 +286,9 @@
                     <div class="dashboard-card rounded-2xl p-5 border border-slate-800 shadow-xl flex flex-col justify-between">
                         <div>
                             <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-1">
-                                <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Taburan Gred AR1
+                                <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Taburan Gred Terkini (AR1)
                             </h3>
-                            <p class="text-xs text-slate-400 mb-4">Pecahan gred semasa kelas</p>
+                            <p class="text-xs text-slate-400 mb-4">Pecahan gred kelas semasa</p>
                             <div class="h-56 w-full flex items-center justify-center">
                                 <canvas id="gradeDistributionChart"></canvas>
                             </div>
@@ -324,7 +303,7 @@
                 <div class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
                     <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex justify-between items-center">
                         <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                            <i data-lucide="table" class="w-4 h-4 text-blue-400"></i> Analisis Headcount Lengkap Murid (HC3)
+                            <i data-lucide="table" class="w-4 h-4 text-blue-400"></i> Senarai Headcount Lengkap (TOV ➔ AR1 ➔ ETR ➔ UASA)
                         </h3>
                         <span id="dash-calon-badge" class="text-xs font-bold px-3 py-1 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">0 Calon</span>
                     </div>
@@ -339,7 +318,7 @@
                                     <th class="py-3 px-3 text-center text-orange-400">ETR</th>
                                     <th class="py-3 px-3 text-center text-emerald-400">UASA</th>
                                     <th class="py-3 px-3 text-center">Jurang (AR1 - TOV)</th>
-                                    <th class="py-3 px-3 text-center">Status Akhir</th>
+                                    <th class="py-3 px-3 text-center">Pencapaian UASA</th>
                                 </tr>
                             </thead>
                             <tbody id="dash-table-body" class="divide-y divide-slate-800 text-slate-200">
@@ -358,7 +337,6 @@
     <script>
         lucide.createIcons();
 
-        // Supabase Client Config
         const SUPABASE_URL = "https://cdmmkkbgjjowzvnpohrj.supabase.co";
         const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -368,7 +346,7 @@
         let perfChartInstance = null;
         let gradeChartInstance = null;
 
-        // Subject lists separated by Tahap
+        // Tahap 1: BM, BI, MT, SN, PI, PM
         const SUBJECTS_TAHAP_1 = [
             { code: "BM", name: "Bahasa Melayu (BM)" },
             { code: "BI", name: "Bahasa Inggeris (BI)" },
@@ -378,6 +356,7 @@
             { code: "PM", name: "Pendidikan Moral (PM)" }
         ];
 
+        // Tahap 2: BM, BI, MT, SN, SEJ, PI, PM
         const SUBJECTS_TAHAP_2 = [
             { code: "BM", name: "Bahasa Melayu (BM)" },
             { code: "BI", name: "Bahasa Inggeris (BI)" },
@@ -544,58 +523,77 @@
         async function refreshCurrentView() {
             const selectedClass = document.getElementById('select-class').value;
             const selectedSubj = document.getElementById('select-subject').value;
-            const selectedExam = document.getElementById('select-exam').value;
             if (!selectedSubj) return;
 
             await fetchMarks(selectedClass, selectedSubj);
 
             if (activeModule === 'entry') {
-                renderEntryForm(selectedClass, selectedSubj, selectedExam);
+                renderEntryForm(selectedClass, selectedSubj);
             } else {
                 renderDashboardView(selectedClass, selectedSubj);
             }
         }
 
-        function renderEntryForm(selectedClass, selectedSubj, selectedExam) {
+        function renderEntryForm(selectedClass, selectedSubj) {
             const students = getStudents(selectedClass, selectedSubj);
             const tbody = document.getElementById('entry-table-body');
             tbody.innerHTML = '';
 
-            document.getElementById('th-exam-name').textContent = `Markah ${selectedExam}`;
-            document.getElementById('entry-subtitle').textContent = `Pengisian: ${selectedExam} | Kelas: ${selectedClass} | Subjek: ${selectedSubj}`;
+            document.getElementById('entry-subtitle').textContent = `Headcount Murid | Kelas: ${selectedClass} | Subjek: ${selectedSubj}`;
 
             if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-500 font-bold">Tiada calon berdaftar untuk subjek ini dalam kelas ${selectedClass}.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-500 font-bold">Tiada calon berdaftar untuk subjek ini dalam kelas ${selectedClass}.</td></tr>`;
                 return;
             }
 
             students.forEach((name, idx) => {
-                const currentScore = cachedMarks[name]?.[selectedExam] ?? '';
-                const gradeInfo = calculateUasaGrade(currentScore);
+                const tov = cachedMarks[name]?.['TOV'] ?? '';
+                const ar1 = cachedMarks[name]?.['AR1'] ?? '';
+                const etr = cachedMarks[name]?.['ETR'] ?? '';
+                const uasa = cachedMarks[name]?.['UASA'] ?? '';
+                
+                const gradeInfoAr1 = calculateUasaGrade(ar1);
+                const gradeInfoUasa = calculateUasaGrade(uasa);
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-800/40 transition-colors';
                 tr.innerHTML = `
-                    <td class="py-3 px-4 text-center text-slate-500 font-bold">${idx + 1}</td>
-                    <td class="py-3 px-5 font-bold text-white text-xs md:text-sm">${name}</td>
-                    <td class="py-3 px-4 text-center">
-                        <input type="number" min="0" max="100" value="${currentScore}" data-student="${name}" data-type="${selectedExam}" placeholder="-"
-                            oninput="onSingleMarkInput(this, 'badge-${idx}')"
-                            class="mark-input w-28 text-center bg-[#090f1f] border border-slate-700 rounded-xl py-2 text-sm text-sky-300 font-extrabold focus:outline-none focus:border-blue-500">
+                    <td class="py-3 px-3 text-center text-slate-500 font-bold">${idx + 1}</td>
+                    <td class="py-3 px-4 font-bold text-white text-xs md:text-sm">${name}</td>
+                    <td class="py-3 px-2 text-center">
+                        <input type="number" min="0" max="100" value="${tov}" data-student="${name}" data-type="TOV" placeholder="-"
+                            class="mark-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-white font-bold focus:outline-none focus:border-blue-500">
                     </td>
-                    <td class="py-3 px-4 text-center">
-                        <span id="badge-${idx}" class="inline-block w-12 py-1 rounded-lg border text-xs font-black ${gradeInfo.color}">${gradeInfo.grade}</span>
+                    <td class="py-3 px-2 text-center">
+                        <input type="number" min="0" max="100" value="${ar1}" data-student="${name}" data-type="AR1" placeholder="-"
+                            oninput="onMarkInput(this, 'ar1-badge-${idx}')"
+                            class="mark-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-sky-300 font-extrabold focus:outline-none focus:border-blue-500">
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        <span id="ar1-badge-${idx}" class="inline-block w-8 py-0.5 rounded border text-[11px] font-black ${gradeInfoAr1.color}">${gradeInfoAr1.grade}</span>
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        <input type="number" min="0" max="100" value="${etr}" data-student="${name}" data-type="ETR" placeholder="-"
+                            class="mark-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-orange-300 font-bold focus:outline-none focus:border-blue-500">
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        <input type="number" min="0" max="100" value="${uasa}" data-student="${name}" data-type="UASA" placeholder="-"
+                            oninput="onMarkInput(this, 'uasa-badge-${idx}')"
+                            class="mark-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-emerald-300 font-extrabold focus:outline-none focus:border-blue-500">
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        <span id="uasa-badge-${idx}" class="inline-block w-8 py-0.5 rounded border text-[11px] font-black ${gradeInfoUasa.color}">${gradeInfoUasa.grade}</span>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function onSingleMarkInput(elem, badgeId) {
+        function onMarkInput(elem, badgeId) {
             const gradeInfo = calculateUasaGrade(elem.value);
             const badge = document.getElementById(badgeId);
             if (badge) {
-                badge.className = `inline-block w-12 py-1 rounded-lg border text-xs font-black ${gradeInfo.color}`;
+                badge.className = `inline-block w-8 py-0.5 rounded border text-[11px] font-black ${gradeInfo.color}`;
                 badge.textContent = gradeInfo.grade;
             }
         }
@@ -726,7 +724,7 @@
             perfChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['TOV (Asas)', 'AR1 (Ujian Semasa)', 'ETR (Sasaran)', 'UASA (Akhir)'],
+                    labels: ['TOV (Asas)', 'AR1 (Ujian 1)', 'ETR (Sasaran)', 'UASA (Akhir)'],
                     datasets: [{
                         label: 'Purata Skor',
                         data: [Number(tov), Number(ar1), Number(etr), Number(uasa)],
@@ -789,10 +787,9 @@
             `;
         }
 
-        async function saveCurrentAssessmentMarks() {
+        async function saveAllMarks() {
             const selectedClass = document.getElementById('select-class').value;
             const selectedSubj = document.getElementById('select-subject').value;
-            const selectedExam = document.getElementById('select-exam').value;
             const statusDiv = document.getElementById('save-status');
             const saveBtn = document.getElementById('save-marks-btn');
 
@@ -805,6 +802,7 @@
 
             inputs.forEach(input => {
                 const sName = input.getAttribute('data-student');
+                const eType = input.getAttribute('data-type');
                 const valStr = input.value.trim();
                 const score = valStr === '' ? null : Number(valStr);
                 const grade = calculateUasaGrade(score).grade;
@@ -813,7 +811,7 @@
                     student_name: sName,
                     class_name: selectedClass,
                     subject_name: selectedSubj,
-                    exam_type: selectedExam,
+                    exam_type: eType,
                     score_val: score,
                     grade_val: grade,
                     updated_at: new Date().toISOString()
@@ -826,13 +824,13 @@
                     .upsert(rowsToUpsert, { onConflict: 'student_name,class_name,subject_name,exam_type' });
 
                 if (error) throw error;
-                statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold text-sm">✓ SEMUA MARKAH ${selectedExam} BERJAYA DISIMPAN KE CLOUD!</span>`;
+                statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold text-sm">✓ SEMUA MARKAH HEADCOUNT BERJAYA DISIMPAN KE CLOUD!</span>`;
             } catch (err) {
                 console.error(err);
                 statusDiv.innerHTML = `<span class="text-rose-400 font-extrabold text-sm">Ralat menyimpan ke cloud. Sila cuba lagi.</span>`;
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerHTML = `<i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Markah ke Cloud`;
+                saveBtn.innerHTML = `<i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Semua Markah ke Cloud`;
                 lucide.createIcons();
             }
         }
