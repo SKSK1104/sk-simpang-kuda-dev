@@ -33,7 +33,7 @@
         }
         @media print {
             body { background: white !important; color: black !important; }
-            header, #auth-status, #filter-section, #mode-nav, #save-footer, #login-section, .no-print { display: none !important; }
+            header, #auth-status, #filter-section, #mode-nav, #save-footer, #login-section, #hc-summary-cards, .no-print { display: none !important; }
             .glass-card { background: none !important; border: none !important; box-shadow: none !important; }
             table { width: 100% !important; border-collapse: collapse !important; color: black !important; }
             th, td { border: 1px solid #333 !important; padding: 6px !important; color: black !important; }
@@ -114,10 +114,10 @@
                 </button>
 
                 <button onclick="switchMode('headcount')" id="tab-hc-btn" class="flex items-center justify-center gap-3 p-4 rounded-2xl border border-gray-800 bg-gray-900/60 hover:bg-gray-800 text-gray-400 font-semibold transition">
-                    <i data-lucide="bar-chart-2" class="w-5 h-5 text-emerald-400"></i>
+                    <i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>
                     <div class="text-left">
-                        <div class="text-sm text-gray-200">Analisis &amp; Laporan Headcount</div>
-                        <div class="text-xs font-normal text-gray-400">Semak OTR, Defisit/Gap &amp; Cetak HC3</div>
+                        <div class="text-sm text-gray-200">Analisis Headcount &amp; Sasaran</div>
+                        <div class="text-xs font-normal text-gray-400">Semak jurang TOV ➔ AR1 ➔ ETR &amp; Cetak HC3</div>
                     </div>
                 </button>
             </div>
@@ -154,6 +154,22 @@
                 </div>
             </div>
 
+            <!-- Headcount KPI Mini Summary (Active only in Headcount mode) -->
+            <div id="hc-summary-cards" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card p-4 rounded-2xl border-l-4 border-emerald-500">
+                    <div class="text-xs text-gray-400 uppercase font-semibold">Mencapai Sasaran (AR1 ≥ TOV)</div>
+                    <div id="kpi-capai" class="text-2xl font-bold text-emerald-400 mt-1">0 Calon</div>
+                </div>
+                <div class="glass-card p-4 rounded-2xl border-l-4 border-rose-500">
+                    <div class="text-xs text-gray-400 uppercase font-semibold">Perlu Bimbingan (AR1 &lt; TOV)</div>
+                    <div id="kpi-defisit" class="text-2xl font-bold text-rose-400 mt-1">0 Calon</div>
+                </div>
+                <div class="glass-card p-4 rounded-2xl border-l-4 border-indigo-500">
+                    <div class="text-xs text-gray-400 uppercase font-semibold">Purata Peningkatan Skor</div>
+                    <div id="kpi-avg-gap" class="text-2xl font-bold text-indigo-400 mt-1">0</div>
+                </div>
+            </div>
+
             <!-- Print Header (Hidden on screen, visible on print) -->
             <div id="print-header" class="hidden text-black mb-4">
                 <h2 class="text-xl font-bold text-center">LAPORAN HEADCOUNT &amp; ANALISIS PRESTASI (HC3)</h2>
@@ -176,7 +192,7 @@
                             0 Calon
                         </span>
                         <button id="btn-print" onclick="window.print()" class="hidden px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 border border-gray-700 flex items-center gap-1.5 transition">
-                            <i data-lucide="printer" class="w-3.5 h-3.5"></i> Cetak Laporan
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i> Cetak Laporan HC3
                         </button>
                     </div>
                 </div>
@@ -213,7 +229,7 @@
         const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentMode = 'entry'; // 'entry' or 'headcount'
+        let currentMode = 'entry';
         let cachedMarks = {};
 
         const MUSLIM_WHITELIST = [
@@ -288,12 +304,14 @@
             const hcBtn = document.getElementById('tab-hc-btn');
             const saveFooter = document.getElementById('save-footer');
             const printBtn = document.getElementById('btn-print');
+            const hcCards = document.getElementById('hc-summary-cards');
 
             if (mode === 'entry') {
                 entryBtn.className = "flex items-center justify-center gap-3 p-4 rounded-2xl border-2 border-indigo-500 bg-indigo-500/10 text-white font-semibold transition";
                 hcBtn.className = "flex items-center justify-center gap-3 p-4 rounded-2xl border border-gray-800 bg-gray-900/60 hover:bg-gray-800 text-gray-400 font-semibold transition";
                 saveFooter.classList.remove('hidden');
                 printBtn.classList.add('hidden');
+                hcCards.classList.add('hidden');
                 document.getElementById('table-title').innerHTML = `<i data-lucide="edit-3" class="w-4 h-4 text-indigo-400"></i> Senarai Murid & Kemasukan Markah`;
                 document.getElementById('table-desc').textContent = "Isi markah TOV, AR1 dan sasaran ETR.";
             } else {
@@ -301,8 +319,9 @@
                 entryBtn.className = "flex items-center justify-center gap-3 p-4 rounded-2xl border border-gray-800 bg-gray-900/60 hover:bg-gray-800 text-gray-400 font-semibold transition";
                 saveFooter.classList.add('hidden');
                 printBtn.classList.remove('hidden');
-                document.getElementById('table-title').innerHTML = `<i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-400"></i> Analisis Sasaran &amp; Headcount`;
-                document.getElementById('table-desc').textContent = "Paparan sasaran OTR1, keputusan AR1 dan status pencapaian (Gap).";
+                hcCards.classList.remove('hidden');
+                document.getElementById('table-title').innerHTML = `<i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i> Analisis Headcount Murid`;
+                document.getElementById('table-desc').textContent = "Kemajuan murid dari TOV ke AR1 berbanding sasaran akhir (ETR).";
             }
             lucide.createIcons();
             renderCurrentView();
@@ -368,9 +387,9 @@
                     <tr class="border-b border-gray-800 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                         <th class="py-3 px-3 w-12 text-center">Bil</th>
                         <th class="py-3 px-4">Nama Penuh Murid</th>
-                        <th class="py-3 px-3 w-28 text-center">TOV</th>
-                        <th class="py-3 px-3 w-28 text-center">AR1</th>
-                        <th class="py-3 px-3 w-28 text-center">ETR</th>
+                        <th class="py-3 px-3 w-28 text-center">TOV (Asas)</th>
+                        <th class="py-3 px-3 w-28 text-center">AR1 (Ujian Semasa)</th>
+                        <th class="py-3 px-3 w-28 text-center">ETR (Sasaran Akhir)</th>
                         <th class="py-3 px-3 w-24 text-center">Gred AR1</th>
                     </tr>
                 `;
@@ -409,49 +428,69 @@
                     tbody.appendChild(tr);
                 });
             } else {
+                // HEADCOUNT VIEW (NO OTR)
                 thead.innerHTML = `
                     <tr class="border-b border-gray-800 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                         <th class="py-3 px-3 w-10 text-center">Bil</th>
                         <th class="py-3 px-4">Nama Penuh Murid</th>
-                        <th class="py-3 px-3 text-center">TOV</th>
-                        <th class="py-3 px-3 text-center">OTR 1</th>
-                        <th class="py-3 px-3 text-center text-indigo-400">AR 1</th>
-                        <th class="py-3 px-3 text-center">ETR</th>
-                        <th class="py-3 px-3 text-center">Gap / Defisit</th>
+                        <th class="py-3 px-3 text-center text-gray-400">TOV</th>
+                        <th class="py-3 px-3 text-center text-indigo-400">AR1</th>
+                        <th class="py-3 px-3 text-center text-emerald-400">ETR (Sasaran)</th>
+                        <th class="py-3 px-3 text-center">Kemajuan (AR1 - TOV)</th>
+                        <th class="py-3 px-3 text-center">Baki ke ETR</th>
                         <th class="py-3 px-3 text-center">Status</th>
                     </tr>
                 `;
 
                 tbody.innerHTML = '';
-                students.forEach((name, idx) => {
-                    const tov = Number(cachedMarks[name]?.['TOV']) || 0;
-                    const ar1 = Number(cachedMarks[name]?.['AR1']) || 0;
-                    const etr = Number(cachedMarks[name]?.['ETR']) || 0;
+                let countCapai = 0;
+                let countDefisit = 0;
+                let totalGap = 0;
+                let validCount = 0;
 
-                    const otr1 = Math.round(tov + ((etr - tov) / 2));
-                    const gap = ar1 - otr1;
-                    const isCapai = gap >= 0;
+                students.forEach((name, idx) => {
+                    const tov = cachedMarks[name]?.['TOV'] !== undefined && cachedMarks[name]?.['TOV'] !== null ? Number(cachedMarks[name]['TOV']) : null;
+                    const ar1 = cachedMarks[name]?.['AR1'] !== undefined && cachedMarks[name]?.['AR1'] !== null ? Number(cachedMarks[name]['AR1']) : null;
+                    const etr = cachedMarks[name]?.['ETR'] !== undefined && cachedMarks[name]?.['ETR'] !== null ? Number(cachedMarks[name]['ETR']) : null;
+
+                    const progress = (ar1 !== null && tov !== null) ? (ar1 - tov) : 0;
+                    const remToEtr = (etr !== null && ar1 !== null) ? (etr - ar1) : (etr || 0);
+                    const isImproved = progress >= 0;
+
+                    if (ar1 !== null && tov !== null) {
+                        validCount++;
+                        totalGap += progress;
+                        if (isImproved) countCapai++;
+                        else countDefisit++;
+                    }
 
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-gray-800/30 transition-colors';
                     tr.innerHTML = `
                         <td class="py-2.5 px-3 text-center text-gray-500 text-xs">${idx + 1}</td>
                         <td class="py-2.5 px-4 font-medium text-gray-200 text-xs md:text-sm">${name}</td>
-                        <td class="py-2.5 px-3 text-center text-gray-400">${tov || '-'}</td>
-                        <td class="py-2.5 px-3 text-center text-gray-300 font-semibold">${otr1 || '-'}</td>
-                        <td class="py-2.5 px-3 text-center text-indigo-300 font-bold">${ar1 || '-'}</td>
-                        <td class="py-2.5 px-3 text-center text-emerald-400 font-semibold">${etr || '-'}</td>
-                        <td class="py-2.5 px-3 text-center font-bold ${gap >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
-                            ${gap > 0 ? '+' + gap : gap}
+                        <td class="py-2.5 px-3 text-center text-gray-300 font-semibold">${tov ?? '-'}</td>
+                        <td class="py-2.5 px-3 text-center text-indigo-300 font-bold text-sm">${ar1 ?? '-'}</td>
+                        <td class="py-2.5 px-3 text-center text-emerald-400 font-semibold">${etr ?? '-'}</td>
+                        <td class="py-2.5 px-3 text-center font-bold ${progress >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${progress > 0 ? '+' + progress : progress}
+                        </td>
+                        <td class="py-2.5 px-3 text-center text-gray-400 font-medium">
+                            ${remToEtr > 0 ? remToEtr + ' lagi' : '✓ Tercapai'}
                         </td>
                         <td class="py-2.5 px-3 text-center">
-                            <span class="px-2 py-0.5 rounded text-xs font-semibold ${isCapai ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">
-                                ${isCapai ? 'Capai' : 'Defisit'}
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold ${isImproved ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">
+                                ${isImproved ? 'Meningkat' : 'Menurun'}
                             </span>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
+
+                // Update KPI Cards
+                document.getElementById('kpi-capai').textContent = `${countCapai} Murid`;
+                document.getElementById('kpi-defisit').textContent = `${countDefisit} Murid`;
+                document.getElementById('kpi-avg-gap').textContent = validCount > 0 ? (totalGap / validCount > 0 ? '+' : '') + (totalGap / validCount).toFixed(1) + ' mata' : '0 mata';
             }
         }
 
