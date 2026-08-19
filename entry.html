@@ -291,10 +291,16 @@ const PENDIDIKAN_ISLAM_ROSTER = {
                         <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">1</span>
                         Jenis Pentaksiran (Switcher)
                     </label>
-                    <input type="hidden" id="select-exam-type" value="AR">
+                    <input type="hidden" id="select-exam-type" value="AR1">
                     <div class="grid grid-cols-2 gap-2 p-1 bg-[#090f1f] border border-blue-500/50 rounded-xl">
                         <button type="button" id="exam-btn-ar" onclick="setExamType('AR')" class="px-4 py-2.5 rounded-lg text-sm font-extrabold bg-blue-600 text-white shadow transition">AR</button>
                         <button type="button" id="exam-btn-uasa" onclick="setExamType('UASA')" class="px-4 py-2.5 rounded-lg text-sm font-extrabold text-slate-400 hover:text-white hover:bg-slate-800 transition">UASA</button>
+                    </div>
+                    <div id="ar-number-wrap" class="mt-2 flex items-center gap-2">
+                        <label for="ar-number" class="text-xs font-bold text-slate-400 whitespace-nowrap">AR KE-</label>
+                        <input id="ar-number" type="number" min="1" step="1" value="1" oninput="updateARNumber()"
+                            class="w-20 bg-[#090f1f] border border-slate-700 rounded-lg px-3 py-2 text-sm font-extrabold text-blue-300 focus:outline-none focus:border-blue-500">
+                        <span class="text-[11px] text-slate-500">Tiada had bilangan AR</span>
                     </div>
                 </div>
 
@@ -618,7 +624,7 @@ const PENDIDIKAN_ISLAM_ROSTER = {
             let list = [];
             const t1 = isTahap1(classVal);
 
-            if (examType === 'AR') {
+            if (examType.startsWith('AR')) {
                 list = t1 ? SUBJECTS_AR_TAHAP_1 : SUBJECTS_AR_TAHAP_2;
             } else {
                 list = t1 ? SUBJECTS_UASA_TAHAP_1 : SUBJECTS_UASA_TAHAP_2;
@@ -638,14 +644,42 @@ const PENDIDIKAN_ISLAM_ROSTER = {
             }
         }
 
+        function getCurrentARKey() {
+            const input = document.getElementById('ar-number');
+            let number = parseInt(input?.value || '1', 10);
+            if (!Number.isFinite(number) || number < 1) number = 1;
+            if (input) input.value = number;
+            return `AR${number}`;
+        }
+
+        function updateARNumber() {
+            const current = document.getElementById('select-exam-type').value;
+            if (current.startsWith('AR')) {
+                document.getElementById('select-exam-type').value = getCurrentARKey();
+                refreshCurrentView();
+            }
+        }
+
         function setExamType(type) {
-            document.getElementById('select-exam-type').value = type;
+            const hiddenExam = document.getElementById('select-exam-type');
             const arBtn = document.getElementById('exam-btn-ar');
             const uasaBtn = document.getElementById('exam-btn-uasa');
+            const arNumberWrap = document.getElementById('ar-number-wrap');
             const activeClass = "px-4 py-2.5 rounded-lg text-sm font-extrabold bg-blue-600 text-white shadow transition";
             const inactiveClass = "px-4 py-2.5 rounded-lg text-sm font-extrabold text-slate-400 hover:text-white hover:bg-slate-800 transition";
-            arBtn.className = type === 'AR' ? activeClass : inactiveClass;
-            uasaBtn.className = type === 'UASA' ? activeClass : inactiveClass;
+
+            if (type === 'AR') {
+                hiddenExam.value = getCurrentARKey();
+                arBtn.className = activeClass;
+                uasaBtn.className = inactiveClass;
+                arNumberWrap.classList.remove('hidden');
+            } else {
+                hiddenExam.value = 'UASA';
+                arBtn.className = inactiveClass;
+                uasaBtn.className = activeClass;
+                arNumberWrap.classList.add('hidden');
+            }
+
             populateSubjects();
             refreshCurrentView();
         }
@@ -760,7 +794,7 @@ const PENDIDIKAN_ISLAM_ROSTER = {
             const tbody = document.getElementById('entry-table-body');
             tbody.innerHTML = '';
 
-            const examLabel = (examType === 'AR') ? 'AR (Ujian Semasa)' : 'UASA (Akhir)';
+            const examLabel = examType.startsWith('AR') ? `${examType} (Ujian Semasa)` : 'UASA (Akhir)';
             document.getElementById('th-current-exam').textContent = `Markah ${examLabel}`;
             document.getElementById('entry-subtitle').textContent = `Pentaksiran: ${examLabel} | Kelas: ${selectedClass} | Subjek: ${selectedSubj}`;
             document.getElementById('calon-count-badge').textContent = `${students.length} Calon Berdaftar`;
@@ -814,7 +848,7 @@ const PENDIDIKAN_ISLAM_ROSTER = {
         // ================= MODUL 2: ANALISIS HEADCOUNT =================
         function renderDashboardView(selectedClass, selectedSubj, examType) {
             document.getElementById('kpi-subj-label').textContent = selectedSubj;
-            const examLabel = (examType === 'AR') ? 'AR (Ujian Semasa)' : 'UASA (Akhir)';
+            const examLabel = examType.startsWith('AR') ? `${examType} (Ujian Semasa)` : 'UASA (Akhir)';
             document.getElementById('pie-subtitle').textContent = `Pecahan Gred Pentaksiran (${examLabel})`;
             document.getElementById('th-dash-current-exam').textContent = `Markah ${examLabel}`;
 
@@ -1004,8 +1038,40 @@ const PENDIDIKAN_ISLAM_ROSTER = {
         }
 
         // ================= SAVE TO SUPABASE =================
+        async function saveRowWithoutUniqueConstraint(row) {
+            const { data: existing, error: lookupError } = await db
+                .from('student_marks')
+                .select('student_name')
+                .eq('student_name', row.student_name)
+                .eq('class_name', row.class_name)
+                .eq('subject_name', row.subject_name)
+                .eq('exam_type', row.exam_type)
+                .limit(1);
+
+            if (lookupError) throw lookupError;
+
+            if (existing && existing.length > 0) {
+                const { error: updateError } = await db
+                    .from('student_marks')
+                    .update({
+                        score_val: row.score_val,
+                        grade_val: row.grade_val,
+                        updated_at: row.updated_at
+                    })
+                    .eq('student_name', row.student_name)
+                    .eq('class_name', row.class_name)
+                    .eq('subject_name', row.subject_name)
+                    .eq('exam_type', row.exam_type);
+                if (updateError) throw updateError;
+            } else {
+                const { error: insertError } = await db
+                    .from('student_marks')
+                    .insert(row);
+                if (insertError) throw insertError;
+            }
+        }
+
         async function saveAllMarks() {
-            const examType = document.getElementById('select-exam-type').value;
             const selectedClass = document.getElementById('select-class').value;
             const selectedSubj = document.getElementById('select-subject').value;
             const statusDiv = document.getElementById('save-status');
@@ -1013,10 +1079,11 @@ const PENDIDIKAN_ISLAM_ROSTER = {
 
             saveBtn.disabled = true;
             saveBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan...`;
+            statusDiv.innerHTML = `<span class="text-slate-400 font-bold">Menghubungi cloud...</span>`;
             lucide.createIcons();
 
             const inputs = document.querySelectorAll('.mark-input');
-            const rowsToUpsert = [];
+            const rowsToSave = [];
 
             inputs.forEach(input => {
                 const sName = input.getAttribute('data-student');
@@ -1025,7 +1092,7 @@ const PENDIDIKAN_ISLAM_ROSTER = {
                 const score = valStr === '' ? null : Number(valStr);
                 const grade = calculateGrade(score).grade;
 
-                rowsToUpsert.push({
+                rowsToSave.push({
                     student_name: sName,
                     class_name: selectedClass,
                     subject_name: selectedSubj,
@@ -1037,15 +1104,33 @@ const PENDIDIKAN_ISLAM_ROSTER = {
             });
 
             try {
-                const { data, error } = await db
+                const { error } = await db
                     .from('student_marks')
-                    .upsert(rowsToUpsert, { onConflict: 'student_name,class_name,subject_name,exam_type' });
+                    .upsert(rowsToSave, { onConflict: 'student_name,class_name,subject_name,exam_type' });
 
-                if (error) throw error;
-                statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold">✓ SEMUA MARKAH ${selectedClass} (${selectedSubj}) BERJAYA DISIMPAN KE CLOUD!</span>`;
+                if (error) {
+                    const msg = `${error.code || ''} ${error.message || ''}`.toLowerCase();
+                    const missingConflictConstraint =
+                        error.code === '42P10' ||
+                        msg.includes('no unique or exclusion constraint') ||
+                        msg.includes('on conflict');
+
+                    if (!missingConflictConstraint) throw error;
+
+                    for (const row of rowsToSave) {
+                        await saveRowWithoutUniqueConstraint(row);
+                    }
+                }
+
+                statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold">✓ MARKAH ${selectedClass} (${selectedSubj}) BERJAYA DISIMPAN KE CLOUD.</span>`;
+                await fetchMarks(selectedClass, selectedSubj);
             } catch (err) {
-                console.error(err);
-                statusDiv.innerHTML = `<span class="text-rose-400 font-extrabold">Ralat menyimpan ke cloud. Sila cuba lagi.</span>`;
+                console.error('SUPABASE SAVE ERROR:', err);
+                const detail = err?.message || err?.details || err?.hint || String(err);
+                statusDiv.innerHTML = `
+                    <div class="text-rose-400 font-extrabold">Gagal menyimpan ke cloud.</div>
+                    <div class="mt-1 text-[11px] text-rose-300 break-words">${detail}</div>
+                `;
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = `<i data-lucide="cloud-upload" class="w-4 h-4"></i> Simpan ke Cloud`;
@@ -1054,6 +1139,7 @@ const PENDIDIKAN_ISLAM_ROSTER = {
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('select-exam-type').value = getCurrentARKey();
             handleClassChange();
             lucide.createIcons();
         });
