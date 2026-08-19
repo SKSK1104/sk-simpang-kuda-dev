@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Analisis AR1 | SK Simpang Kuda</title>
+    <title>Analisis Prestasi AR1 | SK Simpang Kuda</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -12,8 +12,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Roster reference -->
-    <script src="roster.js"></script>
     <style>
         body {
             background-color: #0b0f19;
@@ -34,18 +32,9 @@
             border-radius: 9999px;
         }
         @media print {
-            body {
-                background: white !important;
-                color: black !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .glass-card {
-                background: transparent !important;
-                border: 1px solid #ddd !important;
-                box-shadow: none !important;
-            }
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .glass-card { background: transparent !important; border: 1px solid #ddd !important; box-shadow: none !important; }
         }
     </style>
 </head>
@@ -64,14 +53,14 @@
                         <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h1 class="text-sm font-semibold tracking-wide text-gray-100">Analisis Pencapaian Akademik (AR1)</h1>
-                        <p class="text-xs text-gray-400">SK Simpang Kuda (YBB1104)</p>
+                        <h1 class="text-sm font-semibold tracking-wide text-gray-100">Analisis Prestasi Akademik (AR1)</h1>
+                        <p class="text-xs text-gray-400">SK Simpang Kuda (YBB1104) &bull; UASA Standard Scale</p>
                     </div>
                 </div>
             </div>
             
             <div class="flex items-center gap-3">
-                <button onclick="window.print()" class="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors">
+                <button onclick="window.print()" class="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors" title="Cetak Laporan">
                     <i data-lucide="printer" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -80,7 +69,7 @@
 
     <main class="max-w-7xl mx-auto px-4 mt-6 flex-1 w-full space-y-6">
 
-        <!-- Filter Controls Bento -->
+        <!-- Filter Controls -->
         <section class="glass-card rounded-2xl p-5 shadow-xl no-print">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -121,9 +110,8 @@
             </div>
         </section>
 
-        <!-- Calon & KPI Metrics Bento -->
+        <!-- KPI Metrics Summary Cards -->
         <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Calon Summary Card -->
             <div class="glass-card p-5 rounded-2xl">
                 <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Bilangan Calon</div>
                 <div class="flex items-baseline gap-2 mt-1">
@@ -136,9 +124,8 @@
                 </div>
             </div>
 
-            <!-- MTM Rate Card -->
             <div class="glass-card p-5 rounded-2xl">
-                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Kadar MTM (A - D)</div>
+                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Kadar MTM (A - E)</div>
                 <div id="kpi-mtm" class="text-2xl md:text-3xl font-bold text-emerald-400 mt-1">0.0%</div>
                 <div class="text-xs text-gray-500 mt-2 flex items-center justify-between border-t border-gray-800/80 pt-2">
                     <span>Bil. Lulus: <b id="kpi-lulus-count" class="text-emerald-400">0</b></span>
@@ -146,23 +133,21 @@
                 </div>
             </div>
 
-            <!-- Belum Capai (E) Card -->
             <div class="glass-card p-5 rounded-2xl">
-                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Belum Capai MTM (E)</div>
-                <div id="kpi-fail" class="text-2xl md:text-3xl font-bold text-red-400 mt-1">0.0%</div>
+                <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Belum Capai MTM (F)</div>
+                <div id="kpi-fail" class="text-2xl md:text-3xl font-bold text-rose-400 mt-1">0.0%</div>
                 <div class="text-xs text-gray-500 mt-2 flex items-center justify-between border-t border-gray-800/80 pt-2">
-                    <span>Bil. Gagal: <b id="kpi-gagal-count" class="text-red-400">0</b></span>
-                    <span class="text-amber-400 text-xs">Perlu Intervensi</span>
+                    <span>Bil. Gagal: <b id="kpi-gagal-count" class="text-rose-400">0</b></span>
+                    <span class="text-rose-400 text-xs">Perlu Intervensi</span>
                 </div>
             </div>
 
-            <!-- GP Card -->
             <div class="glass-card p-5 rounded-2xl">
                 <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Gred Purata (GP)</div>
                 <div id="kpi-gp" class="text-2xl md:text-3xl font-bold text-cyan-400 mt-1">0.00</div>
                 <div class="text-xs text-gray-500 mt-2 flex items-center justify-between border-t border-gray-800/80 pt-2">
                     <span>Purata Skor: <b id="kpi-avg-score" class="text-cyan-400">0.0</b></span>
-                    <span class="text-xs text-gray-400">Skala 1 - 5</span>
+                    <span class="text-xs text-gray-400">Skala 1 - 6</span>
                 </div>
             </div>
         </section>
@@ -172,7 +157,7 @@
             <div class="glass-card p-5 rounded-2xl lg:col-span-2">
                 <h3 class="text-sm font-semibold text-gray-200 mb-4 flex items-center gap-2">
                     <i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-400"></i>
-                    Taburan Bilangan Calon Mengikut Gred
+                    Taburan Bilangan Calon Mengikut Gred (UASA)
                 </h3>
                 <div class="h-64">
                     <canvas id="gradeChart"></canvas>
@@ -190,67 +175,70 @@
             </div>
         </section>
 
-        <!-- Subject Summary Table with Calon Breakdown -->
+        <!-- Subject Summary Table (Official School Performance Report) -->
         <section class="glass-card rounded-2xl overflow-hidden shadow-xl">
             <div class="p-4 border-b border-gray-800 bg-gray-800/30 flex items-center justify-between">
-                <h3 class="text-sm font-semibold text-gray-200 flex items-center gap-2">
-                    <i data-lucide="table" class="w-4 h-4 text-indigo-400"></i>
-                    Analisis Mata Pelajaran & Bilangan Calon
-                </h3>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-200 flex items-center gap-2">
+                        <i data-lucide="table" class="w-4 h-4 text-indigo-400"></i>
+                        Analisis Prestasi Mengikut Mata Pelajaran
+                    </h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Rumusan bilangan calon, pecahan gred UASA (A-F), dan GPMP.</p>
+                </div>
             </div>
             <div class="overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-gray-800 bg-gray-800/50 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                             <th class="py-3 px-4">Mata Pelajaran</th>
-                            <th class="py-3 px-3 text-center">Daftar</th>
-                            <th class="py-3 px-3 text-center">Hadir</th>
-                            <th class="py-3 px-3 text-center text-emerald-400">A</th>
-                            <th class="py-3 px-3 text-center text-blue-400">B</th>
-                            <th class="py-3 px-3 text-center text-cyan-400">C</th>
-                            <th class="py-3 px-3 text-center text-amber-400">D</th>
-                            <th class="py-3 px-3 text-center text-red-400">E</th>
-                            <th class="py-3 px-3 text-center text-gray-400">TH</th>
-                            <th class="py-3 px-4 text-center text-emerald-400">% MTM</th>
-                            <th class="py-3 px-4 text-center text-cyan-400">GPMP</th>
+                            <th class="py-3 px-2.5 text-center">Daftar</th>
+                            <th class="py-3 px-2.5 text-center">Hadir</th>
+                            <th class="py-3 px-2.5 text-center text-emerald-400">A</th>
+                            <th class="py-3 px-2.5 text-center text-blue-400">B</th>
+                            <th class="py-3 px-2.5 text-center text-cyan-400">C</th>
+                            <th class="py-3 px-2.5 text-center text-amber-400">D</th>
+                            <th class="py-3 px-2.5 text-center text-orange-400">E</th>
+                            <th class="py-3 px-2.5 text-center text-rose-400">F</th>
+                            <th class="py-3 px-2.5 text-center text-gray-400">TH</th>
+                            <th class="py-3 px-3 text-center text-emerald-400">% MTM</th>
+                            <th class="py-3 px-3 text-center text-cyan-400">GPMP</th>
                         </tr>
                     </thead>
                     <tbody id="summary-table-body" class="divide-y divide-gray-800/60 text-sm">
                         <tr>
-                            <td colspan="11" class="py-8 text-center text-gray-500">Memuatkan data analisis...</td>
+                            <td colspan="12" class="py-8 text-center text-gray-500">Memuatkan data analisis...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- Individual Student Marks Roster View (Reflecting Actual Calon) -->
+        <!-- Anonymized Verification Roster (PDPA Compliant) -->
         <section class="glass-card rounded-2xl overflow-hidden shadow-xl">
             <div class="p-4 border-b border-gray-800 bg-gray-800/30 flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-semibold text-gray-200 flex items-center gap-2">
-                        <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
-                        Senarai Calon & Markah Terperinci
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                        Log Taburan Calon Rawak (Nyah-Pengenalan / PDPA)
                     </h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Memaparkan nama setiap calon berdaftar bagi pilihan tapisan semasa.</p>
+                    <p class="text-xs text-gray-400 mt-0.5">Identiti murid dilindungi mengikut garis panduan privasi data KPM.</p>
                 </div>
             </div>
-            <div class="overflow-x-auto custom-scrollbar max-h-96">
+            <div class="overflow-x-auto custom-scrollbar max-h-80">
                 <table class="w-full text-left border-collapse">
                     <thead class="sticky top-0 bg-gray-900 z-10">
                         <tr class="border-b border-gray-800 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            <th class="py-3 px-4 w-12 text-center">Bil</th>
-                            <th class="py-3 px-4">Nama Calon</th>
+                            <th class="py-3 px-4 w-16 text-center">Bil</th>
+                            <th class="py-3 px-4">Kod Calon</th>
                             <th class="py-3 px-4 w-32">Kelas</th>
                             <th class="py-3 px-4 w-36">Mata Pelajaran</th>
-                            <th class="py-3 px-4 w-28 text-center">Markah</th>
                             <th class="py-3 px-4 w-24 text-center">Gred</th>
-                            <th class="py-3 px-4 w-32 text-center">Status</th>
+                            <th class="py-3 px-4 w-36 text-center">Pencapaian</th>
                         </tr>
                     </thead>
                     <tbody id="student-detail-body" class="divide-y divide-gray-800/60 text-sm">
                         <tr>
-                            <td colspan="7" class="py-8 text-center text-gray-500">Sila pilih tapisan untuk melihat senarai calon.</td>
+                            <td colspan="6" class="py-8 text-center text-gray-500">Sila pilih tapisan untuk melihat taburan.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -270,16 +258,18 @@
         let gradeChartInstance = null;
         let mtmChartInstance = null;
 
+        // Official UASA Standard 6-Tier Scale
         function calculateGrade(score) {
             if (score === null || score === undefined || score === '' || isNaN(score)) {
                 return { grade: 'TH', desc: 'Tidak Hadir', color: 'text-gray-400 bg-gray-800' };
             }
             const s = Number(score);
-            if (s >= 80) return { grade: 'A', desc: 'Cemerlang', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' };
-            if (s >= 65) return { grade: 'B', desc: 'Kepujian', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' };
+            if (s >= 82) return { grade: 'A', desc: 'Cemerlang', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' };
+            if (s >= 66) return { grade: 'B', desc: 'Kepujian', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' };
             if (s >= 50) return { grade: 'C', desc: 'Baik', color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' };
-            if (s >= 40) return { grade: 'D', desc: 'Memuaskan', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' };
-            return { grade: 'E', desc: 'Belum Capai', color: 'text-red-400 bg-red-500/10 border-red-500/20' };
+            if (s >= 35) return { grade: 'D', desc: 'Memuaskan', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' };
+            if (s >= 20) return { grade: 'E', desc: 'Mencapai Minimum', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' };
+            return { grade: 'F', desc: 'Belum Capai', color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' };
         }
 
         async function initDashboardData() {
@@ -317,7 +307,7 @@
             let totalTH = filtered.filter(r => r.grade_val === 'TH' || r.score_val === null).length;
             let totalHadir = totalDaftar - totalTH;
 
-            let gradeCounts = { A: 0, B: 0, C: 0, D: 0, E: 0, TH: 0 };
+            let gradeCounts = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, TH: 0 };
             let totalScoreSum = 0;
             let scoredCount = 0;
             let totalLulus = 0;
@@ -334,13 +324,14 @@
                     scoredCount++;
                 }
 
-                if (['A', 'B', 'C', 'D'].includes(g)) totalLulus++;
-                else if (g === 'E') totalGagal++;
+                // UASA MTM is A through E (>=20), F is Belum Capai
+                if (['A', 'B', 'C', 'D', 'E'].includes(g)) totalLulus++;
+                else if (g === 'F') totalGagal++;
 
                 // Map per subject
                 const s = r.subject_name;
                 if (!subjectMap[s]) {
-                    subjectMap[s] = { daftar: 0, hadir: 0, th: 0, A:0, B:0, C:0, D:0, E:0, TH:0, totalPoints: 0 };
+                    subjectMap[s] = { daftar: 0, hadir: 0, th: 0, A:0, B:0, C:0, D:0, E:0, F:0, TH:0, totalPoints: 0 };
                 }
                 subjectMap[s].daftar++;
                 if (g === 'TH') {
@@ -349,7 +340,7 @@
                 } else {
                     subjectMap[s].hadir++;
                     subjectMap[s][g]++;
-                    const point = g === 'A' ? 1 : g === 'B' ? 2 : g === 'C' ? 3 : g === 'D' ? 4 : 5;
+                    const point = g === 'A' ? 1 : g === 'B' ? 2 : g === 'C' ? 3 : g === 'D' ? 4 : g === 'E' ? 5 : 6;
                     subjectMap[s].totalPoints += point;
                 }
             });
@@ -367,7 +358,7 @@
             document.getElementById('kpi-lulus-count').textContent = totalLulus;
             document.getElementById('kpi-gagal-count').textContent = totalGagal;
 
-            const totalGpPoints = (gradeCounts.A * 1) + (gradeCounts.B * 2) + (gradeCounts.C * 3) + (gradeCounts.D * 4) + (gradeCounts.E * 5);
+            const totalGpPoints = (gradeCounts.A * 1) + (gradeCounts.B * 2) + (gradeCounts.C * 3) + (gradeCounts.D * 4) + (gradeCounts.E * 5) + (gradeCounts.F * 6);
             const overallGp = totalHadir > 0 ? (totalGpPoints / totalHadir).toFixed(2) : "0.00";
             const avgScore = scoredCount > 0 ? (totalScoreSum / scoredCount).toFixed(1) : "0.0";
 
@@ -380,11 +371,11 @@
 
             const subjs = Object.keys(subjectMap);
             if (subjs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" class="py-8 text-center text-gray-500">Tiada rekod calon dijumpai. Masukkan markah di borang kemasukan.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" class="py-8 text-center text-gray-500">Tiada rekod data dijumpai bagi pilihan tapisan ini.</td></tr>`;
             } else {
                 subjs.forEach(sb => {
                     const row = subjectMap[sb];
-                    const lulusCount = row.A + row.B + row.C + row.D;
+                    const lulusCount = row.A + row.B + row.C + row.D + row.E;
                     const mtm = row.hadir > 0 ? ((lulusCount / row.hadir) * 100).toFixed(1) : "0.0";
                     const gpmp = row.hadir > 0 ? (row.totalPoints / row.hadir).toFixed(2) : "0.00";
 
@@ -392,27 +383,28 @@
                     tr.className = 'hover:bg-gray-800/20 transition-colors';
                     tr.innerHTML = `
                         <td class="py-3 px-4 font-medium text-gray-200">${sb}</td>
-                        <td class="py-3 px-3 text-center font-bold text-gray-300">${row.daftar}</td>
-                        <td class="py-3 px-3 text-center font-bold text-emerald-400">${row.hadir}</td>
-                        <td class="py-3 px-3 text-center text-emerald-400 font-bold">${row.A}</td>
-                        <td class="py-3 px-3 text-center text-blue-400 font-bold">${row.B}</td>
-                        <td class="py-3 px-3 text-center text-cyan-400 font-bold">${row.C}</td>
-                        <td class="py-3 px-3 text-center text-amber-400 font-bold">${row.D}</td>
-                        <td class="py-3 px-3 text-center text-red-400 font-bold">${row.E}</td>
-                        <td class="py-3 px-3 text-center text-gray-500 font-bold">${row.TH}</td>
-                        <td class="py-3 px-4 text-center font-bold text-emerald-400">${mtm}%</td>
-                        <td class="py-3 px-4 text-center font-bold text-cyan-400 font-mono">${gpmp}</td>
+                        <td class="py-3 px-2.5 text-center font-bold text-gray-300">${row.daftar}</td>
+                        <td class="py-3 px-2.5 text-center font-bold text-emerald-400">${row.hadir}</td>
+                        <td class="py-3 px-2.5 text-center text-emerald-400 font-bold">${row.A}</td>
+                        <td class="py-3 px-2.5 text-center text-blue-400 font-bold">${row.B}</td>
+                        <td class="py-3 px-2.5 text-center text-cyan-400 font-bold">${row.C}</td>
+                        <td class="py-3 px-2.5 text-center text-amber-400 font-bold">${row.D}</td>
+                        <td class="py-3 px-2.5 text-center text-orange-400 font-bold">${row.E}</td>
+                        <td class="py-3 px-2.5 text-center text-rose-400 font-bold">${row.F}</td>
+                        <td class="py-3 px-2.5 text-center text-gray-500 font-bold">${row.TH}</td>
+                        <td class="py-3 px-3 text-center font-bold text-emerald-400">${mtm}%</td>
+                        <td class="py-3 px-3 text-center font-bold text-cyan-400 font-mono">${gpmp}</td>
                     `;
                     tbody.appendChild(tr);
                 });
             }
 
-            // Render Calon Detail Table
+            // Render PDPA Anonymized Calon List (No personal names)
             const studentTbody = document.getElementById('student-detail-body');
             studentTbody.innerHTML = '';
 
             if (filtered.length === 0) {
-                studentTbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-gray-500">Tiada calon berdaftar untuk tapisan ini.</td></tr>`;
+                studentTbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-gray-500">Tiada rekod calon dijumpai.</td></tr>`;
             } else {
                 filtered.forEach((st, idx) => {
                     const gradeInfo = calculateGrade(st.score_val);
@@ -420,10 +412,9 @@
                     tr.className = 'hover:bg-gray-800/20 transition-colors';
                     tr.innerHTML = `
                         <td class="py-2.5 px-4 text-center text-gray-500 text-xs">${idx + 1}</td>
-                        <td class="py-2.5 px-4 font-medium text-gray-200">${st.student_name}</td>
+                        <td class="py-2.5 px-4 font-mono text-gray-300 text-xs font-semibold">CALON-${String(idx + 1).padStart(3, '0')}</td>
                         <td class="py-2.5 px-4 text-xs text-gray-400">${st.class_name}</td>
                         <td class="py-2.5 px-4 text-xs text-gray-400">${st.subject_name}</td>
-                        <td class="py-2.5 px-4 text-center font-bold text-white">${st.score_val !== null ? st.score_val : '<span class="text-gray-500">TH</span>'}</td>
                         <td class="py-2.5 px-4 text-center">
                             <span class="inline-block w-7 py-0.5 rounded border text-xs font-bold ${gradeInfo.color}">
                                 ${gradeInfo.grade}
@@ -445,10 +436,10 @@
             gradeChartInstance = new Chart(ctxBar, {
                 type: 'bar',
                 data: {
-                    labels: ['A (Cemerlang)', 'B (Kepujian)', 'C (Baik)', 'D (Memuaskan)', 'E (Belum Capai)', 'TH (Tidak Hadir)'],
+                    labels: ['A (82-100)', 'B (66-81)', 'C (50-65)', 'D (35-49)', 'E (20-34)', 'F (0-19)', 'TH'],
                     datasets: [{
-                        data: [grades.A, grades.B, grades.C, grades.D, grades.E, grades.TH],
-                        backgroundColor: ['#10b981', '#3b82f6', '#06b6d4', '#f59e0b', '#ef4444', '#6b7280'],
+                        data: [grades.A, grades.B, grades.C, grades.D, grades.E, grades.F, grades.TH],
+                        backgroundColor: ['#10b981', '#3b82f6', '#06b6d4', '#f59e0b', '#f97316', '#f43f5e', '#6b7280'],
                         borderRadius: 8
                     }]
                 },
@@ -469,10 +460,10 @@
             mtmChartInstance = new Chart(ctxPie, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Lulus MTM (A-D)', 'Belum Capai (E)'],
+                    labels: ['Lulus MTM (A-E)', 'Belum Capai (F)'],
                     datasets: [{
                         data: [passed, failed],
-                        backgroundColor: ['#10b981', '#ef4444'],
+                        backgroundColor: ['#10b981', '#f43f5e'],
                         borderWidth: 0
                     }]
                 },
