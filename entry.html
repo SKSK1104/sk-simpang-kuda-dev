@@ -221,11 +221,145 @@ const PENDIDIKAN_ISLAM_ROSTER = {
             border-radius: 9999px;
         }
         @media print {
-            body { background: white !important; color: black !important; }
-            header, #main-nav-cards, #selection-panel, #save-bar, .no-print { display: none !important; }
-            .dashboard-card { background: white !important; border: 1px solid #000 !important; color: black !important; }
-            table { width: 100% !important; border-collapse: collapse !important; font-size: 10px !important; }
-            th, td { border: 1px solid #000 !important; padding: 4px !important; color: black !important; }
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+
+            html, body {
+                background: #ffffff !important;
+                color: #111827 !important;
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-size: 10pt !important;
+            }
+
+            body {
+                display: block !important;
+            }
+
+            header, #main-nav-cards, #selection-panel, #save-bar, .no-print {
+                display: none !important;
+            }
+
+            main {
+                max-width: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: block !important;
+            }
+
+            #view-entry, #view-dashboard {
+                display: block !important;
+                width: 100% !important;
+            }
+
+            .dashboard-card {
+                background: #ffffff !important;
+                border: 1px solid #d1d5db !important;
+                box-shadow: none !important;
+                color: #111827 !important;
+                overflow: visible !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .overflow-x-auto,
+            .custom-scrollbar,
+            .max-h-\[520px\],
+            .max-h-72,
+            .max-h-96 {
+                overflow: visible !important;
+                max-height: none !important;
+                height: auto !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                table-layout: auto !important;
+                font-size: 8.5pt !important;
+                color: #111827 !important;
+            }
+
+            thead {
+                display: table-header-group !important;
+            }
+
+            tfoot {
+                display: table-footer-group !important;
+            }
+
+            tr {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            th {
+                background: #f3f4f6 !important;
+                color: #111827 !important;
+                border: 1px solid #9ca3af !important;
+                padding: 5px 6px !important;
+                font-weight: 700 !important;
+            }
+
+            td {
+                color: #111827 !important;
+                border: 1px solid #d1d5db !important;
+                padding: 5px 6px !important;
+                background: #ffffff !important;
+            }
+
+            h1, h2, h3, h4, p, span, div {
+                color: #111827 !important;
+            }
+
+            .text-rose-300, .text-rose-400, .text-emerald-400, .text-blue-400,
+            .text-cyan-400, .text-amber-400, .text-orange-400, .text-slate-400,
+            .text-slate-500, .text-white {
+                color: #111827 !important;
+            }
+
+            .bg-rose-500\/10, .bg-emerald-500\/10, .bg-blue-500\/10,
+            .bg-cyan-500\/10, .bg-amber-500\/10, .bg-orange-500\/10,
+            .bg-slate-800, .bg-slate-900\/90, .bg-\[\#090f1f\],
+            .bg-\[\#111c38\] {
+                background: #ffffff !important;
+            }
+
+            .print-report-header {
+                display: block !important;
+                margin-bottom: 10px !important;
+                padding-bottom: 8px !important;
+                border-bottom: 2px solid #111827 !important;
+            }
+
+            .print-report-header h1 {
+                font-size: 15pt !important;
+                font-weight: 800 !important;
+                margin: 0 !important;
+            }
+
+            .print-report-header p {
+                font-size: 9pt !important;
+                margin: 2px 0 0 0 !important;
+                color: #4b5563 !important;
+            }
+
+            .print-section-title {
+                font-size: 11pt !important;
+                font-weight: 800 !important;
+                margin: 10px 0 6px 0 !important;
+                color: #111827 !important;
+            }
+
+            canvas {
+                max-height: 220px !important;
+            }
         }
     </style>
 </head>
@@ -255,6 +389,10 @@ const PENDIDIKAN_ISLAM_ROSTER = {
     </header>
 
     <main class="max-w-[1700px] mx-auto px-4 lg:px-6 mt-6 flex-1 w-full space-y-6">
+        <div class="print-report-header hidden">
+            <h1>SK SIMPANG KUDA — LAPORAN PENGURUSAN AKADEMIK 2026</h1>
+            <p id="print-report-subtitle">Laporan pentaksiran murid</p>
+        </div>
 
         <!-- ================= 2 BIG NAVIGATION CARDS ================= -->
         <div id="main-nav-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -343,7 +481,7 @@ const PENDIDIKAN_ISLAM_ROSTER = {
                     <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Memuatkan data...</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold flex items-center gap-2 transition border border-slate-700">
+                    <button onclick="printCurrentReport('entry')" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold flex items-center gap-2 transition border border-slate-700">
                         <i data-lucide="printer" class="w-4 h-4"></i> Cetak
                     </button>
                     <button onclick="saveAllMarks()" id="save-marks-btn" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
@@ -377,6 +515,12 @@ const PENDIDIKAN_ISLAM_ROSTER = {
 
         <!-- ================= VIEW 2: ANALISIS HEADCOUNT ================= -->
         <div id="view-dashboard" class="hidden space-y-6">
+            <div class="no-print p-4 border-b border-slate-800 bg-slate-900/90">
+                <button onclick="printCurrentReport('dashboard')" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold inline-flex items-center gap-2 transition border border-slate-700">
+                    <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan Analisis
+                </button>
+            </div>
+
             
             <!-- KPI CARDS -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1190,6 +1334,37 @@ const PENDIDIKAN_ISLAM_ROSTER = {
                 saveBtn.innerHTML = `<i data-lucide="cloud-upload" class="w-4 h-4"></i> Simpan ke Cloud`;
                 lucide.createIcons();
             }
+        }
+
+        function printCurrentReport(mode) {
+            const examType = document.getElementById('select-exam-type')?.value || '';
+            const selectedClass = document.getElementById('select-class')?.value || '';
+            const selectedSubj = document.getElementById('select-subject')?.value || '';
+            const subtitle = document.getElementById('print-report-subtitle');
+
+            if (subtitle) {
+                subtitle.textContent = mode === 'dashboard'
+                    ? `Analisis Headcount • ${examType} • ${selectedClass} • ${selectedSubj}`
+                    : `Pengisian Markah • ${examType} • ${selectedClass} • ${selectedSubj}`;
+            }
+
+            const entryView = document.getElementById('view-entry');
+            const dashView = document.getElementById('view-dashboard');
+            const entryWasHidden = entryView.classList.contains('hidden');
+            const dashWasHidden = dashView.classList.contains('hidden');
+
+            if (mode === 'entry') {
+                entryView.classList.remove('hidden');
+                dashView.classList.add('hidden');
+            } else {
+                dashView.classList.remove('hidden');
+                entryView.classList.add('hidden');
+            }
+
+            window.print();
+
+            if (entryWasHidden) entryView.classList.add('hidden'); else entryView.classList.remove('hidden');
+            if (dashWasHidden) dashView.classList.add('hidden'); else dashView.classList.remove('hidden');
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
