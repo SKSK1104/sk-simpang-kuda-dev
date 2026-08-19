@@ -175,7 +175,7 @@
             </div>
         </section>
 
-        <!-- Subject Summary Table (Official School Performance Report) -->
+        <!-- Subject Summary Table -->
         <section class="glass-card rounded-2xl overflow-hidden shadow-xl">
             <div class="p-4 border-b border-gray-800 bg-gray-800/30 flex items-center justify-between">
                 <div>
@@ -213,32 +213,33 @@
             </div>
         </section>
 
-        <!-- Anonymized Verification Roster (PDPA Compliant) -->
+        <!-- Full Student Names Table (Real Names Displayed) -->
         <section class="glass-card rounded-2xl overflow-hidden shadow-xl">
             <div class="p-4 border-b border-gray-800 bg-gray-800/30 flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-semibold text-gray-200 flex items-center gap-2">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-                        Log Taburan Calon Rawak (Nyah-Pengenalan / PDPA)
+                        <i data-lucide="users" class="w-4 h-4 text-emerald-400"></i>
+                        Senarai Rekod Murid &amp; Gred AR1
                     </h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Identiti murid dilindungi mengikut garis panduan privasi data KPM.</p>
+                    <p class="text-xs text-gray-400 mt-0.5">Senarai nama penuh murid mengikut kelas dan subjek yang dipilih.</p>
                 </div>
             </div>
-            <div class="overflow-x-auto custom-scrollbar max-h-80">
+            <div class="overflow-x-auto custom-scrollbar max-h-96">
                 <table class="w-full text-left border-collapse">
                     <thead class="sticky top-0 bg-gray-900 z-10">
                         <tr class="border-b border-gray-800 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                             <th class="py-3 px-4 w-16 text-center">Bil</th>
-                            <th class="py-3 px-4">Kod Calon</th>
+                            <th class="py-3 px-4">Nama Penuh Murid</th>
                             <th class="py-3 px-4 w-32">Kelas</th>
                             <th class="py-3 px-4 w-36">Mata Pelajaran</th>
+                            <th class="py-3 px-4 w-28 text-center">Markah</th>
                             <th class="py-3 px-4 w-24 text-center">Gred</th>
-                            <th class="py-3 px-4 w-36 text-center">Pencapaian</th>
+                            <th class="py-3 px-4 w-36 text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody id="student-detail-body" class="divide-y divide-gray-800/60 text-sm">
                         <tr>
-                            <td colspan="6" class="py-8 text-center text-gray-500">Sila pilih tapisan untuk melihat taburan.</td>
+                            <td colspan="7" class="py-8 text-center text-gray-500">Sila tunggu sebentar...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -261,7 +262,7 @@
         // Official UASA Standard 6-Tier Scale
         function calculateGrade(score) {
             if (score === null || score === undefined || score === '' || isNaN(score)) {
-                return { grade: 'TH', desc: 'Tidak Hadir', color: 'text-gray-400 bg-gray-800' };
+                return { grade: 'TH', desc: 'Tidak Hadir', color: 'text-gray-400 bg-gray-800 border-gray-700' };
             }
             const s = Number(score);
             if (s >= 82) return { grade: 'A', desc: 'Cemerlang', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' };
@@ -324,11 +325,9 @@
                     scoredCount++;
                 }
 
-                // UASA MTM is A through E (>=20), F is Belum Capai
                 if (['A', 'B', 'C', 'D', 'E'].includes(g)) totalLulus++;
                 else if (g === 'F') totalGagal++;
 
-                // Map per subject
                 const s = r.subject_name;
                 if (!subjectMap[s]) {
                     subjectMap[s] = { daftar: 0, hadir: 0, th: 0, A:0, B:0, C:0, D:0, E:0, F:0, TH:0, totalPoints: 0 };
@@ -399,12 +398,12 @@
                 });
             }
 
-            // Render PDPA Anonymized Calon List (No personal names)
+            // Render REAL Student Names (Guaranteed st.student_name)
             const studentTbody = document.getElementById('student-detail-body');
             studentTbody.innerHTML = '';
 
             if (filtered.length === 0) {
-                studentTbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-gray-500">Tiada rekod calon dijumpai.</td></tr>`;
+                studentTbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-gray-500">Tiada rekod murid dijumpai bagi tapisan ini.</td></tr>`;
             } else {
                 filtered.forEach((st, idx) => {
                     const gradeInfo = calculateGrade(st.score_val);
@@ -412,9 +411,10 @@
                     tr.className = 'hover:bg-gray-800/20 transition-colors';
                     tr.innerHTML = `
                         <td class="py-2.5 px-4 text-center text-gray-500 text-xs">${idx + 1}</td>
-                        <td class="py-2.5 px-4 font-mono text-gray-300 text-xs font-semibold">CALON-${String(idx + 1).padStart(3, '0')}</td>
+                        <td class="py-2.5 px-4 font-medium text-gray-200 text-xs md:text-sm">${st.student_name || 'Tiada Nama'}</td>
                         <td class="py-2.5 px-4 text-xs text-gray-400">${st.class_name}</td>
                         <td class="py-2.5 px-4 text-xs text-gray-400">${st.subject_name}</td>
+                        <td class="py-2.5 px-4 text-center font-mono text-xs font-semibold text-gray-200">${st.score_val !== null ? st.score_val : 'TH'}</td>
                         <td class="py-2.5 px-4 text-center">
                             <span class="inline-block w-7 py-0.5 rounded border text-xs font-bold ${gradeInfo.color}">
                                 ${gradeInfo.grade}
