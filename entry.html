@@ -97,7 +97,7 @@
         <!-- Main Portal Workspace (Protected) -->
         <section id="portal-section" class="hidden space-y-6">
 
-            <!-- MAIN ACTION NAVIGATION -->
+            <!-- MAIN ACTION MODULE NAVIGATION -->
             <div id="main-nav-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Card 1: Pengisian Markah -->
                 <button onclick="setMainModule('entry')" id="nav-btn-entry" class="p-5 rounded-2xl border-2 border-blue-500 bg-blue-600/10 text-left flex items-center gap-5 transition hover:bg-blue-600/20 group">
@@ -119,55 +119,47 @@
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Modul 2</span>
                         <h2 class="text-base md:text-lg font-extrabold text-slate-200 group-hover:text-white transition-colors">DIALOG PRESTASI &amp; HEADCOUNT</h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Paparan eksekutif, perbandingan skor, % MTM, dan laporan HC3.</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Paparan eksekutif, analisis skor, % MTM, dan laporan HC3.</p>
                     </div>
                 </button>
             </div>
 
-            <!-- SELECTION PANEL (Kategori Pentaksiran, Kelas, & Subjek Dinamik) -->
+            <!-- SELECTION PANEL (Kelas & Semua Subjek) -->
             <div id="selection-panel" class="dashboard-card rounded-2xl p-5 border border-slate-800">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
-                    <!-- 1. Kategori Pentaksiran (UASA vs AR/PBD) -->
+                    <!-- 1. Pilih Kelas -->
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
                             <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">1</span>
-                            Kategori Pentaksiran
+                            Pilih Kelas
                         </label>
-                        <select id="select-category" onchange="onCategoryChange()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <option value="UASA">UASA (5 Subjek Teras Tahap 2 Sahaja)</option>
-                            <option value="AR">AR / Pentaksiran Berterusan (Semua Subjek & Tahap 1/2)</option>
+                        <select id="select-class" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
+                            <option value="1 CAHAYA">Tahun 1 (1 CAHAYA)</option>
+                            <option value="2 SINARAN">Tahun 2 (2 SINARAN)</option>
+                            <option value="3 KERLIPAN">Tahun 3 (3 KERLIPAN)</option>
+                            <option value="4 BESTARI">Tahun 4 (4 BESTARI)</option>
+                            <option value="5 BIJAKSANA">Tahun 5 (5 BIJAKSANA)</option>
+                            <option value="6 GEMILANG">Tahun 6 (6 GEMILANG)</option>
                         </select>
                     </div>
 
-                    <!-- 2. Pilih Kelas -->
+                    <!-- 2. Pilih Mata Pelajaran -->
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
                             <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">2</span>
-                            Pilih Kelas
-                        </label>
-                        <select id="select-class" onchange="onClassChange()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <optgroup id="group-tahap1" label="Tahap 1">
-                                <option value="1 CAHAYA">Tahun 1 (1 CAHAYA)</option>
-                                <option value="2 SINARAN">Tahun 2 (2 SINARAN)</option>
-                                <option value="3 KERLIPAN">Tahun 3 (3 KERLIPAN)</option>
-                            </optgroup>
-                            <optgroup id="group-tahap2" label="Tahap 2">
-                                <option value="4 BESTARI" selected>Tahun 4 (4 BESTARI)</option>
-                                <option value="5 BIJAKSANA">Tahun 5 (5 BIJAKSANA)</option>
-                                <option value="6 GEMILANG">Tahun 6 (6 GEMILANG)</option>
-                            </optgroup>
-                        </select>
-                    </div>
-
-                    <!-- 3. Pilih Mata Pelajaran -->
-                    <div>
-                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">3</span>
                             Pilih Mata Pelajaran
                         </label>
                         <select id="select-subject" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <!-- Populated dynamically -->
+                            <option value="BM">Bahasa Melayu (BM)</option>
+                            <option value="BI">Bahasa Inggeris (BI)</option>
+                            <option value="MAT">Matematik (MAT)</option>
+                            <option value="SN">Sains (SN)</option>
+                            <option value="SEJ">Sejarah (SEJ)</option>
+                            <option value="RBT">Reka Bentuk &amp; Teknologi (RBT)</option>
+                            <option value="PI">Pendidikan Islam (PI)</option>
+                            <option value="PM">Pendidikan Moral (PM)</option>
+                            <option value="BI_IBAN">Bahasa Iban (BI_IBAN)</option>
                         </select>
                     </div>
                 </div>
@@ -180,7 +172,7 @@
                         <h3 class="text-base font-extrabold text-white uppercase tracking-wide flex items-center gap-2">
                             <i data-lucide="clipboard-edit" class="w-5 h-5 text-blue-400"></i> Borang Pengisian Markah Murid
                         </h3>
-                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi markah mengikut kategori yang dipilih.</p>
+                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi markah TOV, Ujian Semasa (AR1), Sasaran (ETR), dan Akhir Sesi (UASA).</p>
                     </div>
                     <button onclick="saveAllMarks()" id="save-marks-btn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
                         <i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Markah ke Pangkalan Data
@@ -310,7 +302,7 @@
                             <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-1">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Taburan Gred Terkini (AR1)
                             </h3>
-                            <p class="text-xs text-slate-400 mb-4">Pecahan gred kelas semasa</p>
+                            <p class="text-xs text-slate-400 mb-4">Pecahan gred UASA kelas semasa</p>
                             <div class="h-56 w-full flex items-center justify-center">
                                 <canvas id="gradeDistributionChart"></canvas>
                             </div>
@@ -369,39 +361,6 @@
         let perfChartInstance = null;
         let gradeChartInstance = null;
 
-        // 1. STRICT UASA CORE SUBJECTS (Tahap 2 Only - KPM Standard)
-        const SUBJECTS_UASA_CORE = [
-            { code: "BM", name: "Bahasa Melayu (BM)" },
-            { code: "BI", name: "Bahasa Inggeris (BI)" },
-            { code: "MAT", name: "Matematik (MAT)" },
-            { code: "SN", name: "Sains (SN)" },
-            { code: "SEJ", name: "Sejarah (SEJ)" }
-        ];
-
-        // 2. AR / PBD SUBJECTS (Tahap 1)
-        const SUBJECTS_AR_TAHAP1 = [
-            { code: "BM", name: "Bahasa Melayu (BM)" },
-            { code: "BI", name: "Bahasa Inggeris (BI)" },
-            { code: "MAT", name: "Matematik (MAT)" },
-            { code: "SN", name: "Sains (SN)" },
-            { code: "PI", name: "Pendidikan Islam (PI)" },
-            { code: "PM", name: "Pendidikan Moral (PM)" },
-            { code: "BI_IBAN", name: "Bahasa Iban (BI_IBAN)" }
-        ];
-
-        // 3. AR / PBD SUBJECTS (Tahap 2 - Complete List)
-        const SUBJECTS_AR_TAHAP2 = [
-            { code: "BM", name: "Bahasa Melayu (BM)" },
-            { code: "BI", name: "Bahasa Inggeris (BI)" },
-            { code: "MAT", name: "Matematik (MAT)" },
-            { code: "SN", name: "Sains (SN)" },
-            { code: "SEJ", name: "Sejarah (SEJ)" },
-            { code: "RBT", name: "Reka Bentuk & Teknologi (RBT)" },
-            { code: "PI", name: "Pendidikan Islam (PI)" },
-            { code: "PM", name: "Pendidikan Moral (PM)" },
-            { code: "BI_IBAN", name: "Bahasa Iban (BI_IBAN)" }
-        ];
-
         const MUSLIM_WHITELIST = [
             "MOHAMAD AMZAR AIMAN BIN ABDULLAH", "MOHAMAD FARHAN BIN ABDULLAH", "MOHAMMAD FAHRIN BIN ROSLI",
             "MUHAMMAD ARIF HAZIQ BIN MOHAMAD FAIZUL", "NUR AFIFA NAJWA BINTI SUHAIMI", "NUR AMIRA DANIA BINTI ABDUL RAHMAN",
@@ -410,60 +369,6 @@
             "NURUL FARHANA BINTI ISMAIL", "PUTERA NUR IMAN BIN ABDULLAH", "SITI NUR AISYAH BINTI MAT DAUD",
             "SITI NUR FATIHAH BINTI ABDULLAH"
         ];
-
-        function isTahap1(className) {
-            return className.startsWith("1") || className.startsWith("2") || className.startsWith("3");
-        }
-
-        function onCategoryChange() {
-            const cat = document.getElementById('select-category').value;
-            const classSelect = document.getElementById('select-class');
-            const grp1 = document.getElementById('group-tahap1');
-
-            if (cat === 'UASA') {
-                grp1.disabled = true; // Tahap 1 doesn't have UASA
-                if (isTahap1(classSelect.value)) {
-                    classSelect.value = "4 BESTARI";
-                }
-            } else {
-                grp1.disabled = false;
-            }
-            populateSubjects();
-        }
-
-        function onClassChange() {
-            populateSubjects();
-        }
-
-        function populateSubjects() {
-            const cat = document.getElementById('select-category').value;
-            const className = document.getElementById('select-class').value;
-            const subjSelect = document.getElementById('select-subject');
-            const currentSelected = subjSelect.value;
-            subjSelect.innerHTML = '';
-
-            let list = [];
-            if (cat === 'UASA') {
-                list = SUBJECTS_UASA_CORE;
-            } else {
-                list = isTahap1(className) ? SUBJECTS_AR_TAHAP1 : SUBJECTS_AR_TAHAP2;
-            }
-
-            list.forEach(sub => {
-                const opt = document.createElement('option');
-                opt.value = sub.code;
-                opt.textContent = sub.name;
-                subjSelect.appendChild(opt);
-            });
-
-            if (list.some(s => s.code === currentSelected)) {
-                subjSelect.value = currentSelected;
-            } else {
-                subjSelect.value = "BM";
-            }
-
-            refreshCurrentView();
-        }
 
         function calculateUasaGrade(score) {
             if (score === null || score === undefined || score === '' || isNaN(score)) {
@@ -513,7 +418,7 @@
                 </div>
             `;
             lucide.createIcons();
-            onCategoryChange();
+            refreshCurrentView();
         }
 
         async function handleLogout() {
@@ -596,12 +501,11 @@
         }
 
         function renderEntryForm(selectedClass, selectedSubj) {
-            const cat = document.getElementById('select-category').value;
             const students = getStudents(selectedClass, selectedSubj);
             const tbody = document.getElementById('entry-table-body');
             tbody.innerHTML = '';
 
-            document.getElementById('entry-subtitle').textContent = `Pengisian Markah: ${cat} | Kelas: ${selectedClass} | Subjek: ${selectedSubj}`;
+            document.getElementById('entry-subtitle').textContent = `Pengisian Markah: Kelas ${selectedClass} | Subjek: ${selectedSubj}`;
 
             if (students.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-500 font-bold">Tiada calon berdaftar untuk subjek ini dalam kelas ${selectedClass}.</td></tr>`;
