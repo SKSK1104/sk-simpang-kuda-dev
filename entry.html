@@ -172,7 +172,7 @@
                         <h3 class="text-base font-extrabold text-white uppercase tracking-wide flex items-center gap-2">
                             <i data-lucide="clipboard-edit" class="w-5 h-5 text-blue-400"></i> Borang Pengisian Markah Murid
                         </h3>
-                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi markah TOV, Ujian Semasa (AR1), Sasaran (ETR), dan Akhir Sesi (UASA).</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Isi markah TOV, Ujian Semasa (AR1), Sasaran (ETR), dan Akhir Sesi (UASA).</p>
                     </div>
                     <button onclick="saveAllMarks()" id="save-marks-btn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
                         <i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Markah ke Pangkalan Data
@@ -302,7 +302,7 @@
                             <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-1">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Taburan Gred Terkini (AR1)
                             </h3>
-                            <p class="text-xs text-slate-400 mb-4">Pecahan gred UASA kelas semasa</p>
+                            <p class="text-xs text-slate-400 mb-4">Pecahan gred kelas semasa</p>
                             <div class="h-56 w-full flex items-center justify-center">
                                 <canvas id="gradeDistributionChart"></canvas>
                             </div>
@@ -504,8 +504,6 @@
             const students = getStudents(selectedClass, selectedSubj);
             const tbody = document.getElementById('entry-table-body');
             tbody.innerHTML = '';
-
-            document.getElementById('entry-subtitle').textContent = `Pengisian Markah: Kelas ${selectedClass} | Subjek: ${selectedSubj}`;
 
             if (students.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-500 font-bold">Tiada calon berdaftar untuk subjek ini dalam kelas ${selectedClass}.</td></tr>`;
