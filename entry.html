@@ -97,7 +97,7 @@
         <!-- Main Portal Workspace (Protected) -->
         <section id="portal-section" class="hidden space-y-6">
 
-            <!-- MAIN ACTION NAVIGATION CARDS -->
+            <!-- MAIN ACTION MODULE NAVIGATION CARDS -->
             <div id="main-nav-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Card 1: Pengisian Markah -->
                 <button onclick="setMainModule('entry')" id="nav-btn-entry" class="p-5 rounded-2xl border-2 border-blue-500 bg-blue-600/10 text-left flex items-center gap-5 transition hover:bg-blue-600/20 group">
@@ -124,7 +124,7 @@
                 </button>
             </div>
 
-            <!-- SELECTION PANEL: 1. JENIS PENTAKSIRAN, 2. KELAS, 3. SUBJEK -->
+            <!-- SELECTION PANEL -->
             <div id="selection-panel" class="dashboard-card rounded-2xl p-5 border border-slate-800">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     
@@ -148,32 +148,28 @@
                             <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">2</span>
                             Pilih Kelas
                         </label>
-                        <select id="select-class" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <option value="1 CAHAYA">Tahun 1 (1 CAHAYA)</option>
-                            <option value="2 SINARAN">Tahun 2 (2 SINARAN)</option>
-                            <option value="3 KERLIPAN">Tahun 3 (3 KERLIPAN)</option>
-                            <option value="4 BESTARI">Tahun 4 (4 BESTARI)</option>
-                            <option value="5 BIJAKSANA">Tahun 5 (5 BIJAKSANA)</option>
-                            <option value="6 GEMILANG">Tahun 6 (6 GEMILANG)</option>
+                        <select id="select-class" onchange="handleClassChange()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
+                            <optgroup label="Tahap 1 (Tahun 1 - 3)">
+                                <option value="1 CAHAYA">Tahun 1 (1 CAHAYA)</option>
+                                <option value="2 SINARAN">Tahun 2 (2 SINARAN)</option>
+                                <option value="3 KERLIPAN">Tahun 3 (3 KERLIPAN)</option>
+                            </optgroup>
+                            <optgroup label="Tahap 2 (Tahun 4 - 6)">
+                                <option value="4 BESTARI">Tahun 4 (4 BESTARI)</option>
+                                <option value="5 BIJAKSANA">Tahun 5 (5 BIJAKSANA)</option>
+                                <option value="6 GEMILANG">Tahun 6 (6 GEMILANG)</option>
+                            </optgroup>
                         </select>
                     </div>
 
-                    <!-- 3. Subjek Selector -->
+                    <!-- 3. Subjek Selector (Populated dynamically) -->
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
                             <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">3</span>
                             Pilih Mata Pelajaran
                         </label>
                         <select id="select-subject" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <option value="BM">Bahasa Melayu (BM)</option>
-                            <option value="BI">Bahasa Inggeris (BI)</option>
-                            <option value="MAT">Matematik (MAT)</option>
-                            <option value="SN">Sains (SN)</option>
-                            <option value="SEJ">Sejarah (SEJ)</option>
-                            <option value="RBT">Reka Bentuk &amp; Teknologi (RBT)</option>
-                            <option value="PI">Pendidikan Islam (PI)</option>
-                            <option value="PM">Pendidikan Moral (PM)</option>
-                            <option value="BI_IBAN">Bahasa Iban (BI_IBAN)</option>
+                            <!-- Populated by JS -->
                         </select>
                     </div>
 
@@ -372,6 +368,29 @@
         let perfChartInstance = null;
         let gradeChartInstance = null;
 
+        // Subject lists per Tahap
+        const SUBJECTS_TAHAP_1 = [
+            { code: "BM", name: "Bahasa Melayu (BM)" },
+            { code: "BI", name: "Bahasa Inggeris (BI)" },
+            { code: "MAT", name: "Matematik (MAT)" },
+            { code: "SN", name: "Sains (SN)" },
+            { code: "PI", name: "Pendidikan Islam (PI)" },
+            { code: "PM", name: "Pendidikan Moral (PM)" },
+            { code: "BI_IBAN", name: "Bahasa Iban (BI_IBAN)" }
+        ];
+
+        const SUBJECTS_TAHAP_2 = [
+            { code: "BM", name: "Bahasa Melayu (BM)" },
+            { code: "BI", name: "Bahasa Inggeris (BI)" },
+            { code: "MAT", name: "Matematik (MAT)" },
+            { code: "SN", name: "Sains (SN)" },
+            { code: "SEJ", name: "Sejarah (SEJ)" },
+            { code: "RBT", name: "Reka Bentuk & Teknologi (RBT)" },
+            { code: "PI", name: "Pendidikan Islam (PI)" },
+            { code: "PM", name: "Pendidikan Moral (PM)" },
+            { code: "BI_IBAN", name: "Bahasa Iban (BI_IBAN)" }
+        ];
+
         const MUSLIM_WHITELIST = [
             "MOHAMAD AMZAR AIMAN BIN ABDULLAH", "MOHAMAD FARHAN BIN ABDULLAH", "MOHAMMAD FAHRIN BIN ROSLI",
             "MUHAMMAD ARIF HAZIQ BIN MOHAMAD FAIZUL", "NUR AFIFA NAJWA BINTI SUHAIMI", "NUR AMIRA DANIA BINTI ABDUL RAHMAN",
@@ -380,6 +399,36 @@
             "NURUL FARHANA BINTI ISMAIL", "PUTERA NUR IMAN BIN ABDULLAH", "SITI NUR AISYAH BINTI MAT DAUD",
             "SITI NUR FATIHAH BINTI ABDULLAH"
         ];
+
+        function isTahap1(className) {
+            return className.startsWith("1") || className.startsWith("2") || className.startsWith("3");
+        }
+
+        function populateSubjects(className) {
+            const subjSelect = document.getElementById('select-subject');
+            const previousVal = subjSelect.value;
+            subjSelect.innerHTML = '';
+
+            const list = isTahap1(className) ? SUBJECTS_TAHAP_1 : SUBJECTS_TAHAP_2;
+            list.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub.code;
+                opt.textContent = sub.name;
+                subjSelect.appendChild(opt);
+            });
+
+            if (list.some(s => s.code === previousVal)) {
+                subjSelect.value = previousVal;
+            } else {
+                subjSelect.value = "BM";
+            }
+        }
+
+        function handleClassChange() {
+            const selectedClass = document.getElementById('select-class').value;
+            populateSubjects(selectedClass);
+            refreshCurrentView();
+        }
 
         function calculateUasaGrade(score) {
             if (score === null || score === undefined || score === '' || isNaN(score)) {
@@ -429,7 +478,7 @@
                 </div>
             `;
             lucide.createIcons();
-            refreshCurrentView();
+            handleClassChange();
         }
 
         async function handleLogout() {
