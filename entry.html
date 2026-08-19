@@ -292,16 +292,12 @@ const PENDIDIKAN_ISLAM_ROSTER = {
                         Jenis Pentaksiran (Switcher)
                     </label>
                     <input type="hidden" id="select-exam-type" value="AR1">
-                    <div class="grid grid-cols-2 gap-2 p-1 bg-[#090f1f] border border-blue-500/50 rounded-xl">
-                        <button type="button" id="exam-btn-ar" onclick="setExamType('AR')" class="px-4 py-2.5 rounded-lg text-sm font-extrabold bg-blue-600 text-white shadow transition">AR</button>
-                        <button type="button" id="exam-btn-uasa" onclick="setExamType('UASA')" class="px-4 py-2.5 rounded-lg text-sm font-extrabold text-slate-400 hover:text-white hover:bg-slate-800 transition">UASA</button>
+                    <div id="assessment-tabs" class="flex flex-wrap gap-2 p-1 bg-[#090f1f] border border-blue-500/50 rounded-xl">
+                        <button type="button" data-exam="AR1" onclick="selectAssessment('AR1')" class="assessment-tab px-4 py-2.5 rounded-lg text-sm font-extrabold bg-blue-600 text-white shadow transition">AR1</button>
+                        <button type="button" data-exam="UASA" onclick="selectAssessment('UASA')" class="assessment-tab px-4 py-2.5 rounded-lg text-sm font-extrabold text-slate-400 hover:text-white hover:bg-slate-800 transition">UASA</button>
+                        <button type="button" id="add-ar-btn" onclick="addNewAR()" class="px-4 py-2.5 rounded-lg text-sm font-extrabold text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/10 transition">+ AR Baru</button>
                     </div>
-                    <div id="ar-number-wrap" class="mt-2 flex items-center gap-2">
-                        <label for="ar-number" class="text-xs font-bold text-slate-400 whitespace-nowrap">AR KE-</label>
-                        <input id="ar-number" type="number" min="1" step="1" value="1" oninput="updateARNumber()"
-                            class="w-20 bg-[#090f1f] border border-slate-700 rounded-lg px-3 py-2 text-sm font-extrabold text-blue-300 focus:outline-none focus:border-blue-500">
-                        <span class="text-[11px] text-slate-500">Tiada had bilangan AR</span>
-                    </div>
+                    <p class="text-[11px] text-slate-500 mt-2">Pilih pentaksiran yang hendak diisi.</p>
                 </div>
 
                 <!-- 2. Pilih Kelas -->
@@ -644,44 +640,81 @@ const PENDIDIKAN_ISLAM_ROSTER = {
             }
         }
 
-        function getCurrentARKey() {
-            const input = document.getElementById('ar-number');
-            let number = parseInt(input?.value || '1', 10);
-            if (!Number.isFinite(number) || number < 1) number = 1;
-            if (input) input.value = number;
-            return `AR${number}`;
-        }
+        const activeAssessmentClass = "assessment-tab px-4 py-2.5 rounded-lg text-sm font-extrabold bg-blue-600 text-white shadow transition";
+        const inactiveAssessmentClass = "assessment-tab px-4 py-2.5 rounded-lg text-sm font-extrabold text-slate-400 hover:text-white hover:bg-slate-800 transition";
 
-        function updateARNumber() {
+        function renderAssessmentTabs(arTypes = ['AR1']) {
+            const container = document.getElementById('assessment-tabs');
+            const addBtn = document.getElementById('add-ar-btn');
             const current = document.getElementById('select-exam-type').value;
-            if (current.startsWith('AR')) {
-                document.getElementById('select-exam-type').value = getCurrentARKey();
-                refreshCurrentView();
+
+            container.querySelectorAll('.assessment-tab').forEach(btn => btn.remove());
+
+            const ordered = [...new Set(arTypes)]
+                .filter(x => /^AR\d+$/.test(x))
+                .sort((a, b) => Number(a.slice(2)) - Number(b.slice(2)));
+
+            ordered.forEach(exam => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.dataset.exam = exam;
+                btn.textContent = exam;
+                btn.onclick = () => selectAssessment(exam);
+                btn.className = exam === current ? activeAssessmentClass : inactiveAssessmentClass;
+                container.insertBefore(btn, addBtn);
+            });
+
+            const uasa = document.createElement('button');
+            uasa.type = 'button';
+            uasa.dataset.exam = 'UASA';
+            uasa.textContent = 'UASA';
+            uasa.onclick = () => selectAssessment('UASA');
+            uasa.className = current === 'UASA' ? activeAssessmentClass : inactiveAssessmentClass;
+            container.insertBefore(uasa, addBtn);
+        }
+
+        async function loadAssessmentTabs() {
+            try {
+                const { data, error } = await db
+                    .from('student_marks')
+                    .select('exam_type')
+                    .not('exam_type', 'is', null);
+
+                if (error) throw error;
+
+                const arTypes = (data || [])
+                    .map(row => row.exam_type)
+                    .filter(type => /^AR\d+$/.test(type || ''));
+
+                if (!arTypes.includes('AR1')) arTypes.push('AR1');
+                renderAssessmentTabs(arTypes);
+            } catch (err) {
+                console.error('ASSESSMENT LOAD ERROR:', err);
+                renderAssessmentTabs(['AR1']);
             }
         }
 
-        function setExamType(type) {
-            const hiddenExam = document.getElementById('select-exam-type');
-            const arBtn = document.getElementById('exam-btn-ar');
-            const uasaBtn = document.getElementById('exam-btn-uasa');
-            const arNumberWrap = document.getElementById('ar-number-wrap');
-            const activeClass = "px-4 py-2.5 rounded-lg text-sm font-extrabold bg-blue-600 text-white shadow transition";
-            const inactiveClass = "px-4 py-2.5 rounded-lg text-sm font-extrabold text-slate-400 hover:text-white hover:bg-slate-800 transition";
-
-            if (type === 'AR') {
-                hiddenExam.value = getCurrentARKey();
-                arBtn.className = activeClass;
-                uasaBtn.className = inactiveClass;
-                arNumberWrap.classList.remove('hidden');
-            } else {
-                hiddenExam.value = 'UASA';
-                arBtn.className = inactiveClass;
-                uasaBtn.className = activeClass;
-                arNumberWrap.classList.add('hidden');
-            }
-
+        function selectAssessment(examType) {
+            document.getElementById('select-exam-type').value = examType;
+            document.querySelectorAll('.assessment-tab').forEach(btn => {
+                btn.className = btn.dataset.exam === examType ? activeAssessmentClass : inactiveAssessmentClass;
+            });
             populateSubjects();
             refreshCurrentView();
+        }
+
+        async function addNewAR() {
+            const existing = [...document.querySelectorAll('.assessment-tab')]
+                .map(btn => btn.dataset.exam)
+                .filter(type => /^AR\d+$/.test(type || ''))
+                .map(type => Number(type.slice(2)));
+
+            const nextNumber = existing.length ? Math.max(...existing) + 1 : 1;
+            const newType = `AR${nextNumber}`;
+
+            const arTypes = [...existing.map(n => `AR${n}`), newType];
+            renderAssessmentTabs(arTypes);
+            selectAssessment(newType);
         }
 
         function handleExamTypeChange() {
@@ -1038,11 +1071,33 @@ const PENDIDIKAN_ISLAM_ROSTER = {
         }
 
         // ================= SAVE TO SUPABASE =================
-        async function saveRowWithoutUniqueConstraint(row) {
+        async function getStudentIdentityMap(selectedClass) {
+            const { data, error } = await db
+                .from('student_marks')
+                .select('student_id,student_name,religion,school_year')
+                .eq('class_name', selectedClass)
+                .not('student_id', 'is', null);
+
+            if (error) throw error;
+
+            const map = {};
+            (data || []).forEach(row => {
+                if (row.student_name && row.student_id != null && !map[row.student_name]) {
+                    map[row.student_name] = {
+                        student_id: row.student_id,
+                        religion: row.religion || null,
+                        school_year: row.school_year || '2026'
+                    };
+                }
+            });
+            return map;
+        }
+
+        async function saveRowSafely(row) {
             const { data: existing, error: lookupError } = await db
                 .from('student_marks')
-                .select('student_name')
-                .eq('student_name', row.student_name)
+                .select('id')
+                .eq('student_id', row.student_id)
                 .eq('class_name', row.class_name)
                 .eq('subject_name', row.subject_name)
                 .eq('exam_type', row.exam_type)
@@ -1058,10 +1113,7 @@ const PENDIDIKAN_ISLAM_ROSTER = {
                         grade_val: row.grade_val,
                         updated_at: row.updated_at
                     })
-                    .eq('student_name', row.student_name)
-                    .eq('class_name', row.class_name)
-                    .eq('subject_name', row.subject_name)
-                    .eq('exam_type', row.exam_type);
+                    .eq('id', existing[0].id);
                 if (updateError) throw updateError;
             } else {
                 const { error: insertError } = await db
@@ -1082,44 +1134,46 @@ const PENDIDIKAN_ISLAM_ROSTER = {
             statusDiv.innerHTML = `<span class="text-slate-400 font-bold">Menghubungi cloud...</span>`;
             lucide.createIcons();
 
-            const inputs = document.querySelectorAll('.mark-input');
-            const rowsToSave = [];
-
-            inputs.forEach(input => {
-                const sName = input.getAttribute('data-student');
-                const eType = input.getAttribute('data-type');
-                const valStr = input.value.trim();
-                const score = valStr === '' ? null : Number(valStr);
-                const grade = calculateGrade(score).grade;
-
-                rowsToSave.push({
-                    student_name: sName,
-                    class_name: selectedClass,
-                    subject_name: selectedSubj,
-                    exam_type: eType,
-                    score_val: score,
-                    grade_val: grade,
-                    updated_at: new Date().toISOString()
-                });
-            });
-
             try {
-                const { error } = await db
-                    .from('student_marks')
-                    .upsert(rowsToSave, { onConflict: 'student_name,class_name,subject_name,exam_type' });
+                const identityMap = await getStudentIdentityMap(selectedClass);
+                const inputs = document.querySelectorAll('.mark-input');
+                const rowsToSave = [];
+                const missingStudents = [];
 
-                if (error) {
-                    const msg = `${error.code || ''} ${error.message || ''}`.toLowerCase();
-                    const missingConflictConstraint =
-                        error.code === '42P10' ||
-                        msg.includes('no unique or exclusion constraint') ||
-                        msg.includes('on conflict');
+                inputs.forEach(input => {
+                    const studentName = input.getAttribute('data-student');
+                    const examType = input.getAttribute('data-type');
+                    const identity = identityMap[studentName];
 
-                    if (!missingConflictConstraint) throw error;
-
-                    for (const row of rowsToSave) {
-                        await saveRowWithoutUniqueConstraint(row);
+                    if (!identity) {
+                        missingStudents.push(studentName);
+                        return;
                     }
+
+                    const valStr = input.value.trim();
+                    const score = valStr === '' ? null : Number(valStr);
+                    const grade = calculateGrade(score).grade;
+
+                    rowsToSave.push({
+                        school_year: identity.school_year || '2026',
+                        class_name: selectedClass,
+                        subject_name: selectedSubj,
+                        student_id: identity.student_id,
+                        student_name: studentName,
+                        religion: identity.religion,
+                        exam_type: examType,
+                        score_val: score,
+                        grade_val: grade,
+                        updated_at: new Date().toISOString()
+                    });
+                });
+
+                if (missingStudents.length) {
+                    throw new Error(`ID murid tidak ditemui: ${missingStudents.join(', ')}`);
+                }
+
+                for (const row of rowsToSave) {
+                    await saveRowSafely(row);
                 }
 
                 statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold">✓ MARKAH ${selectedClass} (${selectedSubj}) BERJAYA DISIMPAN KE CLOUD.</span>`;
@@ -1138,8 +1192,9 @@ const PENDIDIKAN_ISLAM_ROSTER = {
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('select-exam-type').value = getCurrentARKey();
+        window.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('select-exam-type').value = 'AR1';
+            await loadAssessmentTabs();
             handleClassChange();
             lucide.createIcons();
         });
