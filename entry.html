@@ -29,7 +29,7 @@
         }
         @media print {
             body { background: white !important; color: black !important; }
-            header, #auth-status, #main-nav-cards, #selection-panel, #save-footer, #login-section, .no-print { display: none !important; }
+            header, #main-nav-cards, #selection-panel, #login-section, .no-print { display: none !important; }
             .dashboard-card { background: white !important; border: 1px solid #000 !important; color: black !important; }
             table { width: 100% !important; border-collapse: collapse !important; }
             th, td { border: 1px solid #000 !important; padding: 6px !important; color: black !important; }
@@ -38,7 +38,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased pb-12">
 
-    <!-- Top Ribbon Header -->
+    <!-- Header -->
     <header class="bg-[#090f1f] border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-[1500px] mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -49,13 +49,13 @@
                     <h1 class="text-base font-extrabold tracking-tight uppercase text-white flex items-center gap-2">
                         PORTAL PENGURUSAN AKADEMIK <span class="text-xs bg-blue-600/30 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-bold">2026</span>
                     </h1>
-                    <p class="text-xs text-slate-400">SK Simpang Kuda (YBB1104) &bull; Dialog Prestasi &amp; Headcount Murid</p>
+                    <p class="text-xs text-slate-400">SK Simpang Kuda (YBB1104) &bull; Modul Headcount &amp; Analisis Prestasi</p>
                 </div>
             </div>
             
             <div id="auth-status" class="flex items-center gap-3">
                 <span class="text-xs text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                    <i data-lucide="lock" class="w-3.5 h-3.5"></i> Belum Log Masuk
+                    <i data-lucide="lock" class="w-3.5 h-3.5"></i> Kawalan Akses Terhad
                 </span>
             </div>
         </div>
@@ -63,20 +63,20 @@
 
     <main class="max-w-[1500px] mx-auto px-4 lg:px-6 mt-6 flex-1 w-full space-y-6">
 
-        <!-- Login Section -->
+        <!-- Login Gate -->
         <section id="login-section" class="dashboard-card rounded-2xl p-8 max-w-md mx-auto shadow-2xl mt-12">
             <div class="text-center mb-6">
                 <div class="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 mx-auto mb-3">
-                    <i data-lucide="shield" class="w-7 h-7"></i>
+                    <i data-lucide="shield-check" class="w-7 h-7"></i>
                 </div>
-                <h2 class="text-lg font-bold text-white uppercase tracking-wide">Log Masuk Guru &amp; Pentadbir</h2>
-                <p class="text-xs text-slate-400 mt-1">Masukkan ID dan kata laluan untuk akses sistem.</p>
+                <h2 class="text-lg font-bold text-white uppercase tracking-wide">Pengesahan Guru &amp; Pentadbir</h2>
+                <p class="text-xs text-slate-400 mt-1">Akses data akademik murid terlindung.</p>
             </div>
 
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ID Pengguna</label>
-                    <input type="text" id="login-id" required placeholder="admin" class="w-full bg-[#0c1427] border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ID Staf / Pengguna</label>
+                    <input type="text" id="login-id" required placeholder="admin / guru" class="w-full bg-[#0c1427] border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Kata Laluan</label>
@@ -84,15 +84,15 @@
                 </div>
                 <div id="login-error" class="hidden text-xs text-rose-400 text-center font-bold"></div>
                 <button type="submit" id="login-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
-                    <i data-lucide="log-in" class="w-4 h-4"></i> Log Masuk Sistem
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Sahkan &amp; Masuk
                 </button>
             </form>
         </section>
 
-        <!-- Main Portal Workspace -->
+        <!-- Main Workspace -->
         <section id="portal-section" class="hidden space-y-6">
 
-            <!-- MAIN ACTION NAVIGATION CARDS -->
+            <!-- Module Navigation -->
             <div id="main-nav-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button onclick="setMainModule('entry')" id="nav-btn-entry" class="p-5 rounded-2xl border-2 border-blue-500 bg-blue-600/10 text-left flex items-center gap-5 transition hover:bg-blue-600/20 group">
                     <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/30">
@@ -100,8 +100,8 @@
                     </div>
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-0.5">Modul 1</span>
-                        <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH &amp; HEADCOUNT</h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Isi markah TOV, Ujian Semasa (AR1), Sasaran (ETR), dan Akhir Sesi (UASA).</p>
+                        <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH HEADCOUNT</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Isi TOV (ETR dikira automatik), AR1, dan skor UASA.</p>
                     </div>
                 </button>
 
@@ -112,16 +112,14 @@
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Modul 2</span>
                         <h2 class="text-base md:text-lg font-extrabold text-slate-200 group-hover:text-white transition-colors">DIALOG PRESTASI &amp; HC3</h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Paparan eksekutif, perbandingan skor, % MTM, dan laporan HC3.</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Ringkasan KPI, % MTM, graf headcount, dan analisis HC3.</p>
                     </div>
                 </button>
             </div>
 
-            <!-- SELECTION PANEL -->
+            <!-- Filters & ETR Settings -->
             <div id="selection-panel" class="dashboard-card rounded-2xl p-5 border border-slate-800">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
-                    <!-- 1. Kelas Selector -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
                             <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">1</span>
@@ -141,28 +139,38 @@
                         </select>
                     </div>
 
-                    <!-- 2. Subjek Selector -->
                     <div>
                         <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
                             <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">2</span>
                             Pilih Mata Pelajaran
                         </label>
                         <select id="select-subject" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <!-- Populated by JS -->
                         </select>
                     </div>
 
+                    <div>
+                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-orange-600 text-white text-[11px] flex items-center justify-center font-bold">3</span>
+                            Sasaran Peningkatan ETR (+Markah)
+                        </label>
+                        <select id="select-etr-increment" onchange="applyGlobalEtrIncrement()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-orange-400 focus:outline-none focus:border-orange-500">
+                            <option value="3">+3 Markah daripada TOV</option>
+                            <option value="5" selected>+5 Markah daripada TOV (Standard)</option>
+                            <option value="8">+8 Markah daripada TOV</option>
+                            <option value="10">+10 Markah daripada TOV (Cemerlang)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- ================= VIEW 1: PENGISIAN MARKAH HEADCOUNT ================= -->
+            <!-- ================= VIEW 1: HEADCOUNT ENTRY TABLE ================= -->
             <div id="view-entry" class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl space-y-0">
                 <div class="p-5 bg-slate-900/80 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div>
                         <h3 class="text-base font-extrabold text-white uppercase tracking-wide flex items-center gap-2">
-                            <i data-lucide="clipboard-edit" class="w-5 h-5 text-blue-400"></i> Borang Pengisian Headcount Murid
+                            <i data-lucide="clipboard-edit" class="w-5 h-5 text-blue-400"></i> Borang Pengisian Headcount Lengkap
                         </h3>
-                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi markah TOV, AR1, ETR, dan UASA secara serentak.</p>
+                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi TOV $\rightarrow$ ETR terjana secara automatik $\rightarrow$ Masukkan markah AR1 dan UASA.</p>
                     </div>
                     <button onclick="saveAllMarks()" id="save-marks-btn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
                         <i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Semua Markah ke Cloud
@@ -175,16 +183,15 @@
                             <tr>
                                 <th class="py-3.5 px-3 w-10 text-center">Bil</th>
                                 <th class="py-3.5 px-4">Nama Penuh Murid</th>
-                                <th class="py-3.5 px-2 w-24 text-center">TOV (Asas)</th>
+                                <th class="py-3.5 px-2 w-24 text-center text-slate-300">TOV (Asas)</th>
+                                <th class="py-3.5 px-2 w-24 text-center text-orange-400">ETR (Sasaran)</th>
                                 <th class="py-3.5 px-2 w-24 text-center text-sky-400">AR1 (Ujian 1)</th>
                                 <th class="py-3.5 px-2 w-16 text-center text-sky-400">Gred AR1</th>
-                                <th class="py-3.5 px-2 w-24 text-center text-orange-400">ETR (Sasaran)</th>
                                 <th class="py-3.5 px-2 w-24 text-center text-emerald-400">UASA (Akhir)</th>
                                 <th class="py-3.5 px-2 w-16 text-center text-emerald-400">Gred UASA</th>
                             </tr>
                         </thead>
                         <tbody id="entry-table-body" class="divide-y divide-slate-800/80 text-slate-200">
-                            <!-- Populated via JS -->
                         </tbody>
                     </table>
                 </div>
@@ -194,10 +201,8 @@
                 </div>
             </div>
 
-            <!-- ================= VIEW 2: DIALOG PRESTASI & HEADCOUNT ================= -->
+            <!-- ================= VIEW 2: DASHBOARD DIALOG PRESTASI ================= -->
             <div id="view-dashboard" class="hidden space-y-6">
-
-                <!-- 4 Top Executive KPI Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-gradient-to-br from-[#134e96] to-[#0d2f66] rounded-2xl p-5 shadow-lg border border-blue-400/20 text-white">
                         <div class="flex justify-between items-start">
@@ -264,7 +269,6 @@
                     </div>
                 </div>
 
-                <!-- Charts Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 dashboard-card rounded-2xl p-5 border border-slate-800 shadow-xl">
                         <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
@@ -272,7 +276,7 @@
                                 <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
                                     <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400"></i> Perbandingan Skor: TOV vs AR1 vs ETR vs UASA
                                 </h3>
-                                <p class="text-xs text-slate-400">Analisis kemajuan purata murid sepanjang sesi akademik</p>
+                                <p class="text-xs text-slate-400">Analisis perkembangan skor murid</p>
                             </div>
                             <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center gap-2 transition border border-slate-700">
                                 <i data-lucide="printer" class="w-4 h-4"></i> Cetak HC3
@@ -288,22 +292,20 @@
                             <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-1">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Taburan Gred Terkini (AR1)
                             </h3>
-                            <p class="text-xs text-slate-400 mb-4">Pecahan gred kelas semasa</p>
+                            <p class="text-xs text-slate-400 mb-4">Pecahan gred semasa kelas</p>
                             <div class="h-56 w-full flex items-center justify-center">
                                 <canvas id="gradeDistributionChart"></canvas>
                             </div>
                         </div>
                         <div id="grade-summary-pills" class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800 text-center text-xs font-bold">
-                            <!-- Injected by JS -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Analysis HC3 Table -->
                 <div class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
                     <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex justify-between items-center">
                         <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                            <i data-lucide="table" class="w-4 h-4 text-blue-400"></i> Senarai Headcount Lengkap (TOV ➔ AR1 ➔ ETR ➔ UASA)
+                            <i data-lucide="table" class="w-4 h-4 text-blue-400"></i> Senarai Headcount Lengkap (TOV ➔ ETR ➔ AR1 ➔ UASA)
                         </h3>
                         <span id="dash-calon-badge" class="text-xs font-bold px-3 py-1 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">0 Calon</span>
                     </div>
@@ -314,22 +316,19 @@
                                     <th class="py-3 px-3 w-10 text-center">Bil</th>
                                     <th class="py-3 px-4">Nama Murid</th>
                                     <th class="py-3 px-3 text-center">TOV</th>
-                                    <th class="py-3 px-3 text-center text-sky-400">AR1</th>
                                     <th class="py-3 px-3 text-center text-orange-400">ETR</th>
+                                    <th class="py-3 px-3 text-center text-sky-400">AR1</th>
                                     <th class="py-3 px-3 text-center text-emerald-400">UASA</th>
                                     <th class="py-3 px-3 text-center">Jurang (AR1 - TOV)</th>
                                     <th class="py-3 px-3 text-center">Pencapaian UASA</th>
                                 </tr>
                             </thead>
                             <tbody id="dash-table-body" class="divide-y divide-slate-800 text-slate-200">
-                                <!-- Populated via JS -->
                             </tbody>
                         </table>
                     </div>
                 </div>
-
             </div>
-
         </section>
 
     </main>
@@ -346,7 +345,6 @@
         let perfChartInstance = null;
         let gradeChartInstance = null;
 
-        // Tahap 1: BM, BI, MT, SN, PI, PM
         const SUBJECTS_TAHAP_1 = [
             { code: "BM", name: "Bahasa Melayu (BM)" },
             { code: "BI", name: "Bahasa Inggeris (BI)" },
@@ -356,7 +354,6 @@
             { code: "PM", name: "Pendidikan Moral (PM)" }
         ];
 
-        // Tahap 2: BM, BI, MT, SN, SEJ, PI, PM
         const SUBJECTS_TAHAP_2 = [
             { code: "BM", name: "Bahasa Melayu (BM)" },
             { code: "BI", name: "Bahasa Inggeris (BI)" },
@@ -534,6 +531,37 @@
             }
         }
 
+        function onTovInput(tovInput, idx) {
+            const val = tovInput.value.trim();
+            const etrInput = document.getElementById(`etr-input-${idx}`);
+            if (!etrInput) return;
+
+            if (val === '') {
+                etrInput.value = '';
+                return;
+            }
+
+            const inc = Number(document.getElementById('select-etr-increment').value) || 5;
+            const tovScore = Number(val);
+            const calculatedEtr = Math.min(100, tovScore + inc);
+            
+            // Auto-fill ETR only if empty or standard
+            etrInput.value = calculatedEtr;
+        }
+
+        function applyGlobalEtrIncrement() {
+            const inc = Number(document.getElementById('select-etr-increment').value) || 5;
+            const tovInputs = document.querySelectorAll('.tov-input');
+            
+            tovInputs.forEach((tovInput, idx) => {
+                const val = tovInput.value.trim();
+                const etrInput = document.getElementById(`etr-input-${idx}`);
+                if (val !== '' && etrInput) {
+                    etrInput.value = Math.min(100, Number(val) + inc);
+                }
+            });
+        }
+
         function renderEntryForm(selectedClass, selectedSubj) {
             const students = getStudents(selectedClass, selectedSubj);
             const tbody = document.getElementById('entry-table-body');
@@ -548,10 +576,16 @@
 
             students.forEach((name, idx) => {
                 const tov = cachedMarks[name]?.['TOV'] ?? '';
+                let etr = cachedMarks[name]?.['ETR'] ?? '';
                 const ar1 = cachedMarks[name]?.['AR1'] ?? '';
-                const etr = cachedMarks[name]?.['ETR'] ?? '';
                 const uasa = cachedMarks[name]?.['UASA'] ?? '';
                 
+                // Auto calculate ETR if TOV exists but ETR is blank
+                if (tov !== '' && etr === '') {
+                    const inc = Number(document.getElementById('select-etr-increment').value) || 5;
+                    etr = Math.min(100, Number(tov) + inc);
+                }
+
                 const gradeInfoAr1 = calculateUasaGrade(ar1);
                 const gradeInfoUasa = calculateUasaGrade(uasa);
 
@@ -562,7 +596,12 @@
                     <td class="py-3 px-4 font-bold text-white text-xs md:text-sm">${name}</td>
                     <td class="py-3 px-2 text-center">
                         <input type="number" min="0" max="100" value="${tov}" data-student="${name}" data-type="TOV" placeholder="-"
-                            class="mark-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-white font-bold focus:outline-none focus:border-blue-500">
+                            oninput="onTovInput(this, ${idx})"
+                            class="mark-input tov-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-white font-bold focus:outline-none focus:border-blue-500">
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        <input type="number" min="0" max="100" value="${etr}" id="etr-input-${idx}" data-student="${name}" data-type="ETR" placeholder="-"
+                            class="mark-input w-20 text-center bg-[#090f1f] border border-orange-500/40 rounded-lg py-1.5 text-xs text-orange-300 font-extrabold focus:outline-none focus:border-orange-500">
                     </td>
                     <td class="py-3 px-2 text-center">
                         <input type="number" min="0" max="100" value="${ar1}" data-student="${name}" data-type="AR1" placeholder="-"
@@ -571,10 +610,6 @@
                     </td>
                     <td class="py-3 px-2 text-center">
                         <span id="ar1-badge-${idx}" class="inline-block w-8 py-0.5 rounded border text-[11px] font-black ${gradeInfoAr1.color}">${gradeInfoAr1.grade}</span>
-                    </td>
-                    <td class="py-3 px-2 text-center">
-                        <input type="number" min="0" max="100" value="${etr}" data-student="${name}" data-type="ETR" placeholder="-"
-                            class="mark-input w-20 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-orange-300 font-bold focus:outline-none focus:border-blue-500">
                     </td>
                     <td class="py-3 px-2 text-center">
                         <input type="number" min="0" max="100" value="${uasa}" data-student="${name}" data-type="UASA" placeholder="-"
@@ -677,8 +712,8 @@
                     <td class="py-2.5 px-3 text-center text-slate-500">${idx + 1}</td>
                     <td class="py-2.5 px-4 font-bold text-white">${name}</td>
                     <td class="py-2.5 px-3 text-center text-slate-400 font-bold">${tov ?? '-'}</td>
-                    <td class="py-2.5 px-3 text-center text-sky-400 font-extrabold">${ar1 ?? 'TH'}</td>
                     <td class="py-2.5 px-3 text-center text-orange-400 font-bold">${etr ?? '-'}</td>
+                    <td class="py-2.5 px-3 text-center text-sky-400 font-extrabold">${ar1 ?? 'TH'}</td>
                     <td class="py-2.5 px-3 text-center text-emerald-400 font-extrabold">${uasa ?? '-'}</td>
                     <td class="py-2.5 px-3 text-center font-bold ${gap !== null ? (gap >= 0 ? 'text-emerald-400' : 'text-rose-400') : 'text-slate-500'}">
                         ${gap !== null ? (gap > 0 ? '+' + gap : gap) : '-'}
