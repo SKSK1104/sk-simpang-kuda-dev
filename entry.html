@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Pengurusan Akademik | SK Simpang Kuda</title>
+    <title>Portal Pengurusan Pentaksiran & Headcount 2026 | SK Simpang Kuda</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -29,309 +29,220 @@
         }
         @media print {
             body { background: white !important; color: black !important; }
-            header, #main-nav-cards, #selection-panel, #login-section, .no-print { display: none !important; }
+            header, #selection-panel, #save-bar, .no-print { display: none !important; }
             .dashboard-card { background: white !important; border: 1px solid #000 !important; color: black !important; }
-            table { width: 100% !important; border-collapse: collapse !important; }
-            th, td { border: 1px solid #000 !important; padding: 6px !important; color: black !important; }
+            table { width: 100% !important; border-collapse: collapse !important; font-size: 10px !important; }
+            th, td { border: 1px solid #000 !important; padding: 4px !important; color: black !important; }
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased pb-12">
 
-    <!-- Header -->
+    <!-- Top Ribbon Header -->
     <header class="bg-[#090f1f] border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-[1500px] mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
+        <div class="max-w-[1700px] mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <a href="index.html" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-colors" title="Menu Utama">
                     <i data-lucide="arrow-left" class="w-5 h-5"></i>
                 </a>
                 <div>
                     <h1 class="text-base font-extrabold tracking-tight uppercase text-white flex items-center gap-2">
-                        PORTAL PENGURUSAN AKADEMIK <span class="text-xs bg-blue-600/30 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-bold">2026</span>
+                        PORTAL PENGURUSAN PENTAKSIRAN <span class="text-xs bg-blue-600/30 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-bold">2026</span>
                     </h1>
-                    <p class="text-xs text-slate-400">SK Simpang Kuda (YBB1104) &bull; Dialog Prestasi &amp; Headcount Murid</p>
+                    <p class="text-xs text-slate-400">SK Simpang Kuda (YBB1104) &bull; Sistem Headcount AR &amp; SPPB PBD / UASA</p>
                 </div>
             </div>
             
             <div id="auth-status" class="flex items-center gap-3">
-                <span class="text-xs text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                    <i data-lucide="lock" class="w-3.5 h-3.5"></i> Kawalan Akses Terhad
+                <span class="text-xs text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Portal Rasmi
                 </span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1500px] mx-auto px-4 lg:px-6 mt-6 flex-1 w-full space-y-6">
+    <main class="max-w-[1700px] mx-auto px-4 lg:px-6 mt-6 flex-1 w-full space-y-6">
 
-        <!-- Login Section -->
-        <section id="login-section" class="dashboard-card rounded-2xl p-8 max-w-md mx-auto shadow-2xl mt-12">
-            <div class="text-center mb-6">
-                <div class="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 mx-auto mb-3">
-                    <i data-lucide="shield-check" class="w-7 h-7"></i>
-                </div>
-                <h2 class="text-lg font-bold text-white uppercase tracking-wide">Pengesahan Guru &amp; Pentadbir</h2>
-                <p class="text-xs text-slate-400 mt-1">Akses data akademik murid terlindung.</p>
-            </div>
-
-            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+        <!-- Selection Filter Bar -->
+        <div id="selection-panel" class="dashboard-card rounded-2xl p-5 border border-slate-800 shadow-xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- 1. Pentaksiran Type -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ID Staf / Pengguna</label>
-                    <input type="text" id="login-id" required placeholder="admin / guru" class="w-full bg-[#0c1427] border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">1</span>
+                        Mod Pentaksiran
+                    </label>
+                    <select id="select-system-mode" onchange="handleModeChange()" class="w-full bg-[#090f1f] border border-blue-500/50 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
+                        <option value="AR">AR (Analisis Ujian &amp; Headcount - Skor Markah 0-100)</option>
+                        <option value="PBD">PBD / UASA (Pentaksiran Bilik Darjah SPPB - TP1-TP6)</option>
+                    </select>
                 </div>
+
+                <!-- 2. Kelas -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Kata Laluan</label>
-                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full bg-[#0c1427] border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">2</span>
+                        Pilih Kelas
+                    </label>
+                    <select id="select-class" onchange="handleClassChange()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
+                        <optgroup label="Tahap 1 (Tahun 1 - 3)">
+                            <option value="1 CAHAYA">Tahun 1 (1 CAHAYA)</option>
+                            <option value="2 SINARAN">Tahun 2 (2 SINARAN)</option>
+                            <option value="3 KERLIPAN">Tahun 3 (3 KERLIPAN)</option>
+                        </optgroup>
+                        <optgroup label="Tahap 2 (Tahun 4 - 6)">
+                            <option value="4 BESTARI">Tahun 4 (4 BESTARI)</option>
+                            <option value="5 BIJAKSANA">Tahun 5 (5 BIJAKSANA)</option>
+                            <option value="6 GEMILANG">Tahun 6 (6 GEMILANG)</option>
+                        </optgroup>
+                    </select>
                 </div>
-                <div id="login-error" class="hidden text-xs text-rose-400 text-center font-bold"></div>
-                <button type="submit" id="login-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
-                    <i data-lucide="log-in" class="w-4 h-4"></i> Sahkan &amp; Masuk
-                </button>
-            </form>
-        </section>
 
-        <!-- Main Workspace -->
-        <section id="portal-section" class="hidden space-y-6">
-
-            <!-- Module Switcher -->
-            <div id="main-nav-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button onclick="setMainModule('entry')" id="nav-btn-entry" class="p-5 rounded-2xl border-2 border-blue-500 bg-blue-600/10 text-left flex items-center gap-5 transition hover:bg-blue-600/20 group">
-                    <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/30">
-                        <i data-lucide="edit-3" class="w-7 h-7"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-blue-400 block mb-0.5">Modul 1</span>
-                        <h2 class="text-base md:text-lg font-extrabold text-white group-hover:text-blue-300 transition-colors">PENGISIAN MARKAH</h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Pilih AR1 atau UASA dan isi markah mengikut kelas.</p>
-                    </div>
-                </button>
-
-                <button onclick="setMainModule('dashboard')" id="nav-btn-dash" class="p-5 rounded-2xl border border-slate-800 bg-[#111c38] text-left flex items-center gap-5 transition hover:bg-slate-800/80 group">
-                    <div class="w-14 h-14 rounded-2xl bg-slate-800 text-slate-300 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center flex-shrink-0 transition">
-                        <i data-lucide="layout-dashboard" class="w-7 h-7"></i>
-                    </div>
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Modul 2</span>
-                        <h2 class="text-base md:text-lg font-extrabold text-slate-200 group-hover:text-white transition-colors">DIALOG PRESTASI &amp; HC3</h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Paparan eksekutif, perbandingan skor, % MTM, dan laporan HC3.</p>
-                    </div>
-                </button>
-            </div>
-
-            <!-- SELECTION PANEL -->
-            <div id="selection-panel" class="dashboard-card rounded-2xl p-5 border border-slate-800">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    
-                    <!-- 1. Pentaksiran Selector -->
-                    <div>
-                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">1</span>
-                            Jenis Pentaksiran
-                        </label>
-                        <select id="select-exam" onchange="handleExamChange()" class="w-full bg-[#090f1f] border border-blue-500/50 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <option value="AR1">AR1 (Ujian Pertengahan Sesi)</option>
-                            <option value="UASA">UASA (Ujian Akhir Sesi Akademik)</option>
-                        </select>
-                    </div>
-
-                    <!-- 2. Kelas Selector -->
-                    <div>
-                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">2</span>
-                            Pilih Kelas
-                        </label>
-                        <select id="select-class" onchange="handleClassChange()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <optgroup label="Tahap 1 (Tahun 1 - 3)">
-                                <option value="1 CAHAYA">Tahun 1 (1 CAHAYA)</option>
-                                <option value="2 SINARAN">Tahun 2 (2 SINARAN)</option>
-                                <option value="3 KERLIPAN">Tahun 3 (3 KERLIPAN)</option>
-                            </optgroup>
-                            <optgroup label="Tahap 2 (Tahun 4 - 6)">
-                                <option value="4 BESTARI">Tahun 4 (4 BESTARI)</option>
-                                <option value="5 BIJAKSANA">Tahun 5 (5 BIJAKSANA)</option>
-                                <option value="6 GEMILANG">Tahun 6 (6 GEMILANG)</option>
-                            </optgroup>
-                        </select>
-                    </div>
-
-                    <!-- 3. Subjek Selector -->
-                    <div>
-                        <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">3</span>
-                            Pilih Mata Pelajaran
-                        </label>
-                        <select id="select-subject" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
-                            <!-- Populated dynamically based on Exam & Tahap -->
-                        </select>
-                    </div>
-
+                <!-- 3. Mata Pelajaran -->
+                <div>
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold">3</span>
+                        Pilih Mata Pelajaran
+                    </label>
+                    <select id="select-subject" onchange="refreshCurrentView()" class="w-full bg-[#090f1f] border border-slate-700 rounded-xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
+                    </select>
                 </div>
-            </div>
 
-            <!-- ================= VIEW 1: ENTRY TABLE ================= -->
-            <div id="view-entry" class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl space-y-0">
-                <div class="p-5 bg-slate-900/80 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <div>
-                        <h3 class="text-base font-extrabold text-white uppercase tracking-wide flex items-center gap-2">
-                            <i data-lucide="clipboard-edit" class="w-5 h-5 text-blue-400"></i> Borang Pengisian Markah Murid
-                        </h3>
-                        <p class="text-xs text-slate-400 mt-0.5" id="entry-subtitle">Isi markah bagi pentaksiran yang dipilih.</p>
-                    </div>
-                    <button onclick="saveCurrentAssessmentMarks()" id="save-marks-btn" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
-                        <i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Markah ke Cloud
+            </div>
+        </div>
+
+        <!-- ================= VIEW 1: AR SPREADSHEET TABLE (EXCEL FORMAT) ================= -->
+        <div id="container-ar-table" class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-2xl space-y-0">
+            <div class="p-5 bg-slate-900/90 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3" id="save-bar-ar">
+                <div>
+                    <h3 class="text-base font-extrabold text-white uppercase tracking-wide flex items-center gap-2">
+                        <i data-lucide="table-2" class="w-5 h-5 text-blue-400"></i> Borang Analisis Ujian AR &amp; Headcount (TOV &rarr; AR1 &rarr; AR2 &rarr; AR3 &rarr; UASA &rarr; ETR)
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5" id="ar-subtitle">Kelas: 1 CAHAYA | Subjek: BM</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold flex items-center gap-2 transition border border-slate-700">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Cetak Borang
+                    </button>
+                    <button onclick="saveAllArMarks()" id="save-ar-btn" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
+                        <i data-lucide="cloud-upload" class="w-4 h-4"></i> Simpan Skor ke Cloud
                     </button>
                 </div>
+            </div>
 
-                <div class="overflow-x-auto custom-scrollbar max-h-[550px]">
-                    <table class="w-full text-left text-sm border-collapse">
-                        <thead class="bg-[#090f1f] text-slate-400 uppercase font-extrabold sticky top-0 z-10 border-b border-slate-800 text-xs">
-                            <tr>
-                                <th class="py-3.5 px-3 w-10 text-center">Bil</th>
-                                <th class="py-3.5 px-4">Nama Penuh Murid</th>
-                                <th class="py-3.5 px-2 w-28 text-center text-slate-300">TOV (Asas)</th>
-                                <th class="py-3.5 px-2 w-28 text-center text-orange-400">ETR (Sasaran)</th>
-                                <th class="py-3.5 px-2 w-32 text-center text-sky-400" id="th-selected-exam">Markah AR1</th>
-                                <th class="py-3.5 px-2 w-20 text-center">Gred</th>
-                            </tr>
-                        </thead>
-                        <tbody id="entry-table-body" class="divide-y divide-slate-800/80 text-slate-200">
-                        </tbody>
-                    </table>
+            <div class="overflow-x-auto custom-scrollbar max-h-[600px]">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-[#090f1f] text-slate-300 uppercase font-extrabold sticky top-0 z-10 border-b border-slate-800">
+                        <tr>
+                            <th rowspan="2" class="py-3 px-3 w-10 text-center border-r border-slate-800">Bil</th>
+                            <th rowspan="2" class="py-3 px-4 border-r border-slate-800">Nama Murid</th>
+                            <th colspan="2" class="py-2 px-2 text-center border-r border-slate-800 bg-slate-800/40 text-slate-300">TOV</th>
+                            <th colspan="2" class="py-2 px-2 text-center border-r border-slate-800 bg-sky-950/40 text-sky-400">AR 1 (APRIL)</th>
+                            <th colspan="2" class="py-2 px-2 text-center border-r border-slate-800 bg-blue-950/40 text-blue-400">AR 2 (JUN)</th>
+                            <th colspan="2" class="py-2 px-2 text-center border-r border-slate-800 bg-indigo-950/40 text-indigo-400">AR 3 (OGOS)</th>
+                            <th colspan="2" class="py-2 px-2 text-center border-r border-slate-800 bg-emerald-950/40 text-emerald-400">UASA</th>
+                            <th colspan="2" class="py-2 px-2 text-center bg-orange-950/40 text-orange-400">ETR</th>
+                        </tr>
+                        <tr class="border-t border-slate-800 text-[11px]">
+                            <th class="py-2 px-1 text-center w-16">Markah</th>
+                            <th class="py-2 px-1 text-center w-12 border-r border-slate-800">Gred</th>
+                            <th class="py-2 px-1 text-center w-16 text-sky-400">Markah</th>
+                            <th class="py-2 px-1 text-center w-12 border-r border-slate-800 text-sky-400">Gred</th>
+                            <th class="py-2 px-1 text-center w-16 text-blue-400">Markah</th>
+                            <th class="py-2 px-1 text-center w-12 border-r border-slate-800 text-blue-400">Gred</th>
+                            <th class="py-2 px-1 text-center w-16 text-indigo-400">Markah</th>
+                            <th class="py-2 px-1 text-center w-12 border-r border-slate-800 text-indigo-400">Gred</th>
+                            <th class="py-2 px-1 text-center w-16 text-emerald-400">Markah</th>
+                            <th class="py-2 px-1 text-center w-12 border-r border-slate-800 text-emerald-400">Gred</th>
+                            <th class="py-2 px-1 text-center w-16 text-orange-400">Markah</th>
+                            <th class="py-2 px-1 text-center w-12 text-orange-400">Gred</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entry-table-body" class="divide-y divide-slate-800 text-slate-200">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-4 bg-slate-900/60 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
+                <div id="save-status" class="font-semibold">Sedia untuk mengisi markah AR.</div>
+                <div id="calon-count-badge" class="font-bold text-blue-400">0 Calon Berdaftar</div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 2: PBD / SPPB TABLE (TP1 - TP6) ================= -->
+        <div id="container-pbd-table" class="hidden dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-2xl space-y-0">
+            <div class="p-5 bg-slate-900/90 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3" id="save-bar-pbd">
+                <div>
+                    <h3 class="text-base font-extrabold text-white uppercase tracking-wide flex items-center gap-2">
+                        <i data-lucide="clipboard-check" class="w-5 h-5 text-emerald-400"></i> Borang Pentaksiran Bilik Darjah (PBD / UASA SPPB)
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5" id="pbd-subtitle">Kelas: 1 CAHAYA | Subjek: BAHASA MELAYU</p>
                 </div>
-
-                <div class="p-4 bg-slate-900/60 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
-                    <div id="save-status" class="font-semibold">Sedia untuk mengisi markah.</div>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold flex items-center gap-2 transition border border-slate-700">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan PBD
+                    </button>
+                    <button onclick="saveAllPbdMarks()" id="save-pbd-btn" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
+                        <i data-lucide="cloud-upload" class="w-4 h-4"></i> Simpan Tahap Penguasaan
+                    </button>
                 </div>
             </div>
 
-            <!-- ================= VIEW 2: DASHBOARD ================= -->
-            <div id="view-dashboard" class="hidden space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-gradient-to-br from-[#134e96] to-[#0d2f66] rounded-2xl p-5 shadow-lg border border-blue-400/20 text-white">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="p-2.5 rounded-xl bg-white/10 w-fit mb-2">
-                                    <i data-lucide="users" class="w-6 h-6"></i>
-                                </div>
-                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">Enrolmen Calon</div>
-                            </div>
-                            <div id="kpi-enrolment" class="text-3xl font-black">0</div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-white/10 flex justify-between text-xs font-semibold opacity-90">
-                            <span>Mata Pelajaran:</span>
-                            <span id="kpi-subj-label" class="font-bold">BM</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-[#0284c7] to-[#0369a1] rounded-2xl p-5 shadow-lg border border-sky-400/20 text-white">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="p-2.5 rounded-xl bg-white/10 w-fit mb-2">
-                                    <i data-lucide="check-circle" class="w-6 h-6"></i>
-                                </div>
-                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">% Kehadiran</div>
-                            </div>
-                            <div id="kpi-hadir-rate" class="text-3xl font-black">0.0%</div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-white/10 flex justify-between text-xs font-semibold opacity-90">
-                            <span>Menduduki: <b id="kpi-hadir-count">0</b></span>
-                            <span>Tidak Hadir: <b id="kpi-th-count">0</b></span>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-[#15803d] to-[#166534] rounded-2xl p-5 shadow-lg border border-emerald-400/20 text-white">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="p-2.5 rounded-xl bg-white/10 w-fit mb-2">
-                                    <i data-lucide="award" class="w-6 h-6"></i>
-                                </div>
-                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">Capai MTM (A - E)</div>
-                            </div>
-                            <div id="kpi-mtm-count" class="text-3xl font-black">0 <span id="kpi-mtm-rate" class="text-sm font-bold">(0%)</span></div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-white/10 flex justify-between text-xs font-semibold opacity-90">
-                            <span>Lulus: <b id="kpi-lulus-count">0</b></span>
-                            <span>Belum Capai (F): <b id="kpi-gagal-count">0</b></span>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-[#c2410c] to-[#9a3412] rounded-2xl p-5 shadow-lg border border-orange-400/20 text-white">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="p-2.5 rounded-xl bg-white/10 w-fit mb-2">
-                                    <i data-lucide="target" class="w-6 h-6"></i>
-                                </div>
-                                <div class="text-xs font-bold tracking-wider uppercase opacity-80">Purata Skor</div>
-                            </div>
-                            <div id="kpi-avg-score" class="text-3xl font-black">0.0</div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-white/10 flex justify-between text-xs font-semibold opacity-90">
-                            <span>Purata TOV: <b id="kpi-tov-avg">0.0</b></span>
-                            <span>Purata ETR: <b id="kpi-etr-avg">0.0</b></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 dashboard-card rounded-2xl p-5 border border-slate-800 shadow-xl">
-                        <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
-                            <div>
-                                <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400"></i> Perbandingan Headcount (TOV vs AR1 vs ETR vs UASA)
-                                </h3>
-                                <p class="text-xs text-slate-400">Purata markah keseluruhan kelas</p>
-                            </div>
-                            <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center gap-2 transition border border-slate-700">
-                                <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan
-                            </button>
-                        </div>
-                        <div class="h-72 w-full">
-                            <canvas id="performanceChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-card rounded-2xl p-5 border border-slate-800 shadow-xl flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 mb-1">
-                                <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Taburan Gred Pentaksiran
-                            </h3>
-                            <p class="text-xs text-slate-400 mb-4" id="pie-subtitle">Pecahan gred semasa</p>
-                            <div class="h-56 w-full flex items-center justify-center">
-                                <canvas id="gradeDistributionChart"></canvas>
-                            </div>
-                        </div>
-                        <div id="grade-summary-pills" class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800 text-center text-xs font-bold">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dashboard-card rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
-                    <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex justify-between items-center">
-                        <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                            <i data-lucide="table" class="w-4 h-4 text-blue-400"></i> Analisis Headcount Lengkap Murid (HC3)
-                        </h3>
-                        <span id="dash-calon-badge" class="text-xs font-bold px-3 py-1 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">0 Calon</span>
-                    </div>
-                    <div class="overflow-x-auto custom-scrollbar max-h-96">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-[#090f1f] text-slate-400 uppercase font-bold sticky top-0 z-10 border-b border-slate-800">
-                                <tr>
-                                    <th class="py-3 px-3 w-10 text-center">Bil</th>
-                                    <th class="py-3 px-4">Nama Murid</th>
-                                    <th class="py-3 px-3 text-center">TOV</th>
-                                    <th class="py-3 px-3 text-center text-orange-400">ETR</th>
-                                    <th class="py-3 px-3 text-center text-sky-400">AR1</th>
-                                    <th class="py-3 px-3 text-center text-emerald-400">UASA</th>
-                                    <th class="py-3 px-3 text-center">Jurang (AR1 - TOV)</th>
-                                    <th class="py-3 px-3 text-center">Status Pencapaian</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dash-table-body" class="divide-y divide-slate-800 text-slate-200">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="overflow-x-auto custom-scrollbar max-h-[600px]">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-[#090f1f] text-slate-300 uppercase font-extrabold sticky top-0 z-10 border-b border-slate-800">
+                        <tr>
+                            <th class="py-3 px-3 w-12 text-center border-r border-slate-800">Bil</th>
+                            <th class="py-3 px-4 border-r border-slate-800">Nama Penuh Murid</th>
+                            <th class="py-3 px-4 w-48 text-center border-r border-slate-800 text-emerald-400">Tahap Penguasaan (TP)</th>
+                            <th class="py-3 px-4 text-left">Tafsiran Tahap Penguasaan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pbd-table-body" class="divide-y divide-slate-800 text-slate-200">
+                    </tbody>
+                </table>
             </div>
-        </section>
+
+            <div class="p-4 bg-slate-900/60 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
+                <div id="pbd-save-status" class="font-semibold">Sedia untuk merekod tahap penguasaan PBD.</div>
+                <div id="pbd-calon-count-badge" class="font-bold text-emerald-400">0 Calon Berdaftar</div>
+            </div>
+        </div>
+
+        <!-- ================= SUMMARY STATS BOX ================= -->
+        <div id="summary-section" class="dashboard-card rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+            <h3 class="text-sm font-extrabold uppercase tracking-wider text-white flex items-center gap-2" id="summary-title">
+                <i data-lucide="bar-chart-2" class="w-5 h-5 text-emerald-400"></i> Analisis Taburan Gred Kelas &amp; Peratusan (%)
+            </h3>
+            
+            <div id="summary-table-wrapper" class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-center text-xs border-collapse">
+                    <thead class="bg-[#090f1f] text-slate-400 uppercase font-bold border-b border-slate-800" id="summary-thead">
+                        <tr>
+                            <th class="py-2.5 px-3 text-left border-r border-slate-800">Gred Pencapaian</th>
+                            <th colspan="2" class="py-2 px-2 border-r border-slate-800">TOV</th>
+                            <th colspan="2" class="py-2 px-2 border-r border-slate-800 text-sky-400">AR 1</th>
+                            <th colspan="2" class="py-2 px-2 border-r border-slate-800 text-blue-400">AR 2</th>
+                            <th colspan="2" class="py-2 px-2 border-r border-slate-800 text-indigo-400">AR 3</th>
+                            <th colspan="2" class="py-2 px-2 border-r border-slate-800 text-emerald-400">UASA</th>
+                            <th colspan="2" class="py-2 px-2 text-orange-400">ETR</th>
+                        </tr>
+                        <tr class="border-t border-slate-800 text-[10px] text-slate-500">
+                            <th class="border-r border-slate-800"></th>
+                            <th>Bil</th><th class="border-r border-slate-800">%</th>
+                            <th>Bil</th><th class="border-r border-slate-800">%</th>
+                            <th>Bil</th><th class="border-r border-slate-800">%</th>
+                            <th>Bil</th><th class="border-r border-slate-800">%</th>
+                            <th>Bil</th><th class="border-r border-slate-800">%</th>
+                            <th>Bil</th><th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summary-table-body" class="divide-y divide-slate-800 text-slate-300 font-semibold">
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
     </main>
 
@@ -342,65 +253,88 @@
         const SUPABASE_KEY = "sb_publishable_qmnKG7vZFdnCjchv1GsGMA_D9sOSG2M";
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let activeModule = 'entry';
         let cachedMarks = {};
-        let perfChartInstance = null;
-        let gradeChartInstance = null;
+        let cachedPbdMarks = {};
 
-        // AR1 Subjects (NO PI, NO PM)
-        const SUBJECTS_AR1_TAHAP_1 = [
-            { code: "BM", name: "Bahasa Melayu (BM)" },
-            { code: "BI", name: "Bahasa Inggeris (BI)" },
-            { code: "MT", name: "Matematik (MT)" },
-            { code: "SN", name: "Sains (SN)" }
+        // 1. AR Subjects List (Matching Excel Structure)
+        const SUBJECTS_AR_TAHAP_1 = [
+            { code: "BM", name: "BAHASA MELAYU (BM)" },
+            { code: "BI", name: "ENGLISH (BI)" },
+            { code: "SN", name: "SAINS (SN)" },
+            { code: "MT", name: "MATEMATIK (MT)" }
         ];
 
-        const SUBJECTS_AR1_TAHAP_2 = [
-            { code: "BM", name: "Bahasa Melayu (BM)" },
-            { code: "BI", name: "Bahasa Inggeris (BI)" },
-            { code: "MT", name: "Matematik (MT)" },
-            { code: "SN", name: "Sains (SN)" },
-            { code: "SEJ", name: "Sejarah (SEJ)" }
+        const SUBJECTS_AR_TAHAP_2 = [
+            { code: "BM", name: "BAHASA MELAYU (BM)" },
+            { code: "BI", name: "ENGLISH (BI)" },
+            { code: "SN", name: "SAINS (SN)" },
+            { code: "MT", name: "MATEMATIK (MT)" },
+            { code: "SEJ", name: "SEJARAH (SEJ)" }
         ];
 
-        // UASA Subjects (WITH PI & PM)
-        const SUBJECTS_UASA_TAHAP_1 = [
-            { code: "BM", name: "Bahasa Melayu (BM)" },
-            { code: "BI", name: "Bahasa Inggeris (BI)" },
-            { code: "MT", name: "Matematik (MT)" },
-            { code: "SN", name: "Sains (SN)" },
-            { code: "PI", name: "Pendidikan Islam (PI)" },
-            { code: "PM", name: "Pendidikan Moral (PM)" }
+        // 2. PBD / SPPB Subjects List (Matching SPPB Official PDF System)
+        const SUBJECTS_PBD_TAHAP_1 = [
+            { code: "BM", name: "BAHASA MELAYU (BM)" },
+            { code: "BI", name: "BAHASA INGGERIS (BI)" },
+            { code: "SAINS", name: "SAINS (SAINS)" },
+            { code: "MM", name: "MATEMATIK (MM)" },
+            { code: "PAI", name: "PENDIDIKAN ISLAM (PAI)" },
+            { code: "PM", name: "PENDIDIKAN MORAL (PM)" },
+            { code: "BIN", name: "BAHASA IBAN (BIN)" },
+            { code: "PMZ", name: "PENDIDIKAN MUZIK (PMZ)" },
+            { code: "PSV", name: "PENDIDIKAN SENI VISUAL (PSV)" },
+            { code: "PJPK", name: "PENDIDIKAN JASMANI & KESIHATAN (PJPK)" }
         ];
 
-        const SUBJECTS_UASA_TAHAP_2 = [
-            { code: "BM", name: "Bahasa Melayu (BM)" },
-            { code: "BI", name: "Bahasa Inggeris (BI)" },
-            { code: "MT", name: "Matematik (MT)" },
-            { code: "SN", name: "Sains (SN)" },
-            { code: "SEJ", name: "Sejarah (SEJ)" },
-            { code: "PI", name: "Pendidikan Islam (PI)" },
-            { code: "PM", name: "Pendidikan Moral (PM)" }
+        const SUBJECTS_PBD_TAHAP_2 = [
+            { code: "BM", name: "BAHASA MELAYU (BM)" },
+            { code: "BI", name: "BAHASA INGGERIS (BI)" },
+            { code: "SAINS", name: "SAINS (SAINS)" },
+            { code: "MM", name: "MATEMATIK (MM)" },
+            { code: "PAI", name: "PENDIDIKAN ISLAM (PAI)" },
+            { code: "PM", name: "PENDIDIKAN MORAL (PM)" },
+            { code: "BIN", name: "BAHASA IBAN (BIN)" },
+            { code: "PMZ", name: "PENDIDIKAN MUZIK (PMZ)" },
+            { code: "PSV", name: "PENDIDIKAN SENI VISUAL (PSV)" },
+            { code: "PJPK", name: "PENDIDIKAN JASMANI & KESIHATAN (PJPK)" },
+            { code: "RBT", name: "REKA BENTUK DAN TEKNOLOGI (RBT)" },
+            { code: "SEJ", name: "SEJARAH (SEJ)" }
         ];
+
+        const TP_DESCRIPTIONS = {
+            'TP1': 'Tahu (Tahap Penguasaan Minimum)',
+            'TP2': 'Tahu dan Faham',
+            'TP3': 'Tahu, Faham dan Boleh Buat (Tahap Penguasaan Asas)',
+            'TP4': 'Tahu, Faham dan Boleh Buat dengan Beradab',
+            'TP5': 'Tahu, Faham dan Boleh Buat dengan Beradab Terpuji',
+            'TP6': 'Tahu, Faham dan Boleh Buat dengan Beradab Mithali'
+        };
 
         function isTahap1(className) {
             return className.startsWith("1") || className.startsWith("2") || className.startsWith("3");
         }
 
+        function isMuslimStudent(name) {
+            const n = name.toUpperCase();
+            return n.includes(' BIN ') || n.includes(' BINTI ') || n.includes(' BIN. ') || n.includes(' BINTI. ') || 
+                   n.startsWith('MUHAMMAD ') || n.startsWith('MOHAMAD ') || n.startsWith('MOHD ') || 
+                   n.startsWith('NUR ') || n.startsWith('SITI ') || n.includes(' ABDULLAH ');
+        }
+
         function populateSubjects() {
+            const mode = document.getElementById('select-system-mode').value;
             const classVal = document.getElementById('select-class').value;
-            const examVal = document.getElementById('select-exam').value;
             const subjSelect = document.getElementById('select-subject');
             const currentVal = subjSelect.value;
             subjSelect.innerHTML = '';
 
             let list = [];
-            const tahap1 = isTahap1(classVal);
+            const t1 = isTahap1(classVal);
 
-            if (examVal === 'AR1') {
-                list = tahap1 ? SUBJECTS_AR1_TAHAP_1 : SUBJECTS_AR1_TAHAP_2;
+            if (mode === 'AR') {
+                list = t1 ? SUBJECTS_AR_TAHAP_1 : SUBJECTS_AR_TAHAP_2;
             } else {
-                list = tahap1 ? SUBJECTS_UASA_TAHAP_1 : SUBJECTS_UASA_TAHAP_2;
+                list = t1 ? SUBJECTS_PBD_TAHAP_1 : SUBJECTS_PBD_TAHAP_2;
             }
 
             list.forEach(sub => {
@@ -413,11 +347,22 @@
             if (list.some(s => s.code === currentVal)) {
                 subjSelect.value = currentVal;
             } else {
-                subjSelect.value = "BM";
+                subjSelect.value = list[0].code;
             }
         }
 
-        function handleExamChange() {
+        function handleModeChange() {
+            const mode = document.getElementById('select-system-mode').value;
+            const arContainer = document.getElementById('container-ar-table');
+            const pbdContainer = document.getElementById('container-pbd-table');
+
+            if (mode === 'AR') {
+                arContainer.classList.remove('hidden');
+                pbdContainer.classList.add('hidden');
+            } else {
+                pbdContainer.classList.remove('hidden');
+                arContainer.classList.add('hidden');
+            }
             populateSubjects();
             refreshCurrentView();
         }
@@ -427,16 +372,9 @@
             refreshCurrentView();
         }
 
-        function isMuslimStudent(name) {
-            const n = name.toUpperCase();
-            return n.includes(' BIN ') || n.includes(' BINTI ') || n.includes(' BIN. ') || n.includes(' BINTI. ') || 
-                   n.startsWith('MUHAMMAD ') || n.startsWith('MOHAMAD ') || n.startsWith('MOHD ') || 
-                   n.startsWith('NUR ') || n.startsWith('SITI ') || n.includes(' ABDULLAH ');
-        }
-
-        function calculateUasaGrade(score) {
+        function calculateGrade(score) {
             if (score === null || score === undefined || score === '' || isNaN(score)) {
-                return { grade: 'TH', desc: 'Tidak Hadir', color: 'text-slate-400 bg-slate-800 border-slate-700' };
+                return { grade: 'TH', desc: 'Tidak Hadir', color: 'text-slate-500 bg-slate-800/40 border-slate-700' };
             }
             const s = Number(score);
             if (s >= 82) return { grade: 'A', desc: 'Cemerlang', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' };
@@ -445,71 +383,6 @@
             if (s >= 35) return { grade: 'D', desc: 'Memuaskan', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' };
             if (s >= 20) return { grade: 'E', desc: 'Tahap Minimum', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' };
             return { grade: 'F', desc: 'Belum Capai', color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' };
-        }
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            const id = document.getElementById('login-id').value.trim();
-            const pass = document.getElementById('login-pass').value;
-            const errDiv = document.getElementById('login-error');
-            errDiv.classList.add('hidden');
-
-            const email = `${id}@sk-simpang-kuda.edu.my`;
-
-            try {
-                const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
-                if (error) {
-                    errDiv.textContent = "ID atau kata laluan tidak sah.";
-                    errDiv.classList.remove('hidden');
-                } else {
-                    showPortalView(id);
-                }
-            } catch (err) {
-                errDiv.textContent = "Ralat authentication pelayan.";
-                errDiv.classList.remove('hidden');
-            }
-        }
-
-        function showPortalView(id) {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('portal-section').classList.remove('hidden');
-            document.getElementById('auth-status').innerHTML = `
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-blue-400 font-bold flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-lg uppercase">
-                        <i data-lucide="user-check" class="w-3.5 h-3.5"></i> ${id}
-                    </span>
-                    <button onclick="handleLogout()" class="text-xs font-semibold text-slate-400 hover:text-rose-400 transition-colors px-2 py-1">Keluar</button>
-                </div>
-            `;
-            lucide.createIcons();
-            handleClassChange();
-        }
-
-        async function handleLogout() {
-            await db.auth.signOut();
-            location.reload();
-        }
-
-        function setMainModule(mod) {
-            activeModule = mod;
-            const btnEntry = document.getElementById('nav-btn-entry');
-            const btnDash = document.getElementById('nav-btn-dash');
-            const viewEntry = document.getElementById('view-entry');
-            const viewDash = document.getElementById('view-dashboard');
-
-            if (mod === 'entry') {
-                btnEntry.className = "p-5 rounded-2xl border-2 border-blue-500 bg-blue-600/10 text-left flex items-center gap-5 transition hover:bg-blue-600/20 group";
-                btnDash.className = "p-5 rounded-2xl border border-slate-800 bg-[#111c38] text-left flex items-center gap-5 transition hover:bg-slate-800/80 group";
-                viewEntry.classList.remove('hidden');
-                viewDash.classList.add('hidden');
-            } else {
-                btnDash.className = "p-5 rounded-2xl border-2 border-blue-500 bg-blue-600/10 text-left flex items-center gap-5 transition hover:bg-blue-600/20 group";
-                btnEntry.className = "p-5 rounded-2xl border border-slate-800 bg-[#111c38] text-left flex items-center gap-5 transition hover:bg-slate-800/80 group";
-                viewDash.classList.remove('hidden');
-                viewEntry.classList.add('hidden');
-            }
-            lucide.createIcons();
-            refreshCurrentView();
         }
 
         function getStudents(selectedClass, selectedSubj) {
@@ -522,7 +395,7 @@
                     }
                 }
             }
-            if (selectedSubj === 'PI') {
+            if (selectedSubj === 'PAI' || selectedSubj === 'PI') {
                 students = students.filter(name => isMuslimStudent(name));
             } else if (selectedSubj === 'PM') {
                 students = students.filter(name => !isMuslimStudent(name));
@@ -532,6 +405,7 @@
 
         async function fetchMarks(selectedClass, selectedSubj) {
             cachedMarks = {};
+            cachedPbdMarks = {};
             try {
                 const { data, error } = await db
                     .from('student_marks')
@@ -541,8 +415,12 @@
 
                 if (!error && data) {
                     data.forEach(r => {
-                        if (!cachedMarks[r.student_name]) cachedMarks[r.student_name] = {};
-                        cachedMarks[r.student_name][r.exam_type] = r.score_val;
+                        if (r.exam_type.startsWith('TP_') || r.exam_type === 'PBD') {
+                            if (!cachedPbdMarks[r.student_name]) cachedPbdMarks[r.student_name] = r.grade_val;
+                        } else {
+                            if (!cachedMarks[r.student_name]) cachedMarks[r.student_name] = {};
+                            cachedMarks[r.student_name][r.exam_type] = r.score_val;
+                        }
                     });
                 }
             } catch (err) {
@@ -551,261 +429,248 @@
         }
 
         async function refreshCurrentView() {
+            const mode = document.getElementById('select-system-mode').value;
             const selectedClass = document.getElementById('select-class').value;
             const selectedSubj = document.getElementById('select-subject').value;
-            const selectedExam = document.getElementById('select-exam').value;
             if (!selectedSubj) return;
 
             await fetchMarks(selectedClass, selectedSubj);
 
-            if (activeModule === 'entry') {
-                renderEntryForm(selectedClass, selectedSubj, selectedExam);
+            if (mode === 'AR') {
+                renderArSpreadsheet(selectedClass, selectedSubj);
             } else {
-                renderDashboardView(selectedClass, selectedSubj, selectedExam);
+                renderPbdTable(selectedClass, selectedSubj);
             }
         }
 
-        function renderEntryForm(selectedClass, selectedSubj, selectedExam) {
+        const EXAM_TYPES = ['TOV', 'AR1', 'AR2', 'AR3', 'UASA', 'ETR'];
+
+        // ================= RENDER AR (HEADCOUNT 0-100) =================
+        function renderArSpreadsheet(selectedClass, selectedSubj) {
             const students = getStudents(selectedClass, selectedSubj);
             const tbody = document.getElementById('entry-table-body');
             tbody.innerHTML = '';
 
-            document.getElementById('th-selected-exam').textContent = `Markah ${selectedExam}`;
-            document.getElementById('entry-subtitle').textContent = `Pentaksiran: ${selectedExam} | Kelas: ${selectedClass} | Subjek: ${selectedSubj}`;
+            document.getElementById('ar-subtitle').textContent = `Kelas: ${selectedClass} | Subjek: ${selectedSubj}`;
+            document.getElementById('calon-count-badge').textContent = `${students.length} Calon Berdaftar`;
 
             if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500 font-bold">Tiada calon berdaftar untuk subjek ini dalam kelas ${selectedClass}.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="14" class="py-8 text-center text-slate-500 font-bold">Tiada calon berdaftar untuk subjek ini dalam kelas ${selectedClass}.</td></tr>`;
+                renderArSummary([], {});
                 return;
             }
 
             students.forEach((name, idx) => {
-                const tov = cachedMarks[name]?.['TOV'] ?? '';
-                const etr = cachedMarks[name]?.['ETR'] ?? '';
-                const currentScore = cachedMarks[name]?.[selectedExam] ?? '';
-                const gradeInfo = calculateUasaGrade(currentScore);
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-800/40 transition-colors';
+
+                let colsHtml = `
+                    <td class="py-2.5 px-3 text-center text-slate-500 font-bold border-r border-slate-800">${idx + 1}</td>
+                    <td class="py-2.5 px-4 font-bold text-white whitespace-nowrap border-r border-slate-800">${name}</td>
+                `;
+
+                EXAM_TYPES.forEach(type => {
+                    const score = cachedMarks[name]?.[type] ?? '';
+                    const gradeInfo = calculateGrade(score);
+                    const isLast = (type === 'ETR');
+
+                    colsHtml += `
+                        <td class="py-2 px-1 text-center">
+                            <input type="number" min="0" max="100" value="${score}" data-student="${name}" data-type="${type}" placeholder="-"
+                                oninput="onArCellChange(this, 'badge-${type}-${idx}')"
+                                class="ar-input mark-input w-14 text-center bg-[#090f1f] border border-slate-700 rounded py-1 text-xs text-white font-bold focus:outline-none focus:border-blue-500">
+                        </td>
+                        <td class="py-2 px-1 text-center ${!isLast ? 'border-r border-slate-800' : ''}">
+                            <span id="badge-${type}-${idx}" class="inline-block w-8 py-0.5 rounded border text-[10px] font-black ${gradeInfo.color}">${gradeInfo.grade}</span>
+                        </td>
+                    `;
+                });
+
+                tr.innerHTML = colsHtml;
+                tbody.appendChild(tr);
+            });
+
+            calculateAndRenderArSummary(students);
+        }
+
+        function onArCellChange(elem, badgeId) {
+            const gradeInfo = calculateGrade(elem.value);
+            const badge = document.getElementById(badgeId);
+            if (badge) {
+                badge.className = `inline-block w-8 py-0.5 rounded border text-[10px] font-black ${gradeInfo.color}`;
+                badge.textContent = gradeInfo.grade;
+            }
+            const selectedClass = document.getElementById('select-class').value;
+            const selectedSubj = document.getElementById('select-subject').value;
+            const students = getStudents(selectedClass, selectedSubj);
+            calculateAndRenderArSummary(students);
+        }
+
+        function calculateAndRenderArSummary(students) {
+            const counts = {};
+            EXAM_TYPES.forEach(type => {
+                counts[type] = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, TH: 0, totalValid: 0 };
+            });
+
+            const inputs = document.querySelectorAll('.ar-input');
+            inputs.forEach(input => {
+                const type = input.getAttribute('data-type');
+                const val = input.value.trim();
+                const gradeInfo = calculateGrade(val);
+                counts[type][gradeInfo.grade]++;
+                if (gradeInfo.grade !== 'TH') counts[type].totalValid++;
+            });
+
+            const totalStudents = students.length || 1;
+            const summaryBody = document.getElementById('summary-table-body');
+            summaryBody.innerHTML = '';
+
+            const grades = ['A', 'B', 'C', 'D', 'E', 'F', 'TH'];
+            const gradeLabels = {
+                A: 'Gred A (82 - 100)',
+                B: 'Gred B (66 - 81)',
+                C: 'Gred C (50 - 65)',
+                D: 'Gred D (35 - 49)',
+                E: 'Gred E (20 - 34)',
+                F: 'Gred F (0 - 19)',
+                TH: 'BILANGAN TH'
+            };
+
+            grades.forEach(g => {
+                const tr = document.createElement('tr');
+                tr.className = g === 'TH' ? 'bg-slate-900/60 font-bold' : '';
+
+                let rowHtml = `<td class="py-2 px-3 text-left font-bold border-r border-slate-800 ${g === 'A' ? 'text-emerald-400' : (g === 'F' ? 'text-rose-400' : '')}">${gradeLabels[g]}</td>`;
+
+                EXAM_TYPES.forEach(type => {
+                    const count = counts[type][g];
+                    const pct = ((count / totalStudents) * 100).toFixed(1);
+                    const isLast = (type === 'ETR');
+
+                    rowHtml += `
+                        <td class="py-2 px-1 text-center font-bold">${count}</td>
+                        <td class="py-2 px-1 text-center text-slate-400 text-[10px] ${!isLast ? 'border-r border-slate-800' : ''}">${pct}%</td>
+                    `;
+                });
+
+                tr.innerHTML = rowHtml;
+                summaryBody.appendChild(tr);
+            });
+        }
+
+        // ================= RENDER PBD / SPPB (TP1 - TP6) =================
+        function renderPbdTable(selectedClass, selectedSubj) {
+            const students = getStudents(selectedClass, selectedSubj);
+            const tbody = document.getElementById('pbd-table-body');
+            tbody.innerHTML = '';
+
+            document.getElementById('pbd-subtitle').textContent = `Kelas: ${selectedClass} | Subjek: ${selectedSubj}`;
+            document.getElementById('pbd-calon-count-badge').textContent = `${students.length} Calon Berdaftar`;
+
+            if (students.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-500 font-bold">Tiada calon berdaftar untuk subjek ini dalam kelas ${selectedClass}.</td></tr>`;
+                renderPbdSummary(students);
+                return;
+            }
+
+            students.forEach((name, idx) => {
+                const currentTp = cachedPbdMarks[name] ?? '';
+                const desc = TP_DESCRIPTIONS[currentTp] ?? 'Belum Ditaksir';
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-800/40 transition-colors';
                 tr.innerHTML = `
-                    <td class="py-3 px-3 text-center text-slate-500 font-bold">${idx + 1}</td>
-                    <td class="py-3 px-4 font-bold text-white text-xs md:text-sm">${name}</td>
-                    <td class="py-3 px-2 text-center">
-                        <input type="number" min="0" max="100" value="${tov}" data-student="${name}" data-type="TOV" placeholder="-"
-                            class="mark-input w-24 text-center bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 text-xs text-white font-bold focus:outline-none focus:border-blue-500">
+                    <td class="py-3 px-3 text-center text-slate-500 font-bold border-r border-slate-800">${idx + 1}</td>
+                    <td class="py-3 px-4 font-bold text-white border-r border-slate-800">${name}</td>
+                    <td class="py-2 px-4 text-center border-r border-slate-800">
+                        <select data-student="${name}" onchange="onPbdChange(this, 'pbd-desc-${idx}')" class="pbd-select w-36 bg-[#090f1f] border border-slate-700 rounded-lg py-1.5 px-3 text-xs font-black text-emerald-400 focus:outline-none focus:border-emerald-500">
+                            <option value="">- Pilih TP -</option>
+                            <option value="TP1" ${currentTp === 'TP1' ? 'selected' : ''}>TP 1</option>
+                            <option value="TP2" ${currentTp === 'TP2' ? 'selected' : ''}>TP 2</option>
+                            <option value="TP3" ${currentTp === 'TP3' ? 'selected' : ''}>TP 3</option>
+                            <option value="TP4" ${currentTp === 'TP4' ? 'selected' : ''}>TP 4</option>
+                            <option value="TP5" ${currentTp === 'TP5' ? 'selected' : ''}>TP 5</option>
+                            <option value="TP6" ${currentTp === 'TP6' ? 'selected' : ''}>TP 6</option>
+                        </select>
                     </td>
-                    <td class="py-3 px-2 text-center">
-                        <input type="number" min="0" max="100" value="${etr}" data-student="${name}" data-type="ETR" placeholder="-"
-                            class="mark-input w-24 text-center bg-[#090f1f] border border-orange-500/30 rounded-lg py-1.5 text-xs text-orange-300 font-bold focus:outline-none focus:border-orange-500">
-                    </td>
-                    <td class="py-3 px-2 text-center">
-                        <input type="number" min="0" max="100" value="${currentScore}" data-student="${name}" data-type="${selectedExam}" placeholder="-"
-                            oninput="onSingleMarkInput(this, 'badge-${idx}')"
-                            class="mark-input w-28 text-center bg-[#090f1f] border border-sky-500/50 rounded-lg py-1.5 text-sm text-sky-300 font-extrabold focus:outline-none focus:border-sky-400">
-                    </td>
-                    <td class="py-3 px-2 text-center">
-                        <span id="badge-${idx}" class="inline-block w-10 py-1 rounded-lg border text-xs font-black ${gradeInfo.color}">${gradeInfo.grade}</span>
+                    <td class="py-3 px-4 text-xs text-slate-300 font-semibold" id="pbd-desc-${idx}">
+                        ${desc}
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+
+            renderPbdSummary(students);
         }
 
-        function onSingleMarkInput(elem, badgeId) {
-            const gradeInfo = calculateUasaGrade(elem.value);
-            const badge = document.getElementById(badgeId);
-            if (badge) {
-                badge.className = `inline-block w-10 py-1 rounded-lg border text-xs font-black ${gradeInfo.color}`;
-                badge.textContent = gradeInfo.grade;
-            }
-        }
+        function onPbdChange(elem, descId) {
+            const tp = elem.value;
+            const desc = TP_DESCRIPTIONS[tp] ?? 'Belum Ditaksir';
+            document.getElementById(descId).textContent = desc;
 
-        function renderDashboardView(selectedClass, selectedSubj, selectedExam) {
-            document.getElementById('kpi-subj-label').textContent = selectedSubj;
-            document.getElementById('pie-subtitle').textContent = `Pecahan Gred Pentaksiran (${selectedExam})`;
-            const students = getStudents(selectedClass, selectedSubj);
-
-            document.getElementById('kpi-enrolment').textContent = students.length;
-            document.getElementById('dash-calon-badge').textContent = `${students.length} Calon`;
-
-            let hadirCount = 0;
-            let thCount = 0;
-            let mtmCount = 0;
-            let gagalCount = 0;
-            let totalExamScore = 0;
-            let totalTov = 0;
-            let totalEtr = 0;
-            let totalUasa = 0;
-            let validTovCount = 0;
-            let validEtrCount = 0;
-            let validUasaCount = 0;
-
-            const gradeCounts = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, TH: 0 };
-            const dashTbody = document.getElementById('dash-table-body');
-            dashTbody.innerHTML = '';
-
-            students.forEach((name, idx) => {
-                const tov = cachedMarks[name]?.['TOV'] ?? null;
-                const etr = cachedMarks[name]?.['ETR'] ?? null;
-                const ar1 = cachedMarks[name]?.['AR1'] ?? null;
-                const uasa = cachedMarks[name]?.['UASA'] ?? null;
-                const currentScore = cachedMarks[name]?.[selectedExam] ?? null;
-
-                if (currentScore !== null && currentScore !== '') {
-                    hadirCount++;
-                    const score = Number(currentScore);
-                    totalExamScore += score;
-                    const gradeInfo = calculateUasaGrade(score);
-                    gradeCounts[gradeInfo.grade]++;
-
-                    if (['A', 'B', 'C', 'D', 'E'].includes(gradeInfo.grade)) {
-                        mtmCount++;
-                    } else {
-                        gagalCount++;
-                    }
-                } else {
-                    thCount++;
-                    gradeCounts['TH']++;
-                }
-
-                if (tov !== null && tov !== '') { totalTov += Number(tov); validTovCount++; }
-                if (etr !== null && etr !== '') { totalEtr += Number(etr); validEtrCount++; }
-                if (uasa !== null && uasa !== '') { totalUasa += Number(uasa); validUasaCount++; }
-
-                const tovNum = Number(tov) || 0;
-                const ar1Num = Number(ar1) || 0;
-                const uasaNum = Number(uasa) || 0;
-                const etrNum = Number(etr) || 0;
-                
-                const gap = ar1 !== null && tov !== null ? (ar1Num - tovNum) : null;
-                const isUasaTargetAchieved = uasa !== null && etr !== null ? (uasaNum >= etrNum) : null;
-
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-800/40 transition-colors';
-                tr.innerHTML = `
-                    <td class="py-2.5 px-3 text-center text-slate-500">${idx + 1}</td>
-                    <td class="py-2.5 px-4 font-bold text-white">${name}</td>
-                    <td class="py-2.5 px-3 text-center text-slate-400 font-bold">${tov ?? '-'}</td>
-                    <td class="py-2.5 px-3 text-center text-orange-400 font-bold">${etr ?? '-'}</td>
-                    <td class="py-2.5 px-3 text-center text-sky-400 font-extrabold">${ar1 ?? 'TH'}</td>
-                    <td class="py-2.5 px-3 text-center text-emerald-400 font-extrabold">${uasa ?? '-'}</td>
-                    <td class="py-2.5 px-3 text-center font-bold ${gap !== null ? (gap >= 0 ? 'text-emerald-400' : 'text-rose-400') : 'text-slate-500'}">
-                        ${gap !== null ? (gap > 0 ? '+' + gap : gap) : '-'}
-                    </td>
-                    <td class="py-2.5 px-3 text-center">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isUasaTargetAchieved ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-400 border border-slate-700'}">
-                            ${uasa !== null ? (isUasaTargetAchieved ? 'Capai Sasaran' : 'Bawah Sasaran') : 'Belum Duduk'}
-                        </span>
-                    </td>
-                `;
-                dashTbody.appendChild(tr);
-            });
-
-            const hadirRate = students.length > 0 ? ((hadirCount / students.length) * 100).toFixed(1) : '0.0';
-            const mtmRate = hadirCount > 0 ? ((mtmCount / hadirCount) * 100).toFixed(1) : '0.0';
-            const avgExamScore = hadirCount > 0 ? (totalExamScore / hadirCount).toFixed(1) : '0.0';
-            const avgTov = validTovCount > 0 ? (totalTov / validTovCount).toFixed(1) : '0.0';
-            const avgEtr = validEtrCount > 0 ? (totalEtr / validEtrCount).toFixed(1) : '0.0';
-            const avgAr1 = (cachedMarks && Object.values(cachedMarks).filter(m => m.AR1 != null).length > 0) ? (Object.values(cachedMarks).reduce((a, b) => a + (Number(b.AR1) || 0), 0) / Object.values(cachedMarks).filter(m => m.AR1 != null).length).toFixed(1) : '0.0';
-            const avgUasa = validUasaCount > 0 ? (totalUasa / validUasaCount).toFixed(1) : '0.0';
-
-            document.getElementById('kpi-hadir-rate').textContent = `${hadirRate}%`;
-            document.getElementById('kpi-hadir-count').textContent = hadirCount;
-            document.getElementById('kpi-th-count').textContent = thCount;
-
-            document.getElementById('kpi-mtm-count').innerHTML = `${mtmCount} <span class="text-sm font-bold">(${mtmRate}%)</span>`;
-            document.getElementById('kpi-lulus-count').textContent = mtmCount;
-            document.getElementById('kpi-gagal-count').textContent = gagalCount;
-
-            document.getElementById('kpi-avg-score').textContent = avgExamScore;
-            document.getElementById('kpi-tov-avg').textContent = avgTov;
-            document.getElementById('kpi-etr-avg').textContent = avgEtr;
-
-            renderBarChart(avgTov, avgAr1, avgEtr, avgUasa);
-            renderPieChart(gradeCounts);
-        }
-
-        function renderBarChart(tov, ar1, etr, uasa) {
-            const ctx = document.getElementById('performanceChart').getContext('2d');
-            if (perfChartInstance) perfChartInstance.destroy();
-
-            perfChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['TOV (Asas)', 'AR1 (Ujian 1)', 'ETR (Sasaran)', 'UASA (Akhir)'],
-                    datasets: [{
-                        label: 'Purata Skor',
-                        data: [Number(tov), Number(ar1), Number(etr), Number(uasa)],
-                        backgroundColor: ['#64748b', '#0284c7', '#ea580c', '#10b981'],
-                        borderRadius: 8,
-                        barThickness: 45
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            grid: { color: '#1e293b' },
-                            ticks: { color: '#94a3b8', font: { weight: 'bold' } }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#f1f5f9', font: { weight: 'bold' } }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        function renderPieChart(gradeCounts) {
-            const ctx = document.getElementById('gradeDistributionChart').getContext('2d');
-            if (gradeChartInstance) gradeChartInstance.destroy();
-
-            gradeChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['A (Cemerlang)', 'B (Kepujian)', 'C (Baik)', 'D (Memuaskan)', 'E (Tahap Min)', 'F (Belum Capai)'],
-                    datasets: [{
-                        data: [gradeCounts.A, gradeCounts.B, gradeCounts.C, gradeCounts.D, gradeCounts.E, gradeCounts.F],
-                        backgroundColor: ['#10b981', '#3b82f6', '#06b6d4', '#f59e0b', '#f97316', '#ef4444'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    cutout: '65%'
-                }
-            });
-
-            document.getElementById('grade-summary-pills').innerHTML = `
-                <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 py-1.5 rounded-lg">A: ${gradeCounts.A}</div>
-                <div class="bg-blue-500/10 border border-blue-500/20 text-blue-400 py-1.5 rounded-lg">B: ${gradeCounts.B}</div>
-                <div class="bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 py-1.5 rounded-lg">C: ${gradeCounts.C}</div>
-                <div class="bg-amber-500/10 border border-amber-500/20 text-amber-400 py-1.5 rounded-lg">D: ${gradeCounts.D}</div>
-                <div class="bg-orange-500/10 border border-orange-500/20 text-orange-400 py-1.5 rounded-lg">E: ${gradeCounts.E}</div>
-                <div class="bg-rose-500/10 border border-rose-500/20 text-rose-400 py-1.5 rounded-lg">F: ${gradeCounts.F}</div>
-            `;
-        }
-
-        async function saveCurrentAssessmentMarks() {
             const selectedClass = document.getElementById('select-class').value;
             const selectedSubj = document.getElementById('select-subject').value;
-            const selectedExam = document.getElementById('select-exam').value;
+            const students = getStudents(selectedClass, selectedSubj);
+            renderPbdSummary(students);
+        }
+
+        function renderPbdSummary(students) {
+            const counts = { TP1: 0, TP2: 0, TP3: 0, TP4: 0, TP5: 0, TP6: 0, Belum: 0 };
+            const selects = document.querySelectorAll('.pbd-select');
+            selects.forEach(s => {
+                const val = s.value;
+                if (counts[val] !== undefined) counts[val]++;
+                else counts['Belum']++;
+            });
+
+            const total = students.length || 1;
+            const summaryTitle = document.getElementById('summary-title');
+            summaryTitle.innerHTML = `<i data-lucide="pie-chart" class="w-5 h-5 text-emerald-400"></i> Taburan Tahap Penguasaan PBD / UASA SPPB (Kelas)`;
+
+            const thead = document.getElementById('summary-thead');
+            thead.innerHTML = `
+                <tr>
+                    <th class="py-2.5 px-3 text-left border-r border-slate-800">Tahap Penguasaan</th>
+                    <th class="py-2.5 px-3 text-center border-r border-slate-800">Bilangan Murid</th>
+                    <th class="py-2.5 px-3 text-center border-r border-slate-800">Peratusan (%)</th>
+                    <th class="py-2.5 px-4 text-left">Status Penguasaan</th>
+                </tr>
+            `;
+
+            const tbody = document.getElementById('summary-table-body');
+            tbody.innerHTML = '';
+
+            ['TP1', 'TP2', 'TP3', 'TP4', 'TP5', 'TP6'].forEach(tp => {
+                const c = counts[tp];
+                const pct = ((c / total) * 100).toFixed(1);
+                const isMtm = ['TP3', 'TP4', 'TP5', 'TP6'].includes(tp);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 text-left font-bold border-r border-slate-800 text-emerald-400">${tp}</td>
+                    <td class="py-2.5 px-3 text-center font-extrabold border-r border-slate-800">${c}</td>
+                    <td class="py-2.5 px-3 text-center text-slate-400 border-r border-slate-800">${pct}%</td>
+                    <td class="py-2.5 px-4 text-left text-xs ${isMtm ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}">
+                        ${isMtm ? '✓ Mencapai Tahap Minimum (MTM)' : '⚠ Belum Mencapai Tahap Minimum'}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        // ================= SAVE TO SUPABASE =================
+        async function saveAllArMarks() {
+            const selectedClass = document.getElementById('select-class').value;
+            const selectedSubj = document.getElementById('select-subject').value;
             const statusDiv = document.getElementById('save-status');
-            const saveBtn = document.getElementById('save-marks-btn');
+            const saveBtn = document.getElementById('save-ar-btn');
 
             saveBtn.disabled = true;
-            saveBtn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Menyimpan...`;
+            saveBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan...`;
             lucide.createIcons();
 
-            const inputs = document.querySelectorAll('.mark-input');
+            const inputs = document.querySelectorAll('.ar-input');
             const rowsToUpsert = [];
 
             inputs.forEach(input => {
@@ -813,7 +678,7 @@
                 const eType = input.getAttribute('data-type');
                 const valStr = input.value.trim();
                 const score = valStr === '' ? null : Number(valStr);
-                const grade = calculateUasaGrade(score).grade;
+                const grade = calculateGrade(score).grade;
 
                 rowsToUpsert.push({
                     student_name: sName,
@@ -832,24 +697,64 @@
                     .upsert(rowsToUpsert, { onConflict: 'student_name,class_name,subject_name,exam_type' });
 
                 if (error) throw error;
-                statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold text-sm">✓ SEMUA DATA (${selectedExam}, TOV &amp; ETR) BERJAYA DISIMPAN KE CLOUD!</span>`;
+                statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold">✓ SEMUA SKOR AR &amp; HEADCOUNT BERJAYA DISIMPAN KE CLOUD!</span>`;
             } catch (err) {
                 console.error(err);
-                statusDiv.innerHTML = `<span class="text-rose-400 font-extrabold text-sm">Ralat menyimpan ke cloud. Sila cuba lagi.</span>`;
+                statusDiv.innerHTML = `<span class="text-rose-400 font-extrabold">Ralat menyimpan ke cloud.</span>`;
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerHTML = `<i data-lucide="cloud-upload" class="w-5 h-5"></i> Simpan Markah ke Cloud`;
+                saveBtn.innerHTML = `<i data-lucide="cloud-upload" class="w-4 h-4"></i> Simpan ke Cloud`;
                 lucide.createIcons();
             }
         }
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            const { data } = await db.auth.getSession();
-            if (data?.session) {
-                const email = data.session.user.email || '';
-                const id = email.split('@')[0] || 'Guru';
-                showPortalView(id);
+        async function saveAllPbdMarks() {
+            const selectedClass = document.getElementById('select-class').value;
+            const selectedSubj = document.getElementById('select-subject').value;
+            const statusDiv = document.getElementById('pbd-save-status');
+            const saveBtn = document.getElementById('save-pbd-btn');
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan...`;
+            lucide.createIcons();
+
+            const selects = document.querySelectorAll('.pbd-select');
+            const rowsToUpsert = [];
+
+            selects.forEach(sel => {
+                const sName = sel.getAttribute('data-student');
+                const tpVal = sel.value.trim();
+
+                rowsToUpsert.push({
+                    student_name: sName,
+                    class_name: selectedClass,
+                    subject_name: selectedSubj,
+                    exam_type: 'PBD',
+                    score_val: tpVal ? Number(tpVal.replace('TP', '')) : null,
+                    grade_val: tpVal || 'TH',
+                    updated_at: new Date().toISOString()
+                });
+            });
+
+            try {
+                const { data, error } = await db
+                    .from('student_marks')
+                    .upsert(rowsToUpsert, { onConflict: 'student_name,class_name,subject_name,exam_type' });
+
+                if (error) throw error;
+                statusDiv.innerHTML = `<span class="text-emerald-400 font-extrabold">✓ TAHAP PENGUASAAN PBD / UASA SPPB BERJAYA DISIMPAN!</span>`;
+            } catch (err) {
+                console.error(err);
+                statusDiv.innerHTML = `<span class="text-rose-400 font-extrabold">Ralat menyimpan ke cloud.</span>`;
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = `<i data-lucide="cloud-upload" class="w-4 h-4"></i> Simpan Tahap Penguasaan`;
+                lucide.createIcons();
             }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            handleClassChange();
         });
     </script>
 </body>
